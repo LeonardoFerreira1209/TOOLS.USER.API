@@ -133,7 +133,7 @@ public static class ExtensionsConfigurations
                 {
                     Name = "HYPER.IO DESENVOLVIMENTOS LTDA",
                     Email = "HYPER.IO@OUTLOOK.COM",
-                }
+                },
 
             });
 
@@ -233,11 +233,18 @@ public static class ExtensionsConfigurations
     {
         var apiVersion = configurations.GetValue<string>("SwaggerInfo:ApiVersion");
 
-        application
-            .UseSwagger();
+        application.UseSwagger(c =>
+        {
+            c.RouteTemplate = "swagger/{documentName}/swagger.json";
+        });
 
         application
-            .UseSwaggerUI(swagger => swagger.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"{apiVersion}"));
+            .UseSwaggerUI(swagger =>
+            {
+                swagger.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"{apiVersion}");
+
+                //swagger.InjectStylesheet("/swagger-custom/swagger-custom-styles.css");
+            });
 
         application
             .UseMvcWithDefaultRoute();
@@ -301,4 +308,5 @@ public static class ExtensionsConfigurations
 
         return application;
     }
+
 }
