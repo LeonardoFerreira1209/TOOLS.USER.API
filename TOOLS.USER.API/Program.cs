@@ -31,6 +31,7 @@ try
         .ConfigureIdentityServer(configurations)
         .ConfigureSwagger(configurations)
         .ConfigureDependencies(configurations)
+        .ConfigureRefit(configurations)
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()
         .AddControllers(options =>

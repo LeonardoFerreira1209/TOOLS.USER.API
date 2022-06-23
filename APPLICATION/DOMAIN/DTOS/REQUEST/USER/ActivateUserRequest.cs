@@ -5,8 +5,8 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 /// <summary>
 /// Request de dados de ativação do usuário.
 /// </summary>
-public class ActivateUserRequest 
-{ 
+public class ActivateUserRequest
+{
 
     public ActivateUserRequest(string codigo, Guid usuarioId)
     {

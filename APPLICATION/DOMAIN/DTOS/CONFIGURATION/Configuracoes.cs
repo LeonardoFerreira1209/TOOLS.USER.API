@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+﻿namespace APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 
 /// <summary>
 /// Classe responsavel por receber os dados do Appsettings.

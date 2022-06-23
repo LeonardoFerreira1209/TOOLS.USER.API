@@ -15,8 +15,8 @@ namespace APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER
                 Tags = new OpenApiTag[] { new OpenApiTag { Name = "HealthCheck" } },
                 Responses = new OpenApiResponses
                 {
-                    ["200"] = new OpenApiResponse { Description = "Healthy"},
-                    ["503"] = new OpenApiResponse { Description = "Unhealthy"}
+                    ["200"] = new OpenApiResponse { Description = "Healthy" },
+                    ["503"] = new OpenApiResponse { Description = "Unhealthy" }
                 }
             });
 

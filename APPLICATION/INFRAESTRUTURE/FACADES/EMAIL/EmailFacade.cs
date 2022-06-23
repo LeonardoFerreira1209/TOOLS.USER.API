@@ -34,7 +34,7 @@ public class EmailFacade
 
             if (response.IsSuccessStatusCode is not true) throw new Exception("Erro ao enviar e-mail de confirmação para o usuário.");
         }
-        catch(Exception exception)
+        catch (Exception exception)
         {
             throw new Exception(exception.Message);
         }

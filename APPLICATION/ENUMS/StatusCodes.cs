@@ -197,7 +197,7 @@ public enum StatusCodes
     ServerErrorNotExtended = 510,
 
     [Description("Network Authentication Required")]
-    ServerErrorNetworkAuthenticationRequired  = 511,
+    ServerErrorNetworkAuthenticationRequired = 511,
 
     [Description("Network Connect Timeout Error")]
     ServerErrorNetworkConnectTimeoutError = 599,
