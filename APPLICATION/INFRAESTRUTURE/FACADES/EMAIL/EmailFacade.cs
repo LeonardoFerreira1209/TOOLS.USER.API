@@ -1,8 +1,7 @@
-﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.DOMAIN.DTOS.EMAIL;
-using MailKit.Net.Smtp;
+﻿using APPLICATION.DOMAIN.CONTRACTS.API;
+using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+using APPLICATION.DOMAIN.DTOS.REQUEST;
 using Microsoft.Extensions.Options;
-using MimeKit;
 
 namespace APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 
@@ -13,95 +12,31 @@ public class EmailFacade
 {
     private readonly IOptions<AppSettings> _appsettings;
 
-    public EmailFacade(IOptions<AppSettings> appsettings)
+    private readonly IEmailExternal _emailExternal;
+
+    public EmailFacade(IOptions<AppSettings> appsettings, IEmailExternal emailExternal)
     {
         _appsettings = appsettings;
+
+        _emailExternal = emailExternal;
     }
 
     /// <summary>
     /// Metodo que prepara o envio do e-mail.
     /// </summary>
-    /// <param name="receiver"></param>
-    /// <param name="subject"></param>
-    /// <param name="userId"></param>
-    /// <param name="activateCode"></param>
+    /// <param name="request"></param>
     /// <exception cref="Exception"></exception>
-    public void Invite(string[] receiver, string subject, Guid userId, string activateCode)
+    public async void Invite(MailRequest request)
     {
         try
         {
-            var message = new Message(receiver, subject, userId, activateCode);
+            var response = await _emailExternal.Invite(request);
 
-            var emailMessage = CreateEmailBody(message);
-
-            Send(emailMessage);
-
+            if (response.IsSuccessStatusCode is not true) throw new Exception("Erro ao enviar e-mail de confirmação para o usuário.");
         }
         catch(Exception exception)
         {
             throw new Exception(exception.Message);
-        }
-    }
-
-    /// <summary>
-    /// Método responsavel por criar o corpo do e-mail.
-    /// </summary>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    private MimeMessage CreateEmailBody(Message message)
-    {
-        try
-        {
-            var emailMessage = new MimeMessage();
-
-            emailMessage.From.Add(new MailboxAddress("remetente", _appsettings.Value.Email.From));
-
-            emailMessage.To.AddRange(message.Receiver);
-
-            emailMessage.Subject = message.Subject;
-
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text)
-            {
-                Text = message.Content
-            };
-
-            return emailMessage;
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(exception.Message);
-        }
-    }
-
-    /// <summary>
-    /// Método responsavel por fazer acesso ao client e enviar o e-mail.
-    /// </summary>
-    /// <param name="emailMessage"></param>
-    /// <exception cref="Exception"></exception>
-    private void Send(MimeMessage emailMessage)
-    {
-        using var client = new SmtpClient();
-
-        try
-        {
-            client.Connect(_appsettings.Value.Email.SmtpServer, _appsettings.Value.Email.Port, true);
-
-            client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-            client.Authenticate(_appsettings.Value.Email.From, _appsettings.Value.Email.Password);
-
-            client.Send(emailMessage);
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(exception.Message);
-        }
-        finally
-        {
-            client.Disconnect(true);
-
-            client.Dispose();
         }
     }
 }

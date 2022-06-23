@@ -19,6 +19,93 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\dist\images\cta-illustration.svg" />
+    <None Include="wwwroot\dist\images\feature-icon-01.svg" />
+    <None Include="wwwroot\dist\images\feature-icon-02.svg" />
+    <None Include="wwwroot\dist\images\feature-icon-03.svg" />
+    <None Include="wwwroot\dist\images\feature-icon-04.svg" />
+    <None Include="wwwroot\dist\images\feature-icon-05.svg" />
+    <None Include="wwwroot\dist\images\feature-icon-06.svg" />
+    <None Include="wwwroot\dist\images\hero-back-illustration.svg" />
+    <None Include="wwwroot\dist\images\hero-top-illustration.svg" />
+    <None Include="wwwroot\dist\images\logo.svg" />
+    <None Include="wwwroot\dist\images\pricing-illustration.svg" />
+    <None Include="wwwroot\dist\js\main.min.js" />
+    <None Include="wwwroot\images\cta-illustration.svg" />
+    <None Include="wwwroot\images\feature-icon-01.svg" />
+    <None Include="wwwroot\images\feature-icon-02.svg" />
+    <None Include="wwwroot\images\feature-icon-03.svg" />
+    <None Include="wwwroot\images\feature-icon-04.svg" />
+    <None Include="wwwroot\images\feature-icon-05.svg" />
+    <None Include="wwwroot\images\feature-icon-06.svg" />
+    <None Include="wwwroot\images\hero-back-illustration.svg" />
+    <None Include="wwwroot\images\hero-top-illustration.svg" />
+    <None Include="wwwroot\images\logo.svg" />
+    <None Include="wwwroot\images\pricing-illustration.svg" />
+    <None Include="wwwroot\js\main.js" />
+    <None Include="wwwroot\scss\abstracts\_functions.scss" />
+    <None Include="wwwroot\scss\abstracts\_include-media.scss" />
+    <None Include="wwwroot\scss\abstracts\_mixins.scss" />
+    <None Include="wwwroot\scss\abstracts\_variables.scss" />
+    <None Include="wwwroot\scss\base\_base.scss" />
+    <None Include="wwwroot\scss\base\_helpers.scss" />
+    <None Include="wwwroot\scss\base\_typography.scss" />
+    <None Include="wwwroot\scss\components\_buttons.scss" />
+    <None Include="wwwroot\scss\components\_forms.scss" />
+    <None Include="wwwroot\scss\layout\_cta.scss" />
+    <None Include="wwwroot\scss\layout\_features.scss" />
+    <None Include="wwwroot\scss\layout\_footer.scss" />
+    <None Include="wwwroot\scss\layout\_header.scss" />
+    <None Include="wwwroot\scss\layout\_hero.scss" />
+    <None Include="wwwroot\scss\layout\_main.scss" />
+    <None Include="wwwroot\scss\layout\_pricing.scss" />
+    <None Include="wwwroot\scss\style.scss" />
+    <None Include="wwwroot\scss\_normalize.scss" />
+    <None Include="wwwroot\wwwroot\dist\images\cta-illustration.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\feature-icon-01.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\feature-icon-02.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\feature-icon-03.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\feature-icon-04.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\feature-icon-05.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\feature-icon-06.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\hero-back-illustration.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\hero-top-illustration.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\logo.svg" />
+    <None Include="wwwroot\wwwroot\dist\images\pricing-illustration.svg" />
+    <None Include="wwwroot\wwwroot\dist\js\main.min.js" />
+    <None Include="wwwroot\wwwroot\images\cta-illustration.svg" />
+    <None Include="wwwroot\wwwroot\images\feature-icon-01.svg" />
+    <None Include="wwwroot\wwwroot\images\feature-icon-02.svg" />
+    <None Include="wwwroot\wwwroot\images\feature-icon-03.svg" />
+    <None Include="wwwroot\wwwroot\images\feature-icon-04.svg" />
+    <None Include="wwwroot\wwwroot\images\feature-icon-05.svg" />
+    <None Include="wwwroot\wwwroot\images\feature-icon-06.svg" />
+    <None Include="wwwroot\wwwroot\images\hero-back-illustration.svg" />
+    <None Include="wwwroot\wwwroot\images\hero-top-illustration.svg" />
+    <None Include="wwwroot\wwwroot\images\logo.svg" />
+    <None Include="wwwroot\wwwroot\images\pricing-illustration.svg" />
+    <None Include="wwwroot\wwwroot\js\main.js" />
+    <None Include="wwwroot\wwwroot\scss\abstracts\_functions.scss" />
+    <None Include="wwwroot\wwwroot\scss\abstracts\_include-media.scss" />
+    <None Include="wwwroot\wwwroot\scss\abstracts\_mixins.scss" />
+    <None Include="wwwroot\wwwroot\scss\abstracts\_variables.scss" />
+    <None Include="wwwroot\wwwroot\scss\base\_base.scss" />
+    <None Include="wwwroot\wwwroot\scss\base\_helpers.scss" />
+    <None Include="wwwroot\wwwroot\scss\base\_typography.scss" />
+    <None Include="wwwroot\wwwroot\scss\components\_buttons.scss" />
+    <None Include="wwwroot\wwwroot\scss\components\_forms.scss" />
+    <None Include="wwwroot\wwwroot\scss\layout\_cta.scss" />
+    <None Include="wwwroot\wwwroot\scss\layout\_features.scss" />
+    <None Include="wwwroot\wwwroot\scss\layout\_footer.scss" />
+    <None Include="wwwroot\wwwroot\scss\layout\_header.scss" />
+    <None Include="wwwroot\wwwroot\scss\layout\_hero.scss" />
+    <None Include="wwwroot\wwwroot\scss\layout\_main.scss" />
+    <None Include="wwwroot\wwwroot\scss\layout\_pricing.scss" />
+    <None Include="wwwroot\wwwroot\scss\style.scss" />
+    <None Include="wwwroot\wwwroot\scss\_normalize.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\APPLICATION\APPLICATION.csproj" />
   </ItemGroup>
 

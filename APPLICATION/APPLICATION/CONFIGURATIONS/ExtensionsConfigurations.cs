@@ -1,5 +1,6 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
 using APPLICATION.APPLICATION.SERVICES.USER;
+using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.UTILS;
@@ -11,12 +12,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Refit;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
@@ -97,7 +100,7 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureIdentityServer(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>> (options => options.SignIn.RequireConfirmedEmail = true).AddEntityFrameworkStores<Contexto>().AddDefaultTokenProviders();
+            .AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options => options.SignIn.RequireConfirmedEmail = true).AddEntityFrameworkStores<Contexto>().AddDefaultTokenProviders();
 
         services.Configure<IdentityOptions>(options =>
         {
@@ -156,10 +159,21 @@ public static class ExtensionsConfigurations
             .AddTransient<IUserService, UserService>()
             // Facades
             .AddSingleton<EmailFacade, EmailFacade>();
-        // Facades
-        //Repositories
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configura chamadas a APIS externas através do Refit.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureRefit(this IServiceCollection services, IConfiguration configurations)
+    {
+        services
+            .AddRefitClient<IEmailExternal>().ConfigureHttpClient(c => c.BaseAddress = configurations.GetValue<Uri>("UrlBase:TOOLS_MAIL_API"));
 
         return services;
     }
@@ -290,13 +304,15 @@ public static class ExtensionsConfigurations
             }
         });
 
-        application.MapPost("/security/activate",
+        application.MapGet("/security/activate/{codigo}/{usuarioId:guid}",
         [AllowAnonymous][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, ActivateUserRequest request) =>
+        async ([Service] IUserService userService, string codigo, Guid usuarioId) =>
         {
+            var request = new ActivateUserRequest(codigo, usuarioId);
+
             using (LogContext.PushProperty("Controller", "UserController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
             using (LogContext.PushProperty("Metodo", "activate"))

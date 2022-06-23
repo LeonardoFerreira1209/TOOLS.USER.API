@@ -12,7 +12,7 @@ public class AppSettings
     public Configuracoes Configuracoes { get; set; }
     public RetryPolicy RetryPolicy { get; set; }
     public Auth Auth { get; set; }
-    public Email Email { get; set; }
+    public UrlBase UrlBase { get; set; }
 }
 
 public class RetryPolicy
@@ -58,10 +58,8 @@ public class Password
     public int RequiredLength { get; set; }
 }
 
-public class Email
+public class UrlBase
 {
-    public string From { get; set; }
-    public string SmtpServer { get; set; }
-    public int Port { get; set; }
-    public string Password { get; set; }
+    public string TOOLS_MAIL_API { get; set; }
+    public string BASE_URL { get; set; }
 }

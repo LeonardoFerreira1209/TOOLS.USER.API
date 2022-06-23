@@ -1,6 +1,7 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
@@ -116,11 +117,20 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <returns></returns>
         private async Task ConfirmeUserForEmail(IdentityUser<Guid> user)
         {
-            var EmailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var emailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            var codifyEmailCode = HttpUtility.UrlEncode(EmailCode);
+            var codifyEmailCode = HttpUtility.UrlEncode(emailCode);
 
-            _emailFacade.Invite(new[] { user.Email }, "Link de ativação do usuário", user.Id, codifyEmailCode);
+            _emailFacade.Invite(new MailRequest {
+
+                Receivers = new List<string> { user.Email },
+                Link = $"{_appsettings.Value.UrlBase.BASE_URL}/{codifyEmailCode}/{user.Id}",
+                Subject = "Ativação de e-mail",
+                Content= $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
+                ButtonText = "Clique para ativar o e-mail",
+                TemplateName = "Welcome.Template"
+
+            });
         }
 
         /// <summary>
@@ -136,7 +146,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             {
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.UsuarioId);
 
-                var response = await _userManager.ConfirmEmailAsync(user, request.Codigo);
+                var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(request.Codigo));
 
                 if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
 
