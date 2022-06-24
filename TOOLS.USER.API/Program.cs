@@ -52,7 +52,8 @@ try
         .ConfigureHealthChecks()
         .UseDefaultFiles()
         .UseStaticFiles()
-        .UseHttpsRedirection()
+        .UseRouting()
+        .UseCors("CorsPolicy")
         .UseHttpsRedirection();
 
     // Chamando as configurações de Minimal APIS.
