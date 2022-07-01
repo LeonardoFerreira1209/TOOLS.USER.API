@@ -48,13 +48,13 @@ try
 
     // Chamada das connfigurações do WebApplication Build.
     applicationbuilder
-        .UseSwaggerConfigurations(configurations)
-        .ConfigureHealthChecks()
+        .UseHttpsRedirection()
         .UseDefaultFiles()
         .UseStaticFiles()
         .UseRouting()
         .UseCors("CorsPolicy")
-        .UseHttpsRedirection();
+        .ConfigureHealthChecks()
+        .UseSwaggerConfigurations(configurations);
 
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);
