@@ -9,6 +9,7 @@ using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using HotChocolate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -307,7 +308,7 @@ public static class ExtensionsConfigurations
         });
 
         application.MapGet("/security/activate/{codigo}/{usuarioId}",
-        [AllowAnonymous][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
+        [EnableCors("CorsPolicy")][AllowAnonymous][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
