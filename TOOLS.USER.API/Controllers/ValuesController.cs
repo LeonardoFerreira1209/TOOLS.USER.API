@@ -13,5 +13,12 @@ namespace TOOLS.USER.API.Controllers
         {
             return Ok("Funcionou");
         }
+
+        [EnableCors("CorsPolicy")]
+        [HttpOptions]
+        public async Task<IActionResult> options()
+        {
+            return Ok("Funcionou");
+        }
     }
 }
