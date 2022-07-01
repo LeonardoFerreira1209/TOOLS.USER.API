@@ -2,7 +2,9 @@
 using APPLICATION.APPLICATION.SERVICES.USER;
 using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
+using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+using APPLICATION.DOMAIN.DTOS.RESPONSE;
 using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -278,10 +281,10 @@ public static class ExtensionsConfigurations
     {
         #region User's
         application.MapPost("/security/create",
-        [AllowAnonymous][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)] 
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
+        [EnableCors("CorsPolicy")][AllowAnonymous][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)] 
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
         async ([Service] IUserService userService, CreateRequest request) =>
         {
             using (LogContext.PushProperty("Controller", "UserController"))
@@ -293,10 +296,10 @@ public static class ExtensionsConfigurations
         });
 
         application.MapPost("/security/authentication",
-        [AllowAnonymous][SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
+        [EnableCors("CorsPolicy")][AllowAnonymous][SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
         async ([Service] IUserService userService, LoginRequest request) =>
         {
             using (LogContext.PushProperty("Controller", "UserController"))
@@ -309,9 +312,9 @@ public static class ExtensionsConfigurations
 
         application.MapGet("/security/activate/{codigo}/{usuarioId}",
         [EnableCors("CorsPolicy")][AllowAnonymous][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
         async ([Service] IUserService userService, string codigo, Guid usuarioId) =>
         {
             var request = new ActivateUserRequest(codigo, usuarioId);
