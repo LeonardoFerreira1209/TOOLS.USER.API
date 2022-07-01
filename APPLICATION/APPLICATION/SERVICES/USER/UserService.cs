@@ -119,7 +119,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         {
             var emailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            var codifyEmailCode = HttpUtility.UrlEncode(emailCode);
+            var codifyEmailCode = HttpUtility.UrlEncode(emailCode).Replace("%", ";");
 
             _emailFacade.Invite(new MailRequest
             {
@@ -147,7 +147,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             {
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.UsuarioId);
 
-                var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(request.Codigo));
+                var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(request.Codigo.Replace(";", "%")));
 
                 if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
 
