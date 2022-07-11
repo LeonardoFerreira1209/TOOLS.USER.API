@@ -1,8 +1,6 @@
-﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace APPLICATION.INFRAESTRUTURE.CONTEXTO;
 
@@ -11,11 +9,11 @@ namespace APPLICATION.INFRAESTRUTURE.CONTEXTO;
 /// </summary>
 public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {
-    private readonly IOptions<AppSettings> _appSettings;
+    //private readonly IOptions<AppSettings> _appSettings;
 
-    public Contexto(DbContextOptions<Contexto> options, IOptions<AppSettings> appsettings) : base(options)
+    public Contexto(DbContextOptions<Contexto> options /*IOptions<AppSettings> appsettings*/) : base(options)
     {
-        _appSettings = appsettings;
+       // _appSettings = appsettings;
 
         Database.EnsureCreated();
     }

@@ -29,6 +29,7 @@ try
         .ConfigureLanguage()
         .ConfigureContexto(configurations)
         .ConfigureIdentityServer(configurations)
+        .ConfigureApllicationCookie()
         .ConfigureSwagger(configurations)
         .ConfigureDependencies(configurations)
         .ConfigureRefit(configurations)
