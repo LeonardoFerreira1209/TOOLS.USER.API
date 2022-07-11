@@ -362,14 +362,14 @@ public static class ExtensionsConfigurations
             }
         });
 
-        application.MapGet("/security/activate/{codigo}/{usuarioId}",
+        application.MapGet("/security/activate/{code}/{userId}",
         [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, string codigo, Guid usuarioId) =>
+        async ([Service] IUserService userService, string code, Guid userId) =>
         {
-            var request = new ActivateUserRequest(codigo, usuarioId);
+            var request = new ActivateUserRequest(code, userId);
 
             using (LogContext.PushProperty("Controller", "UserController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
@@ -380,7 +380,7 @@ public static class ExtensionsConfigurations
         });
 
         application.MapPost("/security/addclaim",
-        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
+        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Adicionar claim no usuário", Description = "Método responsável por adicionar uma claim ao usuário.")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
