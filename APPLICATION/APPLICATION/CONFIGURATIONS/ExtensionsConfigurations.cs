@@ -1,10 +1,11 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
+using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
 using APPLICATION.DOMAIN.CONTRACTS.API;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
-using APPLICATION.DOMAIN.DTOS.RESPONSE;
 using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
@@ -27,6 +28,7 @@ using Serilog;
 using Serilog.Context;
 using Serilog.Events;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Net.Mime;
 
@@ -103,16 +105,67 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureIdentityServer(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options => options.SignIn.RequireConfirmedEmail = true).AddEntityFrameworkStores<Contexto>().AddDefaultTokenProviders();
+            .AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
+            {
+                #region Signin
+                options.SignIn.RequireConfirmedEmail = true;
 
-        services.Configure<IdentityOptions>(options =>
-        {
-            options.Password.RequireDigit = options.Password.RequireUppercase = true;
+                options.SignIn.RequireConfirmedAccount = true;
+                #endregion
 
-            options.Password.RequiredLength = configuration.GetValue<int>("Auth:Password:RequiredLength");
-        });
+                #region User
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+
+                options.User.RequireUniqueEmail = true;
+                #endregion
+
+                #region Stores
+                options.Stores.MaxLengthForKeys = 20;
+                #endregion
+
+                #region Lockout
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+
+                options.Lockout.MaxFailedAccessAttempts = 3;
+
+                options.Lockout.AllowedForNewUsers = true;
+                #endregion
+
+                #region Password
+                options.Password.RequireDigit = true;
+
+                options.Password.RequireLowercase = true;
+
+                options.Password.RequireUppercase = true;
+
+                options.Password.RequiredLength = configuration.GetValue<int>("Auth:Password:RequiredLength");
+
+                options.Password.RequireNonAlphanumeric = true;
+
+                options.Password.RequiredUniqueChars = 1;
+                #endregion
+
+            }).AddEntityFrameworkStores<Contexto>().AddDefaultTokenProviders();
 
         return services;
+    }
+
+    /// <summary>
+    /// Configura os cookies da applicação.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureApllicationCookie(this IServiceCollection services)
+    {
+        return services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.HttpOnly = true;
+
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+            options.SlidingExpiration = true;
+
+        });
     }
 
     /// <summary>
@@ -160,6 +213,7 @@ public static class ExtensionsConfigurations
             .AddTransient(x => configurations)
             // Services
             .AddTransient<IUserService, UserService>()
+            .AddTransient<ITokenService, TokenService>()
             // Facades
             .AddSingleton<EmailFacade, EmailFacade>();
 
@@ -262,8 +316,6 @@ public static class ExtensionsConfigurations
             .UseSwaggerUI(swagger =>
             {
                 swagger.SwaggerEndpoint($"/swagger/{apiVersion}/swagger.json", $"{apiVersion}");
-
-                //swagger.InjectStylesheet("/swagger-custom/swagger-custom-styles.css");
             });
 
         application
@@ -281,11 +333,11 @@ public static class ExtensionsConfigurations
     {
         #region User's
         application.MapPost("/security/create",
-        [EnableCors("CorsPolicy")][AllowAnonymous][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
+        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)] 
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, CreateRequest request) =>
+        async ([Service] IUserService userService, UserRequest request) =>
         {
             using (LogContext.PushProperty("Controller", "UserController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
@@ -296,7 +348,7 @@ public static class ExtensionsConfigurations
         });
 
         application.MapPost("/security/authentication",
-        [EnableCors("CorsPolicy")][AllowAnonymous][SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
+        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
@@ -311,7 +363,7 @@ public static class ExtensionsConfigurations
         });
 
         application.MapGet("/security/activate/{codigo}/{usuarioId}",
-        [EnableCors("CorsPolicy")][AllowAnonymous][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
+        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
@@ -324,6 +376,21 @@ public static class ExtensionsConfigurations
             using (LogContext.PushProperty("Metodo", "activate"))
             {
                 return await Tracker.Time(() => userService.Activate(request), "Ativar usuário");
+            }
+        });
+
+        application.MapPost("/security/addclaim",
+        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
+        async ([Service] IUserService userService, [Required] string username, ClaimRequest claimRequest) =>
+        {
+            using (LogContext.PushProperty("Controller", "UserController"))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequest)))
+            using (LogContext.PushProperty("Metodo", "AddClaim"))
+            {
+                return await Tracker.Time(() => userService.AddClaim(username, claimRequest), "Adicionar claim no usuário.");
             }
         });
         #endregion

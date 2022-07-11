@@ -18,7 +18,7 @@ public interface IUserService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<TokenJWT>> Create(CreateRequest request);
+    public Task<ApiResponse<TokenJWT>> Create(UserRequest request);
 
     /// <summary>
     /// Método responsavel por ativar um usuário.
@@ -26,4 +26,12 @@ public interface IUserService
     /// <param name="request"></param>
     /// <returns></returns>
     public Task<ApiResponse<TokenJWT>> Activate(ActivateUserRequest request);
+
+    /// <summary>
+    /// Método responsavel por adicionar uma claim ao usuário.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="claimRequest"></param>
+    /// <returns></returns>
+    Task<ApiResponse<TokenJWT>> AddClaim(string username, ClaimRequest claimRequest);
 }

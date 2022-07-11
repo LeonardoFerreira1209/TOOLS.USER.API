@@ -8,6 +8,6 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<CreateRequest, IdentityUser<Guid>>();
+        CreateMap<UserRequest, IdentityUser<Guid>>();
     }
 }
