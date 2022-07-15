@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Development'
+      name: 'Azure-QA'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
