@@ -18,7 +18,7 @@ public static class Tracker
 
         time.Stop();
 
-        Log.Information($"[LOG INFORMATION] - {message}, Tempo: {time.Elapsed}");
+        Log.Information($"[LOG INFORMATION] - {message}, Tempo: {time.Elapsed}\n");
     }
 
     public static async Task<T> Time<T>(Func<Task<T>> method, string message)
@@ -31,7 +31,7 @@ public static class Tracker
 
         time.Stop();
 
-        Log.Information($"[LOG INFORMATION] - {message}, Tempo: {time.Elapsed}");
+        Log.Information($"[LOG INFORMATION] - {message}, Tempo: {time.Elapsed}\n");
 
         return result;
     }

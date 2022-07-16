@@ -6,6 +6,7 @@ namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 
 public interface IUserService
 {
+    #region User
     /// <summary>
     /// Método responsável por fazer a autenticação do usuário
     /// </summary>
@@ -26,7 +27,9 @@ public interface IUserService
     /// <param name="request"></param>
     /// <returns></returns>
     public Task<ApiResponse<TokenJWT>> Activate(ActivateUserRequest request);
+    #endregion
 
+    #region Claims
     /// <summary>
     /// Método responsavel por adicionar uma claim ao usuário.
     /// </summary>
@@ -34,4 +37,31 @@ public interface IUserService
     /// <param name="claimRequest"></param>
     /// <returns></returns>
     Task<ApiResponse<TokenJWT>> AddClaim(string username, ClaimRequest claimRequest);
+
+    /// <summary>
+    /// Método responsavel por remover uma claim do usuário.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="claimRequest"></param>
+    /// <returns></returns>
+    Task<ApiResponse<TokenJWT>> RemoveClaim(string username, ClaimRequest claimRequest);
+    #endregion
+
+    #region Roles
+    /// <summary>
+    /// Método responsavel por adicionar uma role ao usuário.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="roleName"></param>
+    /// <returns></returns>
+    Task<ApiResponse<TokenJWT>> AddRole(string username, string roleName);
+
+    /// <summary>
+    /// Método responsavel por remover uma role do usuário.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="roleName"></param>
+    /// <returns></returns>
+    Task<ApiResponse<TokenJWT>> RemoveRole(string username, string roleName);
+    #endregion
 }

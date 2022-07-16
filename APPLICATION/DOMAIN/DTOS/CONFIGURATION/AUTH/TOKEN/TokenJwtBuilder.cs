@@ -2,6 +2,7 @@
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 
@@ -12,11 +13,23 @@ public class TokenJwtBuilder
 {
     private SecurityKey securityKey = null;
 
-    private string subject, issuer, audience = String.Empty;
+    private string subject, issuer, audience, username = String.Empty;
 
-    private List<Claim> claims = new();
+    private List<Claim> claims = new(); private List<string> roles = new();
 
     private int expiryInMinutes = 10;
+
+    /// <summary>
+    /// Método que adiciona o username.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    public TokenJwtBuilder AddUsername(string username)
+    {
+        this.username = username;
+
+        return this;
+    }
 
     /// <summary>
     /// Método que adiciona o securotyKey.
@@ -62,6 +75,30 @@ public class TokenJwtBuilder
     public TokenJwtBuilder AddAudience(string audience)
     {
         this.audience = audience;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Método que adicona uma role.
+    /// </summary>
+    /// <param name="role"></param>
+    /// <returns></returns>
+    public TokenJwtBuilder AddRole(string role)
+    {
+        this.roles.Add(role);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Método que adiciona várias roles.
+    /// </summary>
+    /// <param name="roles"></param>
+    /// <returns></returns>
+    public TokenJwtBuilder AddRoles(List<string> roles)
+    {
+        this.roles.AddRange(roles);
 
         return this;
     }
@@ -131,11 +168,12 @@ public class TokenJwtBuilder
             EnsureArguments();
 
             // Adiciona as claims a uma lista.
-            var claims = new List<Claim>
+            var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, this.subject),
+                new Claim(JwtRegisteredClaimNames.UniqueName, this.username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString())
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim(JwtRegisteredClaimNames.Typ, "Bearer")
 
             }.Union(this.claims);
 
@@ -144,7 +182,7 @@ public class TokenJwtBuilder
                 issuer: this.issuer,
                 audience: this.audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
+                expires: DateTime.Now.AddMinutes(this.expiryInMinutes),
                 signingCredentials: new SigningCredentials(this.securityKey, SecurityAlgorithms.HmacSha256)
             );
 
