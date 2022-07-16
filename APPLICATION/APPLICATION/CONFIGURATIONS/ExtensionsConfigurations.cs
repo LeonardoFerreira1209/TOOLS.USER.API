@@ -461,15 +461,16 @@ public static class ExtensionsConfigurations
             }
         });
 
-        application.MapGet("/security/activate/{codigo}/{usuarioId}", [Microsoft.AspNetCore.Authorization.Authorize]
+
+        application.MapGet("/security/activate/{code}/{userId}",
         [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, string codigo, Guid usuarioId) =>
+        async ([Service] IUserService userService, string code, Guid userId) =>
         {
-            var request = new ActivateUserRequest(codigo, usuarioId);
+            var request = new ActivateUserRequest(code, userId);
 
             using (LogContext.PushProperty("Controller", "UserController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
@@ -477,7 +478,6 @@ public static class ExtensionsConfigurations
             {
                 return await Tracker.Time(() => userService.Activate(request), "Ativar usuário");
             }
-
         });
         #endregion
 
