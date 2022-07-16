@@ -13,11 +13,15 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
     {
         private readonly UserManager<IdentityUser<Guid>> _userManager;
 
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+
         private readonly IOptions<AppSettings> _appsettings;
 
-        public TokenService(UserManager<IdentityUser<Guid>> userManager, IOptions<AppSettings> appsettings)
+        public TokenService(UserManager<IdentityUser<Guid>> userManager, RoleManager<IdentityRole<Guid>> roleManager, IOptions<AppSettings> appsettings)
         {
             _userManager = userManager;
+
+            _roleManager = roleManager;
 
             _appsettings = appsettings;
         }
@@ -39,21 +43,23 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
                 // Return de user.
                 var user = await User(username);
-                
+
                 // Return user roles.
                 var roles = await Roles(user);
 
                 // Return user claims.
-                var claims = await Claims(user);
+                var claims = await Claims(user, roles);
                 #endregion
 
                 // Create de token and return.
                 return await Task.FromResult(new TokenJwtBuilder()
+                   .AddUsername(username)
                    .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
                    .AddSubject("HYPER.IO PROJECTS L.T.D.A")
                    .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
                    .AddAudience(_appsettings.Value.Auth.ValidAudience)
                    .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
+                   .AddRoles(roles.ToList())
                    .AddClaims(claims.ToList())
                    .Builder());
             }
@@ -90,7 +96,21 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task<List<Claim>> Claims(IdentityUser<Guid> user) => await Task.FromResult(_userManager.GetClaimsAsync(user).Result.ToList());
+        private async Task<List<Claim>> Claims(IdentityUser<Guid> user, IList<string> roles)
+        {
+            var claims = new List<Claim>();
+
+            claims.AddRange(await _userManager.GetClaimsAsync(user));
+
+            if(roles is not null && roles.Any())
+            {
+                var identityRoles = await _roleManager.Roles.Where(r => roles.Contains(r.Name)).ToListAsync();
+
+                identityRoles.ForEach(identityRole => claims.AddRange(_roleManager.GetClaimsAsync(identityRole).Result));
+            }
+
+            return claims;
+        }
         #endregion
     }
 }

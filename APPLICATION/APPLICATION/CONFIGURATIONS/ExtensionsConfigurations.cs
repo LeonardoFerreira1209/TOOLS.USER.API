@@ -10,6 +10,7 @@ using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using HotChocolate;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
@@ -21,6 +22,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Refit;
@@ -31,6 +33,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Net.Mime;
+using System.Text;
 
 namespace APPLICATION.APPLICATION.CONFIGURATIONS;
 
@@ -151,6 +154,75 @@ public static class ExtensionsConfigurations
     }
 
     /// <summary>
+    /// Configuração da autenticação do sistema.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configurations"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configurations)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+        }).AddJwtBearer(options =>
+        {
+            options.SaveToken = true;
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer = configurations.GetValue<string>("Auth:ValidIssuer"),
+                ValidAudience = configurations.GetValue<string>("Auth:ValidAudience"),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configurations.GetValue<string>("Auth:SecurityKey")))
+            };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    Log.Information("[LOG INFORMATION] - OnAuthenticationFailed " + context.Exception.Message);
+
+                    return Task.CompletedTask;
+                },
+
+                OnTokenValidated = context =>
+                {
+                    Log.Information("[LOG INFORMATION] - OnTokenValidated " + context.SecurityToken);
+
+                    return Task.CompletedTask;
+                }
+            };
+
+        });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configuração da authorização do sistema.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configurations"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureAuthorization(this IServiceCollection services, IConfiguration configurations)
+    {
+        services
+            .AddAuthorization(options =>
+            {
+                options.AddPolicy("User", policy => policy.RequireClaim("Permission", "Admin", "Master"));
+            });
+        
+        return services;
+    }
+
+    /// <summary>
     /// Configura os cookies da applicação.
     /// </summary>
     /// <param name="services"></param>
@@ -182,6 +254,32 @@ public static class ExtensionsConfigurations
         {
             swagger.EnableAnnotations();
 
+            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "JWT Authorization header using the Bearer scheme."
+            });
+
+            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+
+                    Array.Empty<string>()
+                }
+            });
+
             swagger.SwaggerDoc(apiVersion, new OpenApiInfo
             {
                 Version = apiVersion,
@@ -193,8 +291,8 @@ public static class ExtensionsConfigurations
                     Name = "HYPER.IO DESENVOLVIMENTOS LTDA",
                     Email = "HYPER.IO@OUTLOOK.COM",
                 },
-
             });
+
 
             swagger.DocumentFilter<HealthCheckSwagger>();
         });
@@ -213,6 +311,7 @@ public static class ExtensionsConfigurations
             .AddTransient(x => configurations)
             // Services
             .AddTransient<IUserService, UserService>()
+            .AddTransient<IRoleService, RoleService>()
             .AddTransient<ITokenService, TokenService>()
             // Facades
             .AddSingleton<EmailFacade, EmailFacade>();
@@ -333,7 +432,7 @@ public static class ExtensionsConfigurations
     {
         #region User's
         application.MapPost("/security/create",
-        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
+        [EnableCors("CorsPolicy")][Microsoft.AspNetCore.Authorization.Authorize(Policy = "User")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
@@ -362,10 +461,12 @@ public static class ExtensionsConfigurations
             }
         });
 
+
         application.MapGet("/security/activate/{code}/{userId}",
         [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
         async ([Service] IUserService userService, string code, Guid userId) =>
         {
@@ -376,21 +477,6 @@ public static class ExtensionsConfigurations
             using (LogContext.PushProperty("Metodo", "activate"))
             {
                 return await Tracker.Time(() => userService.Activate(request), "Ativar usuário");
-            }
-        });
-
-        application.MapPost("/security/addclaim",
-        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Adicionar claim no usuário", Description = "Método responsável por adicionar uma claim ao usuário.")]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, [Required] string username, ClaimRequest claimRequest) =>
-        {
-            using (LogContext.PushProperty("Controller", "UserController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequest)))
-            using (LogContext.PushProperty("Metodo", "AddClaim"))
-            {
-                return await Tracker.Time(() => userService.AddClaim(username, claimRequest), "Adicionar claim no usuário.");
             }
         });
         #endregion

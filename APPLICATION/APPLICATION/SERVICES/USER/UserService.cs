@@ -21,6 +21,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
     /// </summary>
     public class UserService : IUserService
     {
+        #region privates
         private readonly SignInManager<IdentityUser<Guid>> _signInManager;
 
         private readonly UserManager<IdentityUser<Guid>> _userManager;
@@ -32,6 +33,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         private readonly ITokenService _tokenService;
 
         private readonly IMapper _mapper;
+        #endregion
 
         public UserService(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IMapper mapper)
         {
@@ -161,13 +163,103 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var response = await _userManager.AddClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value} adicionada com sucesso ao usuário {username}.") });
+                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
 
                 return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
             catch (Exception exception)
             {
-                Log.Error("[LOG ERROR]", exception, exception.Message);
+                Log.Error("[LOG ERROR]\n", exception, exception.Message);
+
+                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+            }
+        }
+
+        /// <summary>
+        /// Método responsavel por remover uma claim do usuário.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="claimRequest"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<TokenJWT>> RemoveClaim(string username, ClaimRequest claimRequest)
+        {
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveClaim)}\n");
+
+            try
+            {
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+
+                #region User remove claim
+                var response = await _userManager.RemoveClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
+                #endregion
+
+                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+
+                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("[LOG ERROR]\n", exception, exception.Message);
+
+                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+            }
+        }
+
+        /// <summary>
+        /// Método responsavel por adicionar uma role ao usuário.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<TokenJWT>> AddRole(string username, string roleName)
+        {
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddRole)}\n");
+
+            try
+            {
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+
+                #region User set claim
+                var response = await _userManager.AddToRoleAsync(user, roleName);
+                #endregion
+
+                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+
+                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("[LOG ERROR]\n", exception, exception.Message);
+
+                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+            }
+        }
+
+        /// <summary>
+        /// Método responsavel por remover uma role ao usuário.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="claimRequest"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<TokenJWT>> RemoveRole(string username, string roleName)
+        {
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveRole)}\n");
+
+            try
+            {
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+
+                #region User remove claim
+                var response = await _userManager.RemoveFromRoleAsync(user, roleName);
+                #endregion
+
+                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, removida com sucesso do usuário {username}.") });
+
+                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+            }
+            catch (Exception exception)
+            {
+                Log.Error("[LOG ERROR]\n", exception, exception.Message);
 
                 return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
@@ -189,6 +281,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             {
                 // Create User.
                 var result = await _userManager.CreateAsync(user, userRequest.Password);
+
+                userRequest.Claims.Add(new ClaimRequest("Id", user.Id.ToString()));
 
                 // Add Roles & Claims to user.
                 if (result.Succeeded)
