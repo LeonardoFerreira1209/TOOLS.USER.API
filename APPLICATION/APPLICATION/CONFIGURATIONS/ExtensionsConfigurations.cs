@@ -432,7 +432,7 @@ public static class ExtensionsConfigurations
     {
         #region User's
         application.MapPost("/security/create",
-        [EnableCors("CorsPolicy")][Microsoft.AspNetCore.Authorization.Authorize(Policy = "User")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
+        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
