@@ -21,14 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Test
-        run: |
-          echo "Secret masked"
-          echo ${{ secrets.__CONNECTION_STRING_BASE__ }}
-        env:
-          BaseDados: Server=tcp:hyper-database.database.windows.net,1433;Initial Catalog=TOOLS.USER.API;Persist Security Info=False;User ID=leo.almeida;Password=Cpf@47841467842;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
-        
-      
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v2
         with:
@@ -69,6 +61,12 @@ jobs:
         with:
           name: .net-app
           
+      - uses: nicrosoft/variable-substitution@v1
+        with:
+          files: '${{ github.workspace }}/out/appsettings.json'
+        env:
+          ConnectionStrings.BaseDados: "Server=tcp:hyper-database.database.windows.net,1433;Initial Catalog=TOOLS.USER.API;Persist Security Info=False;User ID=leo.almeida;Password=Cpf@47841467842;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
