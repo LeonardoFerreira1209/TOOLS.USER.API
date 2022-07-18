@@ -26,7 +26,7 @@ jobs:
           echo "Secret masked"
           echo ${{ secrets.__CONNECTION_STRING_BASE__ }}
         env:
-          BaseDados: ${{ secrets.__CONNECTION_STRING_BASE__ }}
+          BaseDados: Server=tcp:hyper-database.database.windows.net,1433;Initial Catalog=TOOLS.USER.API;Persist Security Info=False;User ID=leo.almeida;Password=Cpf@47841467842;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
         
       
       - name: Set up .NET Core
