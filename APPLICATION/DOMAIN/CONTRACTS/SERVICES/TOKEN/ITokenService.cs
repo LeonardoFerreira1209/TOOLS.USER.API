@@ -8,6 +8,6 @@ namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN
         /// Criação do token.
         /// </summary>
         /// <returns></returns>
-        Task<TokenJWT> CreateJsonWebToken(string username);
+        Task<object> CreateJsonWebToken(string username);
     }
 }

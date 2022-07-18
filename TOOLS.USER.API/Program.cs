@@ -11,19 +11,13 @@ try
     // Pegando configurações do appsettings.json.
     var configurations = builder.Configuration;
 
-    // Chamada da configuração do Serilog - Logs do sistema.
-    builder
-        .ConfigureSerilog();
-
-    Log.Information($"[LOG INFORMATION] - Inicializando aplicação [TOOLS.USER.API] - [INICIANDO]\n");
-
     /// <summary>
     /// Chamada das configurações do projeto.
     /// </summary>
     /// 
     builder.Services
-        .Configure<AppSettings>(configurations).AddSingleton<AppSettings>()
         .AddHttpContextAccessor()
+        .Configure<AppSettings>(configurations).AddSingleton<AppSettings>()
         .AddEndpointsApiExplorer()
         .AddOptions()
         .ConfigureLanguage()
@@ -35,6 +29,9 @@ try
         .ConfigureSwagger(configurations)
         .ConfigureDependencies(configurations)
         .ConfigureRefit(configurations)
+        .ConfigureTelemetry(builder.Services.BuildServiceProvider().GetService<IHttpContextAccessor>(), configurations)
+        .ConfigureApplicationInsights()
+        .ConfigureSerilog()
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()
         .AddControllers(options =>
@@ -64,7 +61,7 @@ try
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);
 
-    Log.Information($"[LOG INFORMATION] - Inicializando aplicação [TOOLS.USER.API] - [FINALIZADO]\n");
+    Log.Information($"[LOG INFORMATION] - Inicializando aplicação [TOOLS.USER.API]\n");
 
     // Iniciando a aplicação com todas as configurações já carregadas.
     applicationbuilder.Run();

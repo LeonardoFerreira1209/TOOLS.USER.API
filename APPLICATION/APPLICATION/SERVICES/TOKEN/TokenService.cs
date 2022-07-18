@@ -33,7 +33,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// <param name="username"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<TokenJWT> CreateJsonWebToken(string username)
+        public async Task<object> CreateJsonWebToken(string username)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenService)} - METHOD {nameof(CreateJsonWebToken)}\n");
 

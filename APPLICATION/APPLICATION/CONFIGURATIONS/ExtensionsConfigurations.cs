@@ -1,7 +1,10 @@
-﻿using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
+﻿using APPLICATION.APPLICATION.CONFIGURATIONS.APPLICATIONINSIGHTS;
+using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
 using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
 using APPLICATION.DOMAIN.CONTRACTS.API;
+using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
@@ -10,8 +13,10 @@ using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using HotChocolate;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -30,7 +35,6 @@ using Serilog;
 using Serilog.Context;
 using Serilog.Events;
 using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Net.Mime;
 using System.Text;
@@ -41,32 +45,37 @@ public static class ExtensionsConfigurations
 {
     public static readonly string HealthCheckEndpoint = "/application/healthcheck";
 
+    private static string _applicationInsightsKey;
+
+    private static TelemetryConfiguration _telemetryConfig;
+
+    private static TelemetryClient _telemetryClient;
+
     /// <summary>
     /// Configuração de Logs do sistema.
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder ConfigureSerilog(this WebApplicationBuilder applicationBuilder)
+    public static IServiceCollection ConfigureSerilog(this IServiceCollection services)
     {
-        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+                                 .MinimumLevel.Debug()
+                                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                                 .MinimumLevel.Override("System", LogEventLevel.Error)
+                                 .Enrich.FromLogContext()
+                                 .Enrich.WithEnvironmentUserName()
+                                 .Enrich.WithMachineName()
+                                 .Enrich.WithProcessId()
+                                 .Enrich.WithProcessName()
+                                 .Enrich.WithThreadId()
+                                 .Enrich.WithThreadName()
+                                 .WriteTo.Console()
+                                 .WriteTo.ApplicationInsights(_telemetryConfig, TelemetryConverter.Traces, LogEventLevel.Information)
+                                 .CreateLogger();
+        services
+            .AddTransient<ILogWithMetric, LogWithMetric>();
 
-        applicationBuilder.Host.UseSerilog((context, config) =>
-        {
-            config
-            .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("System", LogEventLevel.Error)
-            .Enrich.FromLogContext()
-            .Enrich.WithEnvironmentUserName()
-            .Enrich.WithMachineName()
-            .Enrich.WithProcessId()
-            .Enrich.WithProcessName()
-            .Enrich.WithThreadId()
-            .Enrich.WithThreadName()
-            .WriteTo.Console();
-        });
-
-        return applicationBuilder;
+        return services;
     }
 
     /// <summary>
@@ -218,7 +227,7 @@ public static class ExtensionsConfigurations
             {
                 options.AddPolicy("User", policy => policy.RequireClaim("Permission", "Admin", "Master"));
             });
-        
+
         return services;
     }
 
@@ -238,6 +247,54 @@ public static class ExtensionsConfigurations
             options.SlidingExpiration = true;
 
         });
+    }
+
+    /// <summary>
+    /// Configuração de métricas
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="httpContextAccessor"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureTelemetry(this IServiceCollection services, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+    {
+        _telemetryConfig = TelemetryConfiguration.CreateDefault();
+
+        _telemetryConfig.InstrumentationKey = _applicationInsightsKey;
+
+        _telemetryConfig.TelemetryInitializers.Add(new ApplicationInsightsInitializer(configuration, httpContextAccessor));
+
+        _telemetryClient = new TelemetryClient(_telemetryConfig);
+
+        services
+            .AddSingleton<ITelemetryInitializer>(x => new ApplicationInsightsInitializer(configuration, httpContextAccessor))
+            .AddSingleton<ITelemetryProxy>(x => new TelemetryProxy(_telemetryClient));
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configuração de App Insights
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureApplicationInsights(this IServiceCollection services)
+    {
+        var metrics = new ApplicationInsightsMetrics(_telemetryClient, _applicationInsightsKey);
+
+        var applicationInsightsServiceOptions = new ApplicationInsightsServiceOptions
+        {
+           
+
+            InstrumentationKey = _applicationInsightsKey
+        };
+
+        services
+            .AddApplicationInsightsTelemetry(applicationInsightsServiceOptions)
+            .AddTransient(x => metrics)
+            .AddTransient<IApplicationInsightsMetrics>(x => metrics);
+
+        return services;
     }
 
     /// <summary>
@@ -307,6 +364,16 @@ public static class ExtensionsConfigurations
     /// <returns></returns>
     public static IServiceCollection ConfigureDependencies(this IServiceCollection services, IConfiguration configurations)
     {
+
+        if (string.IsNullOrEmpty(configurations.GetValue<string>("ApplicationInsights:InstrumentationKey")))
+        {
+            var argNullEx = new ArgumentNullException("AppInsightsKey não pode ser nulo.", new Exception("Parametro inexistente.")); throw argNullEx;
+        }
+        else
+        {
+            _applicationInsightsKey = configurations.GetValue<string>("ApplicationInsights:InstrumentationKey");
+        }
+
         services
             .AddTransient(x => configurations)
             // Services
@@ -433,9 +500,9 @@ public static class ExtensionsConfigurations
         #region User's
         application.MapPost("/security/create",
         [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         async ([Service] IUserService userService, UserRequest request) =>
         {
             using (LogContext.PushProperty("Controller", "UserController"))
@@ -449,8 +516,8 @@ public static class ExtensionsConfigurations
         application.MapPost("/security/authentication",
         [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         async ([Service] IUserService userService, LoginRequest request) =>
         {
             using (LogContext.PushProperty("Controller", "UserController"))
@@ -464,10 +531,9 @@ public static class ExtensionsConfigurations
 
         application.MapGet("/security/activate/{code}/{userId}",
         [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         async ([Service] IUserService userService, string code, Guid userId) =>
         {
             var request = new ActivateUserRequest(code, userId);

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+﻿namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 
 /// <summary>
 /// Request para Fazer o login do usuário.
@@ -16,6 +14,5 @@ public class LoginRequest
     /// Senha do usuário
     /// </summary>
     /// 
-    [DataType(DataType.Password)]
     public string Password { get; set; }
 }

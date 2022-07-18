@@ -26,13 +26,13 @@ public class EmailFacade
     /// </summary>
     /// <param name="request"></param>
     /// <exception cref="Exception"></exception>
-    public async void Invite(MailRequest request)
+    public async Task Invite(MailRequest request)
     {
         try
         {
             var response = await _emailExternal.Invite(request);
 
-            if (response.IsSuccessStatusCode is not true) throw new Exception("Erro ao enviar e-mail de confirmação para o usuário.");
+            if (response.IsSuccessStatusCode is not true) throw new Exception("Erro ao enviar e-mail de confirmação para o usuário. Entre em contato com o suporte e abra um ticket.");
         }
         catch (Exception exception)
         {

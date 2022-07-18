@@ -31,7 +31,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<TokenJWT>> AddClaim([Required] string username, [FromBody] ClaimRequest claimRequest)
+        public async Task<ApiResponse<object>> AddClaim([Required] string username, [FromBody] ClaimRequest claimRequest)
         {
             using (LogContext.PushProperty("Controller", "ClaimController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequest)))
@@ -45,10 +45,10 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         [Authorize(Policy = "User")]
         [EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
-        //[ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<TokenJWT>> RemoveClaim([Required] string username, string roleName)
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ApiResponse<object>> RemoveClaim([Required] string username, string roleName)
         {
             using (LogContext.PushProperty("Controller", "ClaimController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))

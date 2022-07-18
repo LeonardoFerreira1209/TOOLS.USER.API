@@ -1,10 +1,12 @@
-﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
+﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE;
+using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -56,26 +58,45 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<TokenJWT>> Authentication(LoginRequest userRequest)
+        public async Task<ApiResponse<object>> Authentication(LoginRequest userRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Authentication)}\n");
 
             try
             {
-                var response = await _signInManager.PasswordSignInAsync(userRequest.Username, userRequest.Password, true, true);
+                var validation = await new AuthenticationValidator().ValidateAsync(userRequest);
 
-                if (response.Succeeded)
+                if (validation.IsValid is false) return validation.CarregarErrosValidator();
+
+                var signInResult = await _signInManager.PasswordSignInAsync(userRequest.Username, userRequest.Password, true, true);
+
+                if (signInResult.Succeeded is false)
                 {
-                    return new ApiResponse<TokenJWT>(response.Succeeded, await _tokenService.CreateJsonWebToken(userRequest.Username));
+                    if (signInResult.IsLockedOut)
+                    {
+                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
+                    }
+                    else if (signInResult.IsNotAllowed)
+                    {
+                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Email do usuário não está confirmado.") });
+                    }
+                    else if (signInResult.RequiresTwoFactor)
+                    {
+                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário necessita de verificação de dois fatores.") });
+                    }
+                    else
+                    {
+                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Os dados do usuário estão inválidos ou usuário não existe.") });
+                    }
                 }
 
-                return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário não autorizado.") });
+                return new ApiResponse<object>(signInResult.Succeeded, await _tokenService.CreateJsonWebToken(userRequest.Username));
             }
             catch (Exception exception)
             {
                 Log.Error("[LOG ERROR]", exception, exception.Message);
 
-                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
         }
         #endregion
@@ -86,12 +107,16 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<TokenJWT>> Create(UserRequest userRequest)
+        public async Task<ApiResponse<object>> Create(UserRequest userRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Create)}\n");
 
             try
             {
+                var validation = await new CreateUserValidator().ValidateAsync(userRequest);
+
+                if (validation.IsValid is false) return validation.CarregarErrosValidator();
+
                 var identityUser = _mapper.Map<IdentityUser<Guid>>(userRequest);
 
                 #region User create & set roles & claims
@@ -102,16 +127,16 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
                     await ConfirmeUserForEmail(identityUser);
 
-                    return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });
+                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });
                 }
 
-                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
             catch (Exception exception)
             {
                 Log.Error("[LOG ERROR]", exception, exception.Message);
 
-                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
         }
         #endregion
@@ -122,7 +147,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<TokenJWT>> Activate(ActivateUserRequest request)
+        public async Task<ApiResponse<object>> Activate(ActivateUserRequest request)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Activate)}\n");
 
@@ -132,15 +157,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(request.Codigo.Replace(";", "%")));
 
-                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
+                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
 
-                return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Falha ao ativar usuário.") });
+                return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Falha ao ativar usuário.") });
             }
             catch (Exception exception)
             {
                 Log.Error("[LOG ERROR]", exception, exception.Message);
 
-                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
         }
         #endregion
@@ -151,7 +176,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<TokenJWT>> AddClaim(string username, ClaimRequest claimRequest)
+        public async Task<ApiResponse<object>> AddClaim(string username, ClaimRequest claimRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddClaim)}\n");
 
@@ -163,15 +188,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var response = await _userManager.AddClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
 
-                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
             catch (Exception exception)
             {
                 Log.Error("[LOG ERROR]\n", exception, exception.Message);
 
-                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
         }
 
@@ -181,7 +206,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<TokenJWT>> RemoveClaim(string username, ClaimRequest claimRequest)
+        public async Task<ApiResponse<object>> RemoveClaim(string username, ClaimRequest claimRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveClaim)}\n");
 
@@ -193,15 +218,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var response = await _userManager.RemoveClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
 
-                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
             catch (Exception exception)
             {
                 Log.Error("[LOG ERROR]\n", exception, exception.Message);
 
-                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
         }
 
@@ -211,7 +236,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<TokenJWT>> AddRole(string username, string roleName)
+        public async Task<ApiResponse<object>> AddRole(string username, string roleName)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddRole)}\n");
 
@@ -223,15 +248,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var response = await _userManager.AddToRoleAsync(user, roleName);
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
 
-                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
             catch (Exception exception)
             {
                 Log.Error("[LOG ERROR]\n", exception, exception.Message);
 
-                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
         }
 
@@ -241,7 +266,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<TokenJWT>> RemoveRole(string username, string roleName)
+        public async Task<ApiResponse<object>> RemoveRole(string username, string roleName)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveRole)}\n");
 
@@ -253,15 +278,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var response = await _userManager.RemoveFromRoleAsync(user, roleName);
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<TokenJWT>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, removida com sucesso do usuário {username}.") });
+                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, removida com sucesso do usuário {username}.") });
 
-                return new ApiResponse<TokenJWT>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
             catch (Exception exception)
             {
                 Log.Error("[LOG ERROR]\n", exception, exception.Message);
 
-                return new ApiResponse<TokenJWT>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
             }
         }
         #endregion
@@ -288,10 +313,10 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 if (result.Succeeded)
                 {
                     // Verify insert claims and roles.
-                    var insertRoles = userRequest.Roles is not null; var insertClaims = userRequest.Claims is not null;
+                    var insertRoles = userRequest.RolesToUser is not null; var insertClaims = userRequest.Claims is not null;
 
                     // Insert roles to user.
-                    if (insertRoles) await _userManager.AddToRolesAsync(user, userRequest.Roles.Select(r => r.Name));
+                    if (insertRoles) await _userManager.AddToRolesAsync(user, userRequest.RolesToUser.SelectMany(r => r.Name));
 
                     // Insert claims to user.
                     if (insertClaims) await _userManager.AddClaimsAsync(user, userRequest.Claims.Select(c => new Claim(c.Type, c.Value)));
@@ -325,7 +350,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 var codifyEmailCode = HttpUtility.UrlEncode(emailCode).Replace("%", ";");
 
-                _emailFacade.Invite(new MailRequest
+                await _emailFacade.Invite(new MailRequest
                 {
 
                     Receivers = new List<string> { user.Email },

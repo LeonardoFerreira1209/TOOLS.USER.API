@@ -12,21 +12,21 @@ public interface IUserService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<TokenJWT>> Authentication(LoginRequest request);
+    public Task<ApiResponse<object>> Authentication(LoginRequest request);
 
     /// <summary>
     /// Método responsável por criar um novo usuário.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<TokenJWT>> Create(UserRequest request);
+    public Task<ApiResponse<object>> Create(UserRequest request);
 
     /// <summary>
     /// Método responsavel por ativar um usuário.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<TokenJWT>> Activate(ActivateUserRequest request);
+    public Task<ApiResponse<object>> Activate(ActivateUserRequest request);
     #endregion
 
     #region Claims
@@ -36,7 +36,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="claimRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<TokenJWT>> AddClaim(string username, ClaimRequest claimRequest);
+    Task<ApiResponse<object>> AddClaim(string username, ClaimRequest claimRequest);
 
     /// <summary>
     /// Método responsavel por remover uma claim do usuário.
@@ -44,7 +44,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="claimRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<TokenJWT>> RemoveClaim(string username, ClaimRequest claimRequest);
+    Task<ApiResponse<object>> RemoveClaim(string username, ClaimRequest claimRequest);
     #endregion
 
     #region Roles
@@ -54,7 +54,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="roleName"></param>
     /// <returns></returns>
-    Task<ApiResponse<TokenJWT>> AddRole(string username, string roleName);
+    Task<ApiResponse<object>> AddRole(string username, string roleName);
 
     /// <summary>
     /// Método responsavel por remover uma role do usuário.
@@ -62,6 +62,6 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="roleName"></param>
     /// <returns></returns>
-    Task<ApiResponse<TokenJWT>> RemoveRole(string username, string roleName);
+    Task<ApiResponse<object>> RemoveRole(string username, string roleName);
     #endregion
 }
