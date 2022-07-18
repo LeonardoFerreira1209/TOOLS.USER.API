@@ -21,9 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Sample Azure action
-        env: # Or as an environment variable
-          BaseDados: ${{ __CONNECTION_STRING_BASE__ }}
+      - name: Test
+        run: |
+          echo "Secret masked"
+          echo ${{ secrets.__CONNECTION_STRING_BASE__ }}
+        
       
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v2
