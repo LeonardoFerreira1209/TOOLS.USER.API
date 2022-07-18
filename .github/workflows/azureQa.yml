@@ -33,6 +33,20 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+            
+      - name: Sample Azure action
+        env:
+          BaseDados: ${{ __CONNECTION_STRING_BASE__ }}
+          ApiVersion: ${{ __API_VERSION__ }}
+          UriMyGit: ${{ __URL_MY_GITHUB__ }}
+          TimeOutDefault: ${{ __TIMEOUT_DEFAULT__ }}
+          TOOLS_MAIL_API: ${{ __URL_TOOLS_MAIL_API__ }}
+          BASE_URL: ${{ __BASE_URL__ }}
+          ValidIssuer: ${{ __VALID_ISSUER__ }}
+          ValidAudience: ${{ __VALID_AUDIENCE__ }}
+          SecurityKey: ${{ __SECURITY_KEY__ }}
+          ExpiresIn: ${{ __EXPIRES_TIME__ }}
+          RequiredLength: ${{ __REQUIRED_LENGTH__ }}
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
@@ -60,20 +74,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: .net-app
-
-      - name: Sample Azure action
-        env:
-          BaseDados: ${{ __CONNECTION_STRING_BASE__ }}
-          ApiVersion: ${{ __API_VERSION__ }}
-          UriMyGit: ${{ __URL_MY_GITHUB__ }}
-          TimeOutDefault: ${{ __TIMEOUT_DEFAULT__ }}
-          TOOLS_MAIL_API: ${{ __URL_TOOLS_MAIL_API__ }}
-          BASE_URL: ${{ __BASE_URL__ }}
-          ValidIssuer: ${{ __VALID_ISSUER__ }}
-          ValidAudience: ${{ __VALID_AUDIENCE__ }}
-          SecurityKey: ${{ __SECURITY_KEY__ }}
-          ExpiresIn: ${{ __EXPIRES_TIME__ }}
-          RequiredLength: ${{ __REQUIRED_LENGTH__ }}
           
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
