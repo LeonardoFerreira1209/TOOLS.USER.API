@@ -25,6 +25,8 @@ jobs:
         run: |
           echo "Secret masked"
           echo ${{ secrets.__CONNECTION_STRING_BASE__ }}
+        env:
+          BaseDados: ${{ secrets.__CONNECTION_STRING_BASE__ }}
         
       
       - name: Set up .NET Core
