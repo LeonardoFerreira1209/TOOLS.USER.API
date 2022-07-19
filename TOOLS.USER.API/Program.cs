@@ -40,8 +40,7 @@ try
 
             options.Filters.Add(new ProducesAttribute("application/json"));
 
-        })
-        .AddNewtonsoftJson();
+        });
 
     // Preparando WebApplication Build.
     var applicationbuilder = builder.Build();

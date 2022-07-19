@@ -76,12 +76,45 @@ public class RoleService : IRoleService
 
             if (role is not null)
             {
-                foreach(var claim in claimRequests)
+                foreach (var claim in claimRequests)
                 {
                     await _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value));
                 }
 
                 return new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim adicionada a role {roleName} com sucesso.") });
+            }
+            #endregion
+
+            return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, $"Role com o nome {roleName} não existe.") });
+        }
+        catch (Exception exception)
+        {
+            Log.Error("[LOG ERROR]", exception, exception.Message);
+
+            return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+        }
+    }
+
+    /// <summary>
+    /// Método responsável por remover uma claim na role.
+    /// </summary>
+    /// <param name="roleName"></param>
+    /// <param name="claimRequests"></param>
+    /// <returns></returns>
+    public async Task<ApiResponse<object>> RemoveClaim(string roleName, ClaimRequest claimRequests)
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(Create)}\n");
+
+        try
+        {
+            #region Add claim in exist role.
+            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleName.Equals(role.Name));
+
+            if (role is not null)
+            {
+                await _roleManager.RemoveClaimAsync(role, new Claim(claimRequests.Type, claimRequests.Value));
+
+                return new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim removida da role {roleName} com sucesso.") });
             }
             #endregion
 

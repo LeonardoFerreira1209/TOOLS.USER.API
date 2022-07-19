@@ -1,4 +1,5 @@
 ﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE;
 
@@ -19,7 +20,7 @@ public interface IUserService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<object>> Create(UserRequest request);
+    public Task<ApiResponse<object>> Create(PersonRequest request);
 
     /// <summary>
     /// Método responsavel por ativar um usuário.

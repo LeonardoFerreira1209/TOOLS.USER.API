@@ -1,9 +1,7 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
-using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE;
 using APPLICATION.DOMAIN.UTILS;
-using HotChocolate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +23,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
             _userService = userService;
         }
 
+        /// <summary>
+        /// Método responsável por adicionar uma claim no usuário
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="claimRequest"></param>
+        /// <returns></returns>
         [HttpPost("/security/addclaim")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
@@ -41,9 +45,14 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
             }
         }
 
+        /// <summary>
+        /// Método responsável por remover um claim do usuário.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         [HttpDelete("/security/removeclaim")]
-        [Authorize(Policy = "User")]
-        [EnableCors("CorsPolicy")]
+        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

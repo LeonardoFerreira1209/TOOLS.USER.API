@@ -2,8 +2,8 @@
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
+using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE;
 using APPLICATION.DOMAIN.VALIDATORS;
@@ -107,20 +107,20 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Create(UserRequest userRequest)
+        public async Task<ApiResponse<object>> Create(PersonRequest personRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Create)}\n");
 
             try
             {
-                var validation = await new CreateUserValidator().ValidateAsync(userRequest);
+                var validation = await new CreateUserValidator().ValidateAsync(personRequest.userRequest);
 
                 if (validation.IsValid is false) return validation.CarregarErrosValidator();
 
-                var identityUser = _mapper.Map<IdentityUser<Guid>>(userRequest);
+                var identityUser = _mapper.Map<IdentityUser<Guid>>(personRequest.userRequest);
 
                 #region User create & set roles & claims
-                var response = await BuildUser(identityUser, userRequest);
+                var response = await BuildUser(identityUser, personRequest.userRequest);
                 #endregion
 
                 if (response.Succeeded)

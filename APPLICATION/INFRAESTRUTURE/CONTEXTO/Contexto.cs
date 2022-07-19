@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using APPLICATION.DOMAIN.ENTITY;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,4 +23,6 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
     {
         builder.Entity<IdentityUser<Guid>>().ToTable("AspNetUsers").HasKey(t => t.Id); base.OnModelCreating(builder);
     }
+
+    public DbSet<Person> Persons { get; set; }
 }

@@ -10,12 +10,20 @@ public interface IRoleService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<object>> Create(RoleRequest request);
+    Task<ApiResponse<object>> Create(RoleRequest request);
 
     /// <summary>
     /// Método responsável por adicionar uma nova claim na role.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<object>> AddClaim(string roleName, List<ClaimRequest> claimRequests);
+    Task<ApiResponse<object>> AddClaim(string roleName, List<ClaimRequest> claimRequests);
+
+    /// <summary>
+    /// Método responsavel por remover a claim da role.
+    /// </summary>
+    /// <param name="roleName"></param>
+    /// <param name="claimRequests"></param>
+    /// <returns></returns>
+    Task<ApiResponse<object>> RemoveClaim(string roleName, ClaimRequest claimRequests);
 }

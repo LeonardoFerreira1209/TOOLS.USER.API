@@ -8,6 +8,7 @@ using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
@@ -348,10 +349,15 @@ public static class ExtensionsConfigurations
                     Name = "HYPER.IO DESENVOLVIMENTOS LTDA",
                     Email = "HYPER.IO@OUTLOOK.COM",
                 },
+                License = new OpenApiLicense{
+                    
+                    Name = "HYPER.IO LICENSE",
+                },
+                TermsOfService = new Uri(uriMyGit)
             });
 
-
             swagger.DocumentFilter<HealthCheckSwagger>();
+
         });
 
         return services;
@@ -503,7 +509,7 @@ public static class ExtensionsConfigurations
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, UserRequest request) =>
+        async ([Service] IUserService userService, PersonRequest request) =>
         {
             using (LogContext.PushProperty("Controller", "UserController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
