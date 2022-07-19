@@ -60,12 +60,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: .net-app
-          
-      - uses: nicrosoft/variable-substitution@v1
-        with:
-          files: '${{ github.workspace }}/out/appsettings.json'
-        env:
-          ConnectionStrings.BaseDados: "Server=tcp:hyper-database.database.windows.net,1433;Initial Catalog=TOOLS.USER.API;Persist Security Info=False;User ID=leo.almeida;Password=Cpf@47841467842;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -75,3 +69,25 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         
+  DEPLOY-HOMOL:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: DEPLOY-QA
+    environment:
+      name: 'AZURE-HOMOL'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+      
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
