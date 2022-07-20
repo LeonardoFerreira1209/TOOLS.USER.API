@@ -6,4 +6,4 @@ Implementado o talk.io para controle de acessos e chats,
 
 [![Build and deploy ASP.Net Core app to an Azure Web App](https://github.com/LeonardoFerreira1209/TOOLS.USER.API/actions/workflows/deploy.yml/badge.svg)](https://github.com/LeonardoFerreira1209/TOOLS.USER.API/actions/workflows/deploy.yml)
 
-![Aryclenio GitHub Stats](https://github-readme-stats.vercel.app/api?username=aryclenio&show_icons=true)
+![Aryclenio GitHub Stats](https://github-readme-stats.vercel.app/api?username=LeonardoFerreira1209&show_icons=true)
