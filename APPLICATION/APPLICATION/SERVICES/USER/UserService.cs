@@ -74,7 +74,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
                     if (signInResult.IsLockedOut)
                     {
-                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
+                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorLocked, "Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
                     }
                     else if (signInResult.IsNotAllowed)
                     {
@@ -107,20 +107,20 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Create(PersonRequest personRequest)
+        public async Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Create)}\n");
 
             try
             {
-                var validation = await new CreateUserValidator().ValidateAsync(personRequest.userRequest);
+                var validation = await new CreateUserValidator().ValidateAsync(personFastRequest.User);
 
                 if (validation.IsValid is false) return validation.CarregarErrosValidator();
 
-                var identityUser = _mapper.Map<IdentityUser<Guid>>(personRequest.userRequest);
+                var identityUser = _mapper.Map<IdentityUser<Guid>>(personFastRequest.User);
 
                 #region User create & set roles & claims
-                var response = await BuildUser(identityUser, personRequest.userRequest);
+                var response = await BuildUser(identityUser, personFastRequest.User);
                 #endregion
 
                 if (response.Succeeded)

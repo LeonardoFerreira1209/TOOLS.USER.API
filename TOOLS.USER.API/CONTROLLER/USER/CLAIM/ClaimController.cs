@@ -12,8 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]")] [ApiController]
     public class ClaimController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -31,7 +30,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         /// <returns></returns>
         [HttpPost("/security/addclaim")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
-        [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
+        [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Adicionar claim no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -57,13 +56,13 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> RemoveClaim([Required] string username, string roleName)
+        public async Task<ApiResponse<object>> RemoveClaim([Required] string username, string claimName)
         {
             using (LogContext.PushProperty("Controller", "ClaimController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimName)))
             using (LogContext.PushProperty("Metodo", "RemoveClaim"))
             {
-                return await Tracker.Time(() => _userService.AddRole(username, roleName), "Adicionar role no usuário.");
+                return await Tracker.Time(() => _userService.AddRole(username, claimName), "Adicionar role no usuário.");
             }
         }
     }

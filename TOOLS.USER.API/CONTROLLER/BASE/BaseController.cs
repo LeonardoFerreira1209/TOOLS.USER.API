@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace TOOLS.USER.API.CONTROLLER.BASE;
-
-[Route("api/[controller]")] [ApiController]
-public class BaseController : ControllerBase
+namespace TOOLS.USER.API.CONTROLLER.BASE
 {
-    [HttpOptions("/options")]
-    public async Task<IActionResult> Options()
+    [Route("api/[controller]")] [ApiController]
+    public class BaseController : ControllerBase
     {
-        return await Task.FromResult(Ok("Retorno das options da aplicação!"));
+
     }
 }

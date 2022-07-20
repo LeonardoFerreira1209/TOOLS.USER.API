@@ -7,9 +7,7 @@ using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
-using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
-using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
@@ -504,53 +502,20 @@ public static class ExtensionsConfigurations
     public static WebApplication UseMinimalAPI(this WebApplication application, IConfiguration configurations)
     {
         #region User's
-        application.MapPost("/security/create",
-        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, PersonRequest request) =>
-        {
-            using (LogContext.PushProperty("Controller", "UserController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
-            using (LogContext.PushProperty("Metodo", "Create"))
-            {
-                return await Tracker.Time(() => userService.Create(request), "Criar usuário");
-            }
-        });
-
-        application.MapPost("/security/authentication",
-        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, LoginRequest request) =>
-        {
-            using (LogContext.PushProperty("Controller", "UserController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
-            using (LogContext.PushProperty("Metodo", "Authentication"))
-            {
-                return await Tracker.Time(() => userService.Authentication(request), "Autenticar usuário");
-            }
-        });
-
-
-        application.MapGet("/security/activate/{code}/{userId}",
-        [EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        async ([Service] IUserService userService, string code, Guid userId) =>
-        {
-            var request = new ActivateUserRequest(code, userId);
-
-            using (LogContext.PushProperty("Controller", "UserController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
-            using (LogContext.PushProperty("Metodo", "activate"))
-            {
-                return await Tracker.Time(() => userService.Activate(request), "Ativar usuário");
-            }
-        });
+        //application.MapPost("/security/create",
+        //[EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
+        //[ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        //async ([Service] IUserService userService, PersonRequest request) =>
+        //{
+        //    using (LogContext.PushProperty("Controller", "UserController"))
+        //    using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
+        //    using (LogContext.PushProperty("Metodo", "Create"))
+        //    {
+        //        return await Tracker.Time(() => userService.Create(request), "Criar usuário");
+        //    }
+        //});
         #endregion
 
         return application;

@@ -20,7 +20,7 @@ public interface IUserService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<object>> Create(PersonRequest request);
+    public Task<ApiResponse<object>> Create(PersonFastRequest request);
 
     /// <summary>
     /// Método responsavel por ativar um usuário.
