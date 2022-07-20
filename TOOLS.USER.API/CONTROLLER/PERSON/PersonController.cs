@@ -42,14 +42,14 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         /// </summary>
         /// <param name="profileImage"></param>
         /// <returns></returns>
-        [HttpPost("/completeRegister")]
+        [HttpPatch("/profileImage/{personId}")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Adicionar imagem de perfil na Pessoa", Description = "Método responsável por adicionar uma imagem de perfil em uma pessoa.")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> ProfileImage(IFormFile profileImage)
+        public async Task<ApiResponse<object>> ProfileImage(Guid personId, IFormFile profileImage)
         {
             using (LogContext.PushProperty("Controller", "PersonController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(profileImage)))
