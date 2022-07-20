@@ -4,4 +4,4 @@ Authentication project using IdentityServer, Created to control users from the T
 
 Implementado o talk.io para controle de acessos e chats,
 
-[![Build and deploy ASP.Net Core app to an Azure Web App](https://github.com/LeonardoFerreira1209/TOOLS.USER.API/actions/workflows/azureDeploy.yml/badge.svg)](https://github.com/LeonardoFerreira1209/TOOLS.USER.API/actions/workflows/azureDeploy.yml)
+[![Build and deploy ASP.Net Core app to an Azure Web App](https://github.com/LeonardoFerreira1209/TOOLS.USER.API/actions/workflows/deploy.yml/badge.svg)](https://github.com/LeonardoFerreira1209/TOOLS.USER.API/actions/workflows/deploy.yml)
