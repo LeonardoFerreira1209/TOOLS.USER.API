@@ -1,6 +1,6 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
-using APPLICATION.DOMAIN.DTOS.RESPONSE;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

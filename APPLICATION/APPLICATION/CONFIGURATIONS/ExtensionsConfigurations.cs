@@ -1,16 +1,20 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
+using APPLICATION.APPLICATION.SERVICES.PERSON;
 using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
 using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
+using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
+using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using HotChocolate;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
@@ -381,11 +385,15 @@ public static class ExtensionsConfigurations
         services
             .AddTransient(x => configurations)
             // Services
+            .AddTransient<IPersonService, PersonService>()
             .AddTransient<IUserService, UserService>()
             .AddTransient<IRoleService, RoleService>()
             .AddTransient<ITokenService, TokenService>()
             // Facades
-            .AddSingleton<EmailFacade, EmailFacade>();
+            .AddSingleton<EmailFacade, EmailFacade>()
+            // Repository
+            .AddScoped<IPersonRepository, PersonRepository>();
+
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

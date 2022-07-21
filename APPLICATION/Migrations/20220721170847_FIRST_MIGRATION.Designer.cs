@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APPLICATION.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220719031011_PERSON_MIGRATION")]
-    partial class PERSON_MIGRATION
+    [Migration("20220721170847_FIRST_MIGRATION")]
+    partial class FIRST_MIGRATION
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,22 +24,73 @@ namespace APPLICATION.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.Person", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Age")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Birthday")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.Contact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CEP")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Complement")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Contacts");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.Person", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BirthDay")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CPF")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Cep")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
@@ -48,13 +99,7 @@ namespace APPLICATION.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Profession")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RG")
@@ -68,6 +113,45 @@ namespace APPLICATION.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PROFESSION.Profession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Office")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Wage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Workload")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Professions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -271,7 +355,18 @@ namespace APPLICATION.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.Person", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.Contact", b =>
+                {
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.Person", "Person")
+                        .WithMany("Contacts")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.Person", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", "User")
                         .WithMany()
@@ -280,6 +375,25 @@ namespace APPLICATION.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PROFESSION.Profession", b =>
+                {
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", "Company")
+                        .WithMany("Professions")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.Person", "Person")
+                        .WithMany("Professions")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -331,6 +445,18 @@ namespace APPLICATION.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", b =>
+                {
+                    b.Navigation("Professions");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.Person", b =>
+                {
+                    b.Navigation("Contacts");
+
+                    b.Navigation("Professions");
                 });
 #pragma warning restore 612, 618
         }

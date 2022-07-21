@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace APPLICATION.Migrations
 {
-    public partial class PERSON_MIGRATION : Migration
+    public partial class FIRST_MIGRATION : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,6 +46,20 @@ namespace APPLICATION.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Companies",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companies", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,14 +175,11 @@ namespace APPLICATION.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Age = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Birthday = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Profession = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RG = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CPF = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Cep = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -178,6 +189,61 @@ namespace APPLICATION.Migrations
                         name: "FK_Persons_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contacts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CEP = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Number = table.Column<int>(type: "int", nullable: false),
+                    Complement = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contacts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contacts_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Professions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Office = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Wage = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Workload = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Professions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Professions_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Professions_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -222,9 +288,24 @@ namespace APPLICATION.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Contacts_PersonId",
+                table: "Contacts",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Persons_UserId",
                 table: "Persons",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Professions_CompanyId",
+                table: "Professions",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Professions_PersonId",
+                table: "Professions",
+                column: "PersonId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -245,10 +326,19 @@ namespace APPLICATION.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Persons");
+                name: "Contacts");
+
+            migrationBuilder.DropTable(
+                name: "Professions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Companies");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

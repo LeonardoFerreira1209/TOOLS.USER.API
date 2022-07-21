@@ -9,10 +9,10 @@ namespace APPLICATION.ENUMS
 {
     public enum Gender
     {
-        [Description("Masculino")]
-        Masculino = 1,
+        [Description("Male")]
+        Male = 1,
 
-        [Description("Feminino")]
-        Feminino = 2
+        [Description("Female")]
+        Female = 2
     }
 }

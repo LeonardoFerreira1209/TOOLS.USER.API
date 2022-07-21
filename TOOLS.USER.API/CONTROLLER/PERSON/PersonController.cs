@@ -1,5 +1,8 @@
-﻿using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
-using APPLICATION.DOMAIN.DTOS.RESPONSE;
+﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
+using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using APPLICATION.DOMAIN.UTILS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +15,16 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
     [Route("api/[controller]")] [ApiController]
     public class PersonController : ControllerBase
     {
+
+        private readonly IPersonService _personService;
+
+        public PersonController(IPersonService personService)
+        {
+            _personService = personService;
+        }
+
+
+
         /// <summary>
         /// Método responsável por completar o cadastro de uma pessoa
         /// </summary>
@@ -24,16 +37,13 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> CompleteRegister(PersonFullRequest personFullRequets)
+        public async Task<PersonResponse> CompleteRegister(PersonFullRequest personFullRequets)
         {
             using (LogContext.PushProperty("Controller", "PersonController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personFullRequets)))
             using (LogContext.PushProperty("Metodo", "CompleteRegister"))
             {
-               
-                return new ApiResponse<object>();
-
-                //return await Tracker.Time(() => _userService.AddClaim(username, claimRequest), "Adicionar claim no usuário.");
+                return await Tracker.Time(() => _personService.CompleteRegister(personFullRequets), "Completar cadastro de pessoa.");
             }
         }
 

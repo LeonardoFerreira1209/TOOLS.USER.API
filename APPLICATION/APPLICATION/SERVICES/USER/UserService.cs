@@ -1,11 +1,12 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
-using APPLICATION.DOMAIN.DTOS.RESPONSE;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using AutoMapper;
@@ -35,9 +36,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         private readonly ITokenService _tokenService;
 
         private readonly IMapper _mapper;
+
+        private readonly IPersonService _personService;
         #endregion
 
-        public UserService(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IMapper mapper)
+        public UserService(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IMapper mapper, IPersonService personService)
         {
             _signInManager = signInManager;
 
@@ -50,6 +53,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             _tokenService = tokenService;
 
             _mapper = mapper;
+
+            _personService = personService;
         }
 
         #region Authentication
@@ -125,6 +130,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 if (response.Succeeded)
                 {
+                    await _personService.Create(personFastRequest, identityUser.Id);
+
                     await ConfirmeUserForEmail(identityUser);
 
                     return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });

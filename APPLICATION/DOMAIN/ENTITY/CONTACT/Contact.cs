@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using APPLICATION.DOMAIN.ENTITY.PERSON;
 
-namespace APPLICATION.DOMAIN.DTOS.REQUEST.CONTACT;
+namespace APPLICATION.DOMAIN.ENTITY.CONTACT;
 
-public class ContactRequest
+public class Contact
 {
     /// <summary>
     /// Identificador
@@ -36,7 +36,6 @@ public class ContactRequest
     /// Email de contato.
     /// </summary>
     /// 
-    [DataType(DataType.EmailAddress)]
     public string Email { get; set; }
     #endregion
 
@@ -45,16 +44,18 @@ public class ContactRequest
     /// Numero do celular de contato.
     /// </summary>
     /// 
-    [DataType(DataType.PhoneNumber)]
     public string PhoneNumber { get; set; }
     #endregion
 
     #region Person
-
     /// <summary>
-    /// Identificado de pessoa
+    /// Identificador de pessoa
     /// </summary>
     public Guid PersonId { get; set; }
 
+    /// <summary>
+    /// Dados da pessoa.
+    /// </summary>
+    public virtual Person Person { get; set; }
     #endregion
 }
