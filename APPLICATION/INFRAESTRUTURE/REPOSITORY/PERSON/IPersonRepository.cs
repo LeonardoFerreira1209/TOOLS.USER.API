@@ -7,5 +7,5 @@ namespace APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 public interface IPersonRepository
 {
     Task Create(PersonFastRequest personFastRequest, Guid userId);
-    Task<Person> CompleteRegister(PersonFullRequest personFullRequest);
+    Task CompleteRegister(PersonFullRequest personFullRequest);
 }

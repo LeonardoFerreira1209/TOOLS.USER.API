@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace APPLICATION.DOMAIN.UTILS;
+namespace APPLICATION.DOMAIN.UTILS.Extensions;
 
 public static class Extensions
 {
@@ -17,7 +17,7 @@ public static class Extensions
 
         var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
 
-        return (attributes.Length > 0) ? (T)attributes[0] : null;
+        return attributes.Length > 0 ? (T)attributes[0] : null;
     }
 
     /// <summary>
@@ -81,6 +81,21 @@ public static class Extensions
         }
 
         return erros;
+    }
+
+    public static DateOnly ToDateOnly(this DateTime dateTime)
+    {
+        return new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day);
+    }
+
+    public static TimeOnly ToTimeOnly(this DateTime dateTime)
+    {
+        return new TimeOnly(dateTime.Hour, dateTime.Minute);
+    }
+
+    public static DateTime ToDateTime(this DateOnly dateOnly)
+    {
+        return new DateTime(dateOnly.Year, dateOnly.Month, dateOnly.Day);
     }
 }
 

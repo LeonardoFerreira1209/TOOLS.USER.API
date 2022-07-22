@@ -24,25 +24,6 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
         Database.EnsureCreated();
     }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        builder.Entity<IdentityUser<Guid>>().ToTable("AspNetUsers").HasKey(table => table.Id);
-        
-        builder.Entity<Person>()
-            .HasOne(person => person.User);
-
-        builder.Entity<Contact>()
-            .HasOne(contact => contact.Person).WithMany(person => person.Contacts).HasForeignKey(contact => contact.PersonId);
-
-        builder.Entity<Profession>()
-            .HasOne(profession => profession.Person).WithMany(person => person.Professions).HasForeignKey(profession => profession.PersonId);
-
-        builder.Entity<Profession>()
-            .HasOne(profession => profession.Company).WithMany(company => company.Professions).HasForeignKey(profession => profession.CompanyId);
-
-        base.OnModelCreating(builder);
-    }
-
     #region C
     public DbSet<Company> Companies { get; set; }
 

@@ -37,13 +37,13 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<PersonResponse> CompleteRegister(PersonFullRequest personFullRequets)
+        public async Task CompleteRegister(PersonFullRequest personFullRequets)
         {
             using (LogContext.PushProperty("Controller", "PersonController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personFullRequets)))
             using (LogContext.PushProperty("Metodo", "CompleteRegister"))
             {
-                return await Tracker.Time(() => _personService.CompleteRegister(personFullRequets), "Completar cadastro de pessoa.");
+                await Tracker.Time(() => _personService.CompleteRegister(personFullRequets), "Completar cadastro de pessoa.");
             }
         }
 

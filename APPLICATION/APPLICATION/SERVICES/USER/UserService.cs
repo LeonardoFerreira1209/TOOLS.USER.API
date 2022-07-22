@@ -7,6 +7,7 @@ using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using AutoMapper;
@@ -118,11 +119,18 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
-                var validation = await new CreateUserValidator().ValidateAsync(personFastRequest.User);
 
-                if (validation.IsValid is false) return validation.CarregarErrosValidator();
+                #region validate requests
+                var validationPerson = await new CreateUserValidator().ValidateAsync(personFastRequest.User);
 
-                var identityUser = _mapper.Map<IdentityUser<Guid>>(personFastRequest.User);
+                var validationUser = await new CreateUserValidator().ValidateAsync(personFastRequest.User);
+
+                if (validationUser.IsValid is false) return validationUser.CarregarErrosValidator();
+                #endregion
+
+                #region Conver request to identity
+                var identityUser = personFastRequest.User.ToIdentityUser();
+                #endregion
 
                 #region User create & set roles & claims
                 var response = await BuildUser(identityUser, personFastRequest.User);
@@ -130,9 +138,13 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 if (response.Succeeded)
                 {
+                    #region Person create
                     await _personService.Create(personFastRequest, identityUser.Id);
+                    #endregion
 
+                    #region Invite e-mail confirmation
                     await ConfirmeUserForEmail(identityUser);
+                    #endregion
 
                     return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });
                 }
@@ -361,7 +373,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
 
                     Receivers = new List<string> { user.Email },
-                    Link = $"{_appsettings.Value.UrlBase.BASE_URL}/security/activate/{codifyEmailCode}/{user.Id}",
+                    Link = $"{_appsettings.Value.UrlBase.BASE_URL}/api/user/security/activate/{codifyEmailCode}/{user.Id}",
                     Subject = "Ativação de e-mail",
                     Content = $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
                     ButtonText = "Clique para ativar o e-mail",

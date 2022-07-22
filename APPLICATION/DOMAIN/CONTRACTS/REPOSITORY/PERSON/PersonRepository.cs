@@ -4,6 +4,7 @@ using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.DOMAIN.UTILS.PERSON;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using Microsoft.Extensions.Options;
@@ -28,64 +29,13 @@ public class PersonRepository : IPersonRepository
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
 
-        var person = new Person
-        {
-            FirstName = personFastRequest.FirstName,
-            LastName = personFastRequest.LastName,
-            Gender = personFastRequest.Gender,
-            CPF = personFastRequest.CPF,
-            UserId = userId
-        };
-
-        await _contexto.Persons.AddAsync(person);
-
-        await _contexto.SaveChangesAsync();
+        await _contexto.Persons.AddAsync(personFastRequest.ToEntity(userId)); await _contexto.SaveChangesAsync();
     }
 
-    public async Task<Person> CompleteRegister(PersonFullRequest personFullRequest)
+    public async Task CompleteRegister(PersonFullRequest personFullRequest)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(CompleteRegister)}\n");
 
-        var person = new Person
-        {
-            Id = personFullRequest.Id,
-            FirstName = personFullRequest.FirstName,
-            LastName = personFullRequest.LastName,
-            Age = personFullRequest.Age,
-            //BirthDay = personFullRequest.BirthDay,
-            Contacts = personFullRequest.Contacts.Select(c => new Contact
-            {
-                Name = c.Name,
-                CEP = c.CEP,
-                Complement = c.Complement,
-                Email = c.Email,
-                Number = c.Number,
-                PersonId = c.PersonId,
-                PhoneNumber = c.PhoneNumber
-
-            }).ToList(),
-            CPF = personFullRequest.CPF,
-            Gender = personFullRequest.Gender,
-            Professions = personFullRequest.Professions.Select(p => new Profession
-            {
-                CompanyId = p.CompanyId,
-                Description = p.Description,
-                PersonId = p.PersonId,
-                //StartDate = p.StartDate,
-                //EndDate = p.EndDate,
-                Office = p.Office,
-                Wage = p.Wage,
-               //Workload = p.Workload,
-
-            }).ToList(),
-            RG = personFullRequest.RG,
-            UserId = personFullRequest.UserId
-        };
-
-        _contexto.Persons.Update(person);
-
-        await _contexto.SaveChangesAsync();
-
-        return person;
+        _contexto.Persons.Update(personFullRequest.ToEntity()); await _contexto.SaveChangesAsync();
     }
 }

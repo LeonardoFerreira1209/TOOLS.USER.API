@@ -8,7 +8,7 @@ public interface IPersonService
 {
     Task Create(PersonFastRequest personFastRequest, Guid userId);
 
-    Task<PersonResponse> CompleteRegister(PersonFullRequest personFullRequest);
+    Task CompleteRegister(PersonFullRequest personFullRequest);
 
     Task<PersonResponse> ProfileImage(byte[] imagem);
 }

@@ -8,14 +8,6 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 public class PersonFullRequest
 {
     #region Base
-    /// <summary>
-    /// Identificador.
-    /// </summary>
-    public Guid Id { get; set; }
-
-    /// <summary>
-    /// Primeiro nome.
-    /// </summary>
     public string FirstName { get; set; }
 
     /// <summary>
