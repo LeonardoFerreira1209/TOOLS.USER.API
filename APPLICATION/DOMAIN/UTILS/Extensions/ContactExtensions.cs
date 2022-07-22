@@ -1,4 +1,5 @@
-﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
+﻿using APPLICATION.DOMAIN.DTOS.REQUEST.CONTACT;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 
 namespace APPLICATION.DOMAIN.UTILS.Extensions;
@@ -16,6 +17,21 @@ public static class ContactExtensions
             Number = contact.Number,
             PersonId = contact.PersonId,
             PhoneNumber = contact.PhoneNumber
+        };
+    }
+
+    public static Contact ToEntity(this ContactRequest contactRequest)
+    {
+        return new Contact
+        {
+            Id = contactRequest.Id,
+            PersonId = contactRequest.PersonId,
+            Name = contactRequest.Name,
+            CEP = contactRequest.CEP,
+            Complement = contactRequest.Complement,
+            Email = contactRequest.Email,
+            Number = contactRequest.Number,
+            PhoneNumber = contactRequest.PhoneNumber,
         };
     }
 }

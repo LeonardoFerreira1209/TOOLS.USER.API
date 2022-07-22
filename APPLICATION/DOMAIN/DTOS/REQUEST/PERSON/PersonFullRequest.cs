@@ -1,13 +1,21 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.CONTACT;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PROFESSION;
 using APPLICATION.ENUMS;
-using Microsoft.AspNetCore.Http;
 
 namespace APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 
 public class PersonFullRequest
 {
     #region Base
+
+    /// <summary>
+    /// Identificador
+    /// </summary>
+    public Guid Id { get; set; }
+
+    /// <summary>
+    /// Primeiro nome
+    /// </summary>
     public string FirstName { get; set; }
 
     /// <summary>

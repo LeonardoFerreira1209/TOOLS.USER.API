@@ -1,11 +1,10 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.PROFESSION;
-using APPLICATION.DOMAIN.UTILS.PERSON;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
+using Serilog;
 
 namespace APPLICATION.APPLICATION.SERVICES.PERSON;
 
@@ -18,14 +17,42 @@ public class PersonService : IPersonService
         _personRepository = personRepository;
     }
 
-    public async Task Create(PersonFastRequest personFastRequest, Guid userId)
+    public async Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest, Guid userId)
     {
-        await _personRepository.Create(personFastRequest, userId);
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(Create)}\n");
+
+        try
+        {
+            await _personRepository.Create(personFastRequest, userId);
+
+            return new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Pessoa criada com sucesso!") });
+
+        }
+        catch (Exception exception)
+        {
+            Log.Error("[LOG ERROR]", exception, exception.Message);
+
+            return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+        }
     }
 
-    public async Task CompleteRegister(PersonFullRequest personFullRequest)
+    public async Task<ApiResponse<object>> CompleteRegister(PersonFullRequest personFullRequest)
     {
-        await _personRepository.CompleteRegister(personFullRequest);
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(CompleteRegister)}\n");
+
+        try
+        {
+            await _personRepository.CompleteRegister(personFullRequest);
+
+            return new ApiResponse<object>(true, personFullRequest, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Registro da pessoa completado com sucesso") });
+
+        }
+        catch (Exception exception)
+        {
+            Log.Error("[LOG ERROR]", exception, exception.Message);
+
+            return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+        }
     }
 
     public Task<PersonResponse> ProfileImage(byte[] imagem)

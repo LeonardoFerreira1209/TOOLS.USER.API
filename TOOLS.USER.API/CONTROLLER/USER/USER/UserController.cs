@@ -68,9 +68,10 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// <summary>
         /// Método responsável por Ativar usuário
         /// </summary>
-        /// <param name="loginRequest"></param>
+        /// <param name="code"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpPost("/security/activate/{code}/{userId}")]
+        [HttpGet("/security/activate/{code}/{userId}")]
         [EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]

@@ -119,13 +119,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
-
                 #region validate requests
-                var validationPerson = await new CreateUserValidator().ValidateAsync(personFastRequest.User);
-
-                var validationUser = await new CreateUserValidator().ValidateAsync(personFastRequest.User);
-
-                if (validationUser.IsValid is false) return validationUser.CarregarErrosValidator();
+                var validation = await new CreatePersonValidator().ValidateAsync(personFastRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
                 #endregion
 
                 #region Conver request to identity
@@ -373,7 +368,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
 
                     Receivers = new List<string> { user.Email },
-                    Link = $"{_appsettings.Value.UrlBase.BASE_URL}/api/user/security/activate/{codifyEmailCode}/{user.Id}",
+                    Link = $"{_appsettings.Value.UrlBase.BASE_URL}/security/activate/{codifyEmailCode}/{user.Id}",
                     Subject = "Ativação de e-mail",
                     Content = $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
                     ButtonText = "Clique para ativar o e-mail",

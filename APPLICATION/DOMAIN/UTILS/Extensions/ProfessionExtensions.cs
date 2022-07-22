@@ -1,4 +1,5 @@
-﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.PROFESSION;
+﻿using APPLICATION.DOMAIN.DTOS.REQUEST.PROFESSION;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.PROFESSION;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
 
 namespace APPLICATION.DOMAIN.UTILS.Extensions;
@@ -21,4 +22,18 @@ public static class ProfessionExtensions
             Wage = profession.Wage,
         };
     }
+
+    public static Profession ToIdentity(this ProfessionRequest professionRequest) => new Profession
+    {
+        PersonId = professionRequest.PersonId,
+        CompanyId = professionRequest.CompanyId,
+        Description = professionRequest.Description,
+
+        StartDate = professionRequest.StartDate.ToDateTime(),
+        EndDate = professionRequest.EndDate.ToDateTime(),
+        Workload = professionRequest.Workload.ToDateTime(),
+
+        Office = professionRequest.Office,
+        Wage = professionRequest.Wage,
+    };
 }

@@ -27,14 +27,18 @@ public static class PersonExtensions
     {
         return new Person
         {
+            Id = personFullRequest.Id,
             FirstName = personFullRequest.FirstName,
             LastName = personFullRequest.LastName,
             Age = personFullRequest.Age,
             BirthDay = personFullRequest.BirthDay.ToDateTime(),
-            //Professions = personFullRequest.Professions.Select(profession => profession.ToIdentity())
+
+            Professions = personFullRequest.Professions.Select(profession => profession.ToIdentity()).ToList(),
+            Contacts = personFullRequest.Contacts.Select(contact => contact.ToEntity()).ToList(),
 
             Gender = personFullRequest.Gender,
 
+            RG = personFullRequest.RG,
             CPF = personFullRequest.CPF,
 
             UserId = personFullRequest.UserId

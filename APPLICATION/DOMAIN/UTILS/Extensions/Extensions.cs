@@ -83,19 +83,44 @@ public static class Extensions
         return erros;
     }
 
+    /// <summary>
+    /// Convert DateTime to DateOnly
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
     public static DateOnly ToDateOnly(this DateTime dateTime)
     {
         return new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day);
     }
 
+    /// <summary>
+    /// Conver DateTime to TimeUnly
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
     public static TimeOnly ToTimeOnly(this DateTime dateTime)
     {
         return new TimeOnly(dateTime.Hour, dateTime.Minute);
     }
 
+    /// <summary>
+    /// Convert DateOnly to DateTime
+    /// </summary>
+    /// <param name="dateOnly"></param>
+    /// <returns></returns>
     public static DateTime ToDateTime(this DateOnly dateOnly)
     {
         return new DateTime(dateOnly.Year, dateOnly.Month, dateOnly.Day);
+    }
+
+    /// <summary>
+    /// Convert TimeOnly to DateTime
+    /// </summary>
+    /// <param name="timeOnly"></param>
+    /// <returns></returns>
+    public static DateTime ToDateTime(this TimeOnly timeOnly)
+    {
+        return new DateTime(0, 0, 0, timeOnly.Hour, timeOnly.Minute, timeOnly.Second);
     }
 }
 
