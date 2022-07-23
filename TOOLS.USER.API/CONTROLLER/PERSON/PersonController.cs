@@ -1,6 +1,5 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
 using Microsoft.AspNetCore.Authorization;
@@ -22,8 +21,6 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         {
             _personService = personService;
         }
-
-
 
         /// <summary>
         /// Método responsável por completar o cadastro de uma pessoa

@@ -120,7 +120,7 @@ public static class Extensions
     /// <returns></returns>
     public static DateTime ToDateTime(this TimeOnly timeOnly)
     {
-        return new DateTime(0, 0, 0, timeOnly.Hour, timeOnly.Minute, timeOnly.Second);
+        return new DateTime(0001, 01, 01, timeOnly.Hour, timeOnly.Minute, timeOnly.Second);
     }
 }
 

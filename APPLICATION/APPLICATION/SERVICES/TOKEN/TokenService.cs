@@ -61,7 +61,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                    .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
                    .AddRoles(roles.ToList())
                    .AddClaims(claims.ToList())
-                   .Builder());
+                   .Builder(user));
             }
             catch (Exception exception)
             {

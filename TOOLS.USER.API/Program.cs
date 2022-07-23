@@ -29,7 +29,7 @@ try
         .ConfigureSwagger(configurations)
         .ConfigureDependencies(configurations)
         .ConfigureRefit(configurations)
-        .ConfigureTelemetry(builder.Services.BuildServiceProvider().GetService<IHttpContextAccessor>(), configurations)
+        .ConfigureTelemetry(configurations)
         .ConfigureApplicationInsights()
         .ConfigureSerilog()
         .ConfigureHealthChecks(configurations)

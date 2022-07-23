@@ -8,22 +8,22 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 public class ActivateUserRequest
 {
 
-    public ActivateUserRequest(string codigo, Guid usuarioId)
+    public ActivateUserRequest(string code, Guid userId)
     {
-        Codigo = codigo;
+        Code = code;
 
-        UsuarioId = usuarioId;
+        UserId = userId;
     }
 
     /// <summary>
     /// Código de confirmação do e-mail.
     /// </summary>
     [Required]
-    public string Codigo { get; set; }
+    public string Code { get; set; }
 
     /// <summary>
     /// Id do usuário que será ativado.
     /// </summary>
     [Required]
-    public Guid UsuarioId { get; set; }
+    public Guid UserId { get; set; }
 }

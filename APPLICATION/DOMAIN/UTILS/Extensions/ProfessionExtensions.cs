@@ -29,9 +29,9 @@ public static class ProfessionExtensions
         CompanyId = professionRequest.CompanyId,
         Description = professionRequest.Description,
 
-        StartDate = professionRequest.StartDate.ToDateTime(),
-        EndDate = professionRequest.EndDate.ToDateTime(),
-        Workload = professionRequest.Workload.ToDateTime(),
+        StartDate = professionRequest.StartDate,
+        EndDate = professionRequest.EndDate,
+        Workload = professionRequest.Workload,
 
         Office = professionRequest.Office,
         Wage = professionRequest.Wage,
