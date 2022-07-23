@@ -24,12 +24,12 @@ public class ProfessionRequest
     /// <summary>
     /// Data de inicio
     /// </summary>
-    public DateOnly StartDate { get; set; }
+    public DateTime StartDate { get; set; }
 
     /// <summary>
     /// Data de término
     /// </summary>
-    public DateOnly EndDate { get; set; }
+    public DateTime EndDate { get; set; }
 
     /// <summary>
     /// Sálario
@@ -39,7 +39,7 @@ public class ProfessionRequest
     /// <summary>
     /// Carga horária
     /// </summary>
-    public TimeOnly Workload { get; set; }
+    public DateTime Workload { get; set; }
     #endregion
 
     #region Person

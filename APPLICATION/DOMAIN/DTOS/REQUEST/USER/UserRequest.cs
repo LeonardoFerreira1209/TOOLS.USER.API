@@ -31,10 +31,5 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
         #endregion
-
-        #region Permissions
-        public ICollection<RoleToUserRequest> RolesToUser { get; set; } = new HashSet<RoleToUserRequest>();
-        public ICollection<ClaimRequest> Claims { get; set; } = new List<ClaimRequest>();
-        #endregion
     }
 }

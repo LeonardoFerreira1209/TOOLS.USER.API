@@ -8,6 +8,12 @@ namespace APPLICATION.DOMAIN.UTILS.PERSON;
 
 public static class PersonExtensions
 {
+    /// <summary>
+    /// Convert request to Entity 
+    /// </summary>
+    /// <param name="personFastRequest"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     public static Person ToEntity(this PersonFastRequest personFastRequest, Guid userId)
     {
         return new Person
@@ -23,6 +29,11 @@ public static class PersonExtensions
         };
     }
 
+    /// <summary>
+    /// Convert Request to Entity
+    /// </summary>
+    /// <param name="personFullRequest"></param>
+    /// <returns></returns>
     public static Person ToEntity(this PersonFullRequest personFullRequest)
     {
         return new Person
@@ -31,7 +42,7 @@ public static class PersonExtensions
             FirstName = personFullRequest.FirstName,
             LastName = personFullRequest.LastName,
             Age = personFullRequest.Age,
-            BirthDay = personFullRequest.BirthDay.ToDateTime(),
+            BirthDay = personFullRequest.BirthDay,
 
             Professions = personFullRequest.Professions.Select(profession => profession.ToIdentity()).ToList(),
             Contacts = personFullRequest.Contacts.Select(contact => contact.ToEntity()).ToList(),
@@ -45,6 +56,11 @@ public static class PersonExtensions
         };
     }
 
+    /// <summary>
+    /// Convert Entity to Response.
+    /// </summary>
+    /// <param name="person"></param>
+    /// <returns></returns>
     public static PersonResponse  ToResponse(this Person person)
     {
         return new PersonResponse

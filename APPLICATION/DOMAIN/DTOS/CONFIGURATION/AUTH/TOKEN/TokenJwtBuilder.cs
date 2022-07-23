@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -158,7 +159,7 @@ public class TokenJwtBuilder
     /// Método que cria e retorna o token.
     /// </summary>
     /// <returns></returns>
-    public TokenJWT Builder()
+    public TokenJWT Builder(IdentityUser<Guid> user)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenJwtBuilder)} - METHOD {nameof(Builder)}\n");
 
@@ -170,10 +171,14 @@ public class TokenJwtBuilder
             // Adiciona as claims a uma lista.
             var claims = new[]
             {
+                new Claim("id", user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, this.username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                new Claim(JwtRegisteredClaimNames.Typ, "Bearer")
+                new Claim(JwtRegisteredClaimNames.Typ, "Bearer"),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("phoneNumber", user.PhoneNumber),
+                new Claim(JwtRegisteredClaimNames.Website, "https://toolsuserapi.azurewebsites.net/")
 
             }.Union(this.claims);
 

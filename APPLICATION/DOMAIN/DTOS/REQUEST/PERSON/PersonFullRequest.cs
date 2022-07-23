@@ -31,7 +31,7 @@ public class PersonFullRequest
     /// <summary>
     /// Data de aniversário.
     /// </summary>
-    public DateOnly BirthDay { get; set; }  
+    public DateTime BirthDay { get; set; }  
 
     /// <summary>
     /// Gênero.

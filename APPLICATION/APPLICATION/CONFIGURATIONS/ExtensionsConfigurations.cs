@@ -259,8 +259,10 @@ public static class ExtensionsConfigurations
     /// <param name="httpContextAccessor"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection ConfigureTelemetry(this IServiceCollection services, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+    public static IServiceCollection ConfigureTelemetry(this IServiceCollection services, IConfiguration configuration)
     {
+        var httpContextAccessor = services.BuildServiceProvider().GetService<IHttpContextAccessor>();
+
         _telemetryConfig = TelemetryConfiguration.CreateDefault();
 
         _telemetryConfig.InstrumentationKey = _applicationInsightsKey;

@@ -64,39 +64,45 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Authentication(LoginRequest userRequest)
+        public async Task<ApiResponse<object>> Authentication(LoginRequest loginRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Authentication)}\n");
 
             try
             {
-                var validation = await new AuthenticationValidator().ValidateAsync(userRequest);
+                // Validate de userRequest.
+                var validation = await new AuthenticationValidator().ValidateAsync(loginRequest);
 
+                // return errors response.
                 if (validation.IsValid is false) return validation.CarregarErrosValidator();
 
-                var signInResult = await _signInManager.PasswordSignInAsync(userRequest.Username, userRequest.Password, true, true);
-
+                // sigin user wirh username & password
+                var signInResult = await _signInManager.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, true, true);
+                              
+                // return error response
                 if (signInResult.Succeeded is false)
                 {
+                    // locked user
                     if (signInResult.IsLockedOut)
                     {
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorLocked, "Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
                     }
-                    else if (signInResult.IsNotAllowed)
+                    else if (signInResult.IsNotAllowed) // not allowed user
                     {
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Email do usuário não está confirmado.") });
                     }
-                    else if (signInResult.RequiresTwoFactor)
+                    else if (signInResult.RequiresTwoFactor) // requires two factor user
                     {
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário necessita de verificação de dois fatores.") });
                     }
-                    else
+                    else // incorrects params user.
                     {
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Os dados do usuário estão inválidos ou usuário não existe.") });
                     }
                 }
 
-                return new ApiResponse<object>(signInResult.Succeeded, await _tokenService.CreateJsonWebToken(userRequest.Username));
+                // return the token.
+                return new ApiResponse<object>(signInResult.Succeeded, await _tokenService.CreateJsonWebToken(loginRequest.Username));
             }
             catch (Exception exception)
             {
@@ -159,17 +165,17 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <summary>
         /// Método responsavel por ativar um novo usuário.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="activateUserRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Activate(ActivateUserRequest request)
+        public async Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Activate)}\n");
 
             try
             {
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == request.UsuarioId);
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == activateUserRequest.UserId);
 
-                var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(request.Codigo.Replace(";", "%")));
+                var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(activateUserRequest.Code.Replace(";", "%")));
 
                 if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
 
@@ -319,27 +325,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             try
             {
                 // Create User.
-                var result = await _userManager.CreateAsync(user, userRequest.Password);
-
-                userRequest.Claims.Add(new ClaimRequest("Id", user.Id.ToString()));
-
-                // Add Roles & Claims to user.
-                if (result.Succeeded)
-                {
-                    // Verify insert claims and roles.
-                    var insertRoles = userRequest.RolesToUser is not null; var insertClaims = userRequest.Claims is not null;
-
-                    // Insert roles to user.
-                    if (insertRoles) await _userManager.AddToRolesAsync(user, userRequest.RolesToUser.SelectMany(r => r.Name));
-
-                    // Insert claims to user.
-                    if (insertClaims) await _userManager.AddClaimsAsync(user, userRequest.Claims.Select(c => new Claim(c.Type, c.Value)));
-
-                    // Add login info to user.
-                    await _userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "LOCAL", "@TOOLS.USER.API.PROJECT"));
-                }
-
-                return result;
+                return await _userManager.CreateAsync(user, userRequest.Password);
             }
             catch (Exception exception)
             {
