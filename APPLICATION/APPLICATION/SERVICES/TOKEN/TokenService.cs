@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace APPLICATION.APPLICATION.SERVICES.TOKEN
@@ -46,26 +47,40 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                 // Return de user.
                 var user = await User(username);
 
-                // Return user roles.
-                var roles = await Roles(user);
+                // Return token saved in database.
+                var tokenSaved = await TokenSaved(user);
 
-                // Return user claims.
-                var claims = await Claims(user, roles);
-                #endregion
+                // verify data in token.
+                if (tokenSaved is null)
+                {
+                    // Return user roles.
+                    var roles = await Roles(user);
 
-                Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
+                    // Return user claims.
+                    var claims = await Claims(user, roles);
+                    #endregion
 
-                // Create de token and return.
-                return await Task.FromResult(new TokenJwtBuilder()
-                   .AddUsername(username)
-                   .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
-                   .AddSubject("HYPER.IO PROJECTS L.T.D.A")
-                   .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
-                   .AddAudience(_appsettings.Value.Auth.ValidAudience)
-                   .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
-                   .AddRoles(roles.ToList())
-                   .AddClaims(claims.ToList())
-                   .Builder(user));
+                    Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
+
+                    // Create de token and return.
+                    var token = await Task.FromResult(new TokenJwtBuilder()
+                       .AddUsername(username)
+                       .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
+                       .AddSubject("HYPER.IO PROJECTS L.T.D.A")
+                       .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
+                       .AddAudience(_appsettings.Value.Auth.ValidAudience)
+                       .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
+                       .AddRoles(roles.ToList())
+                       .AddClaims(claims.ToList())
+                       .Builder(user));
+
+                    // Save tokenin database
+                    //await _userManager.GenerateUserTokenAsync(user, "TOOLS.USER.API", token.Value);
+
+                    return token;
+                }
+
+                return new TokenJWT(new JwtSecurityTokenHandler().ReadJwtToken(tokenSaved));
             }
             catch (Exception exception)
             {
@@ -117,6 +132,10 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
             return claims;
         }
+        #endregion
+
+        #region Token
+        private async Task<string> TokenSaved(IdentityUser<Guid> user) => await _userManager.GetAuthenticationTokenAsync(user, "TOOLS.USER.API", "AUTHTOKEN");
         #endregion
 
         #endregion

@@ -46,6 +46,8 @@ public class PersonRepository : IPersonRepository
 
         try
         {
+            Log.Information($"[LOG INFORMATION] - Atualizando dados do usuário.\n");
+
             _contexto.Persons.Update(personFullRequest.ToEntity()); await _contexto.SaveChangesAsync();
 
             return true;

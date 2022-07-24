@@ -44,8 +44,8 @@ public static class PersonExtensions
             Age = personFullRequest.Age,
             BirthDay = personFullRequest.BirthDay,
 
-            Professions = personFullRequest.Professions.Select(profession => profession.ToIdentity()).ToList(),
-            Contacts = personFullRequest.Contacts.Select(contact => contact.ToEntity()).ToList(),
+            Professions = personFullRequest.Professions?.Select(profession => profession.ToIdentity()).ToList(),
+            Contacts = personFullRequest.Contacts?.Select(contact => contact.ToEntity()).ToList(),
 
             Gender = personFullRequest.Gender,
 

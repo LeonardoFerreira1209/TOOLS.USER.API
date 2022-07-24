@@ -46,10 +46,20 @@ public class PersonService : IPersonService
 
         try
         {
-            await _personRepository.CompleteRegister(personFullRequest);
+            Log.Information($"[LOG INFORMATION] - Completando registro da pessoa {personFullRequest.FirstName} {personFullRequest.LastName}.\n");
 
-            return new ApiResponse<object>(true, personFullRequest, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Registro da pessoa completado com sucesso") });
+            var sucesso = await _personRepository.CompleteRegister(personFullRequest);
 
+            if (sucesso is false)
+            {
+                Log.Information($"[LOG INFORMATION] - Falha ao finalizar registro da pessoa {personFullRequest.FirstName} {personFullRequest.LastName}.\n");
+
+                return new ApiResponse<object>(sucesso, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, "Registro da pessoa falhou.") });
+            }
+
+            Log.Information($"[LOG INFORMATION] - Registro de usuário completado com sucesso {personFullRequest.FirstName} {personFullRequest.LastName}.\n");
+
+            return new ApiResponse<object>(sucesso, personFullRequest, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Registro da pessoa completado com sucesso") });
         }
         catch (Exception exception)
         {

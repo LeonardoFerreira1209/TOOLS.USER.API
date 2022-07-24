@@ -105,7 +105,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário necessita de verificação de dois fatores.") });
                     }
-                    else // incorrects params user.
+                    else // incorrects params user
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, dados incorretos.\n");
 
