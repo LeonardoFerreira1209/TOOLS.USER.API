@@ -23,7 +23,11 @@ public class PersonService : IPersonService
 
         try
         {
+            Log.Information($"[LOG INFORMATION] - Criando pessoa referente ao usuário.\n");
+
             await _personRepository.Create(personFastRequest, userId);
+
+            Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
 
             return new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Pessoa criada com sucesso!") });
 

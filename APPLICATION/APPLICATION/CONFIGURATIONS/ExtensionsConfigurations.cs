@@ -10,22 +10,22 @@ using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
-using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
-using APPLICATION.DOMAIN.UTILS;
+using APPLICATION.DOMAIN.ENTITY.COMPANY;
+using APPLICATION.DOMAIN.ENTITY.CONTACT;
+using APPLICATION.DOMAIN.ENTITY.PERSON;
+using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.ENUMS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
-using HotChocolate;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,11 +35,10 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Refit;
 using Serilog;
-using Serilog.Context;
 using Serilog.Events;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Globalization;
 using System.Net.Mime;
+using System.Security.Claims;
 using System.Text;
 
 namespace APPLICATION.APPLICATION.CONFIGURATIONS;
@@ -199,14 +198,14 @@ public static class ExtensionsConfigurations
             {
                 OnAuthenticationFailed = context =>
                 {
-                    Log.Information("[LOG INFORMATION] - OnAuthenticationFailed " + context.Exception.Message);
+                    Log.Information($"[LOG ERROR] {nameof(JwtBearerEvents)} - METHOD OnAuthenticationFailed - {context.Exception.Message}\n");
 
                     return Task.CompletedTask;
                 },
 
                 OnTokenValidated = context =>
                 {
-                    Log.Information("[LOG INFORMATION] - OnTokenValidated " + context.SecurityToken);
+                    Log.Information($"[LOG INFORMATION] {nameof(JwtBearerEvents)} - OnTokenValidated - {context.SecurityToken}");
 
                     return Task.CompletedTask;
                 }
@@ -228,7 +227,7 @@ public static class ExtensionsConfigurations
         services
             .AddAuthorization(options =>
             {
-                options.AddPolicy("User", policy => policy.RequireClaim("Permission", "Admin", "Master"));
+                options.AddPolicy("User", policy => policy.RequireClaim("permission", "admin", "master"));
             });
 
         return services;
@@ -289,7 +288,7 @@ public static class ExtensionsConfigurations
 
         var applicationInsightsServiceOptions = new ApplicationInsightsServiceOptions
         {
-           
+
 
             InstrumentationKey = _applicationInsightsKey
         };
@@ -353,8 +352,9 @@ public static class ExtensionsConfigurations
                     Name = "HYPER.IO DESENVOLVIMENTOS LTDA",
                     Email = "HYPER.IO@OUTLOOK.COM",
                 },
-                License = new OpenApiLicense{
-                    
+                License = new OpenApiLicense
+                {
+
                     Name = "HYPER.IO LICENSE",
                 },
                 TermsOfService = new Uri(uriMyGit)
@@ -500,6 +500,120 @@ public static class ExtensionsConfigurations
 
         application
             .UseMvcWithDefaultRoute();
+
+        return application;
+    }
+
+    /// <summary>
+    /// Execute Seeds in database
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    public static async Task<WebApplication> Seeds(this WebApplication application)
+    {
+        Log.Debug($"[LOG DEBUG] - Criando Seeds.\n");
+
+        using (var scope = application.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
+
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+            var context = scope.ServiceProvider.GetRequiredService<Contexto>();
+
+            // Set data in user.
+            var user = new IdentityUser<Guid>
+            {
+                Email = "Admin@outlook.com",
+                EmailConfirmed = true,
+                UserName = "Admin",
+                PhoneNumber = "+55(18)99776-2452"
+            };
+
+            // Generate a password hash.
+            user.PasswordHash = new PasswordHasher<IdentityUser<Guid>>().HashPassword(user, "Admin@123");
+
+            // Create user.
+            await userManager.CreateAsync(user);
+
+            // Add Login in user.
+            await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
+
+            // Set data in role.
+            var role = new IdentityRole<Guid> { Name = "DefaultUser" };
+
+            // Create role.
+            await roleManager.CreateAsync(role);
+
+            // Add claim in role.
+            await roleManager.AddClaimAsync(role, new Claim("permission", "admin"));
+
+            // Add role to user.
+            await userManager.AddToRoleAsync(user, role.Name);
+
+            // Set data in Person.
+            var person = new Person
+            {
+                UserId = user.Id,
+                FirstName = "Admin",
+                LastName = "Admin",
+                Age = 1,
+                BirthDay = DateTime.Now,
+                CPF = "32965808086",
+                RG = "371061775",
+                Gender = Gender.Male,
+            };
+
+            // Set data in Contact.
+            var contacts = new List<Contact>
+            {
+                new Contact
+                {
+                    Name = "Principal",
+                    Email = "Admin@example.com",
+                    CEP = "19050590",
+                    Complement = "House",
+                    Number = 545,
+                    PhoneNumber = "+55(18)99776-8856",
+                    PersonId = person.Id,
+                }
+            };
+
+            // Sets data in Company.
+            var company = new Company
+            {
+                Name = "HYPER.IO",
+                Description = "tecnology & future solutions.",
+                StartDate = DateTime.Now,
+            };
+
+            // Add Company.
+            await context.Companies.AddAsync(company);
+
+            //Set data in Professions.
+            var professions = new List<Profession>
+             {
+                new Profession
+                {
+                    PersonId = person.Id,
+                    CompanyId = company.Id,
+                    Description = "FullStack developer - Pleno",
+                    Office = "Developer",
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now,
+                    Wage = 11000,
+                    Workload = DateTime.Now
+                }
+            };
+
+            // Set contacts & professions in person.
+            person.Contacts = contacts; person.Professions = professions;
+
+            // Add Person
+            await context.Persons.AddAsync(person);
+
+            // Commit de transaction.
+            await context.SaveChangesAsync();
+        }
 
         return application;
     }

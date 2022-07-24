@@ -33,12 +33,14 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// <param name="username"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<object> CreateJsonWebToken(string username)
+        public async Task<TokenJWT> CreateJsonWebToken(string username)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenService)} - METHOD {nameof(CreateJsonWebToken)}\n");
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Recuperando dados do token do usuário\n");
+
                 #region Configurations user
 
                 // Return de user.
@@ -50,6 +52,8 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                 // Return user claims.
                 var claims = await Claims(user, roles);
                 #endregion
+
+                Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
 
                 // Create de token and return.
                 return await Task.FromResult(new TokenJwtBuilder()
@@ -71,6 +75,8 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
             }
         }
         #endregion
+
+        #region Private methods
 
         #region User
         /// <summary>
@@ -102,7 +108,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
             claims.AddRange(await _userManager.GetClaimsAsync(user));
 
-            if(roles is not null && roles.Any())
+            if (roles is not null && roles.Any())
             {
                 var identityRoles = await _roleManager.Roles.Where(r => roles.Contains(r.Name)).ToListAsync();
 
@@ -111,6 +117,8 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
             return claims;
         }
+        #endregion
+
         #endregion
     }
 }

@@ -14,6 +14,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Serilog;
 using System.Security.Claims;
 using System.Web;
@@ -70,11 +71,14 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
-                // Validate de userRequest.
-                var validation = await new AuthenticationValidator().ValidateAsync(loginRequest);
+                Log.Information($"[LOG INFORMATION] - Validando request.\n");
 
-                // return errors response.
-                if (validation.IsValid is false) return validation.CarregarErrosValidator();
+                // Validate de userRequest.
+                var validation = await new AuthenticationValidator().ValidateAsync(loginRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
+
+                Log.Information($"[LOG INFORMATION] - Request validado com sucesso.\n");
+
+                Log.Information($"[LOG INFORMATION] - Recuperando usuário {JsonConvert.SerializeObject(loginRequest)}.\n");
 
                 // sigin user wirh username & password
                 var signInResult = await _signInManager.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, true, true);
@@ -85,24 +89,41 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     // locked user
                     if (signInResult.IsLockedOut)
                     {
+                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, está bloqueado.\n");
+
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorLocked, "Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
                     }
                     else if (signInResult.IsNotAllowed) // not allowed user
                     {
+                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, não está confirmado.\n");
+
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Email do usuário não está confirmado.") });
                     }
                     else if (signInResult.RequiresTwoFactor) // requires two factor user
                     {
+                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, requer verificação de dois fatores.\n");
+
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário necessita de verificação de dois fatores.") });
                     }
                     else // incorrects params user.
                     {
+                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, dados incorretos.\n");
+
                         return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Os dados do usuário estão inválidos ou usuário não existe.") });
                     }
                 }
 
+                Log.Information($"[LOG INFORMATION] - Usuário recuperado com sucesso.\n");
+
+                Log.Information($"[LOG INFORMATION] - Gerando token.\n");
+
+                // Create token.
+                var token = await _tokenService.CreateJsonWebToken(loginRequest.Username);
+
+                Log.Information($"[LOG INFORMATION] - Token gerado {token.Value}.\n");
+
                 // return the token.
-                return new ApiResponse<object>(signInResult.Succeeded, await _tokenService.CreateJsonWebToken(loginRequest.Username));
+                return new ApiResponse<object>(signInResult.Succeeded, token);
             }
             catch (Exception exception)
             {
@@ -125,9 +146,13 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Validando request.\n");
+
                 #region validate requests
                 var validation = await new CreatePersonValidator().ValidateAsync(personFastRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
                 #endregion
+
+                Log.Information($"[LOG INFORMATION] - Request validado com sucesso.\n");
 
                 #region Conver request to identity
                 var identityUser = personFastRequest.User.ToIdentityUser();
@@ -173,11 +198,22 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Recuperando usuário.\n");
+
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == activateUserRequest.UserId);
+
+                Log.Information($"[LOG INFORMATION] - Confirmando e-mail do usuário {user.UserName}.\n");
 
                 var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(activateUserRequest.Code.Replace(";", "%")));
 
-                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
+                if (response.Succeeded)
+                {
+                    Log.Information($"[LOG INFORMATION] - Usuário ativado com sucesso.\n");
+
+                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n");
 
                 return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Falha ao ativar usuário.") });
             }
@@ -202,13 +238,24 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Recuperando usuario {username}.\n");
+
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+
+                Log.Information($"[LOG INFORMATION] - Adicionando a claim ({claimRequest.Type}/{claimRequest.Value}) no usuário.\n");
 
                 #region User set claim
                 var response = await _userManager.AddClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                if (response.Succeeded)
+                {
+                    Log.Information($"[LOG INFORMATION] - Claim adicionada com sucesso.\n");
+
+                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha ao adicionar claim.\n");
 
                 return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
@@ -232,13 +279,24 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Recuperando usuário {username}.\n");
+
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+
+                Log.Information($"[LOG INFORMATION] - Removendo a claim ({claimRequest.Type}/{claimRequest.Value}) do usuário.\n");
 
                 #region User remove claim
                 var response = await _userManager.RemoveClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                if (response.Succeeded)
+                {
+                    Log.Information($"[LOG INFORMATION] - Claim remvida com sucesso.\n");
+
+                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha ao remover claim.\n");
 
                 return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
@@ -262,13 +320,24 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Recuperando dados do usuário {username}.\n");
+
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+
+                Log.Information($"[LOG INFORMATION] - Adicionando a role ({roleName}) ao usuário.\n");
 
                 #region User set claim
                 var response = await _userManager.AddToRoleAsync(user, roleName);
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+                if (response.Succeeded)
+                {
+                    Log.Information($"[LOG INFORMATION] - Role adicionada com sucesso.\n");
+
+                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha ao adicionar role.\n");
 
                 return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
@@ -292,13 +361,24 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Recuperando dados do usuário {username}.\n");
+
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+
+                Log.Information($"[LOG INFORMATION] - Removendo role ({roleName}) do usuário.\n");
 
                 #region User remove claim
                 var response = await _userManager.RemoveFromRoleAsync(user, roleName);
                 #endregion
 
-                if (response.Succeeded) return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, removida com sucesso do usuário {username}.") });
+                if (response.Succeeded)
+                {
+                    Log.Information($"[LOG INFORMATION] - Role removida com sucesso.\n");
+
+                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, removida com sucesso do usuário {username}.") });
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
 
                 return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
             }
@@ -324,8 +404,23 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information("[LOG INFORMATION] - Criando usuário\n");
+
                 // Create User.
-                return await _userManager.CreateAsync(user, userRequest.Password);
+                var identityResult =  await _userManager.CreateAsync(user, userRequest.Password);
+
+                if(identityResult.Succeeded)
+                {
+                    Log.Information($"[LOG INFORMATION] - Usuário criado com sucesso {user.UserName}, dados {JsonConvert.SerializeObject(userRequest)}\n");
+
+                    await _userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
+
+                    return identityResult;
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
+
+                return identityResult;
             }
             catch (Exception exception)
             {
@@ -346,9 +441,13 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             try
             {
+                Log.Information($"[LOG INFORMATION] - Gerando codigo de confirmação de e-mail.\n");
+
                 var emailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var codifyEmailCode = HttpUtility.UrlEncode(emailCode).Replace("%", ";");
+
+                Log.Information($"[LOG INFORMATION] - Código gerado - {codifyEmailCode}.\n");
 
                 await _emailFacade.Invite(new MailRequest
                 {

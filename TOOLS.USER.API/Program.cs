@@ -14,7 +14,6 @@ try
     /// <summary>
     /// Chamada das configurações do projeto.
     /// </summary>
-    /// 
     builder.Services
         .AddHttpContextAccessor()
         .Configure<AppSettings>(configurations).AddSingleton<AppSettings>()
@@ -47,6 +46,9 @@ try
 
     // Chamada das connfigurações do WebApplication Build.
     applicationbuilder
+        // -- Seeds
+        .Seeds().Result
+        // -- Seeds
         .UseHttpsRedirection()
         .UseDefaultFiles()
         .UseStaticFiles()
