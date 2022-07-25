@@ -10,7 +10,7 @@ public interface IRoleService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<ObjectResult> Create(RoleRequest request);
+    Task<ObjectResult> Create(RoleRequest roleRequest);
 
     /// <summary>
     /// Método responsável por adicionar uma nova claim na role.

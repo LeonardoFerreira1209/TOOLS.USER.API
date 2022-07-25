@@ -40,25 +40,33 @@ public class RoleService : IRoleService
             // Mapper to entity.
             var role = _autoMapper.Map<IdentityRole<Guid>>(roleRequest);
 
+            Log.Information($"[LOG INFORMATION] - Criando nova Role {roleRequest.Name}\n");
+
             // Create a role in database.
             var response = await _roleManager.CreateAsync(role);
 
             // Is success enter.
             if (response.Succeeded)
             {
+                Log.Information($"[LOG INFORMATION] - Adicionando claims na role {roleRequest.Name}\n");
+
                 // foreach and add claims in request
                 roleRequest.Claims.ForEach(claim => _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value)));
 
                 // Response success.
-                var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Role criado com sucesso.") });
+                var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessCreated, "Role criado com sucesso.") });
+
+                Log.Information($"[LOG INFORMATION] - Role criada com sucesso.\n");
 
                 // Return response.
                 return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessCreated };
             }
             #endregion
 
+            Log.Information($"[LOG INFORMATION] - Falha ao criar role.\n");
+
             // Response error.
-            var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+            var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
 
             // Return response error.
             return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
@@ -85,10 +93,12 @@ public class RoleService : IRoleService
     /// <returns></returns>
     public async Task<ObjectResult> AddClaim(string roleName, List<ClaimRequest> claimRequests)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(Create)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(AddClaim)}\n");
 
         try
         {
+            Log.Information($"[LOG INFORMATION] - Adicionando uma novas claims na role {roleName}\n");
+
             #region Add claim in exist role.
             // Get the role for Id.
             var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleName.Equals(role.Name));
@@ -101,10 +111,14 @@ public class RoleService : IRoleService
                 {
                     // Add claims in role.
                     await _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value));
+
+                    Log.Information($"[LOG INFORMATION] - Claim {claim.Type}/{claim.Value} adicionada.\n");
                 }
 
                 // Response success.
-                var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, $"Claim adicionada a role {roleName} com sucesso.") });
+                var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, $"Claim adicionada a role {roleName} com sucesso.") });
+
+                Log.Information($"[LOG INFORMATION] - Claims adicionadas com sucesso na role {roleName}\n");
 
                 // Return success
                 return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
@@ -112,7 +126,9 @@ public class RoleService : IRoleService
             #endregion
 
             // Response error.
-            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, $"Role com o nome {roleName} não existe.") });
+            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ErrorNotFound, $"Role com o nome {roleName} não existe.") });
+
+            Log.Information($"[LOG INFORMATION] - Falha ao adicionar claim na role {roleName}\n");
 
             // Return response
             return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorNotFound };
@@ -137,10 +153,12 @@ public class RoleService : IRoleService
     /// <returns></returns>
     public async Task<ObjectResult> RemoveClaim(string roleName, ClaimRequest claimRequests)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(Create)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(RemoveClaim)}\n");
 
         try
         {
+            Log.Information($"[LOG INFORMATION] - Removendo a claim {claimRequests.Type}/{claimRequests.Value} da Role {roleName}\n");
+
             #region Add claim in exist role.
             // Get role for Id.
             var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleName.Equals(role.Name));
@@ -152,13 +170,17 @@ public class RoleService : IRoleService
                 await _roleManager.RemoveClaimAsync(role, new Claim(claimRequests.Type, claimRequests.Value));
 
                 // Response success.
-                var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, $"Claim removida da role {roleName} com sucesso.") });
+                var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, $"Claim removida da role {roleName} com sucesso.") });
+
+                Log.Information($"[LOG INFORMATION] - Claim removida {claimRequests.Type}/{claimRequests.Value} com sucesso\n");
 
                 return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
             }
             #endregion
 
-            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, $"Role com o nome {roleName} não existe.") });
+            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ErrorNotFound, $"Role com o nome {roleName} não existe.") });
+
+            Log.Information($"[LOG INFORMATION] - Falha ao remover claim {claimRequests.Type}/{claimRequests.Value}\n");
 
             return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorNotFound };
         }

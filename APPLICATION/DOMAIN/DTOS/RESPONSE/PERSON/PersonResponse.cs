@@ -37,6 +37,11 @@ public class PersonResponse
     /// Gênero.
     /// </summary>
     public Gender Gender { get; set; }
+
+    /// <summary>
+    /// Imagem da Pessoa.
+    /// </summary>
+    public byte[] Image { get; set; }
     #endregion
 
     #region Docs

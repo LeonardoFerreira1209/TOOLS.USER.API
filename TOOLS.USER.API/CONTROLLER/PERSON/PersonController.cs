@@ -12,7 +12,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace TOOLS.USER.API.CONTROLLER.PERSON
 {
-    [Route("api/[controller]")] [ApiController]
+    [Route("api/[controller]")]
+    [ApiController]
     public class PersonController : ControllerBase
     {
         private readonly IPersonService _personService;
@@ -23,9 +24,9 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         }
 
         /// <summary>
-        /// Método responsável por completar o cadastro de uma pessoa
+        /// Método responsavel por personId.
         /// </summary>
-        /// <param name="personFullRequets"></param>
+        /// <param name="personId"></param>
         /// <returns></returns>
         [HttpGet("/get")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
@@ -78,23 +79,13 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> ProfileImage(Guid personId, IFormFile profileImage)
+        public async Task<ObjectResult> ProfileImage(Guid personId, IFormFile formFile)
         {
             using (LogContext.PushProperty("Controller", "PersonController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(profileImage)))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(formFile)))
             using (LogContext.PushProperty("Metodo", "ProfileImage"))
             {
-                MemoryStream memoryStream = new();
-
-                await profileImage.CopyToAsync(memoryStream);
-                
-                byte[] bytes = memoryStream.ToArray();
-
-                var imagem = bytes;
-
-                return new ApiResponse<object>();
-
-                //return await Tracker.Time(() => _userService.AddClaim(username, claimRequest), "Adicionar claim no usuário.");
+                return await Tracker.Time(() => _personService.ProfileImage(personId, formFile), "Método responsável por grava a imagem do usuário.");
             }
         }
     }

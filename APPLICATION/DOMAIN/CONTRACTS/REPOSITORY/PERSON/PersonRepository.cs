@@ -39,7 +39,7 @@ public class PersonRepository : IPersonRepository
             // return true value and person.
             return (true, entityEntry.Entity);
         }
-        catch(Exception exception)
+        catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
@@ -91,7 +91,30 @@ public class PersonRepository : IPersonRepository
             // Return true and person value.
             return (true, entityEntry.Entity);
         }
-        catch(Exception exception)
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+
+            // return false and null value.
+            return (false, null);
+        }
+    }
+
+    public async Task<(bool success, byte[] image)> ProfileImage(Person person, byte[] image)
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(ProfileImage)}\n");
+
+        try
+        {
+            Log.Information($"[LOG INFORMATION] - Adicionando imagem no banco.\n");
+
+            // Set image in person. / Update Person with image. / Save the changes.
+            person.Image = image; _contexto.Persons.Update(person); await _contexto.SaveChangesAsync();
+
+            // Return true and person value.
+            return (true, person.Image);
+        }
+        catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 

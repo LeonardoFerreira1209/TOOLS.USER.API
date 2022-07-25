@@ -38,6 +38,11 @@ namespace APPLICATION.DOMAIN.ENTITY.PERSON
         /// Gênero.
         /// </summary>
         public Gender Gender { get; set; }
+
+        /// <summary>
+        /// Imagem de perfil.
+        /// </summary>
+        public byte[] Image { get; set; }
         #endregion
 
         #region Docs
