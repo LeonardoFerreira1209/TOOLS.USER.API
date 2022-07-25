@@ -34,7 +34,7 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> Get(Guid personId)
+        public async Task<ObjectResult> Get(Guid personId)
         {
             using (LogContext.PushProperty("Controller", "PersonController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personId)))
@@ -56,7 +56,7 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> CompleteRegister(PersonFullRequest personFullRequets)
+        public async Task<ObjectResult> CompleteRegister(PersonFullRequest personFullRequets)
         {
             using (LogContext.PushProperty("Controller", "PersonController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personFullRequets)))

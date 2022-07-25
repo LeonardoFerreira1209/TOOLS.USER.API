@@ -13,6 +13,7 @@ using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -66,7 +67,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Authentication(LoginRequest loginRequest)
+        public async Task<ObjectResult> Authentication(LoginRequest loginRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Authentication)}\n");
 
@@ -81,36 +82,52 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 Log.Information($"[LOG INFORMATION] - Recuperando usuário {JsonConvert.SerializeObject(loginRequest)}.\n");
 
-                // sigin user wirh username & password
+                // sigin user wirh username & password.
                 var signInResult = await _signInManager.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, true, true);
                               
-                // return error response
+                // return error response.
                 if (signInResult.Succeeded is false)
                 {
-                    // locked user
+                    // locked user.
                     if (signInResult.IsLockedOut)
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, está bloqueado.\n");
 
-                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorLocked, "Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
+                        // Response Locked.
+                        var apiResponseErrorLocked = new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ErrorLocked, "Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
+
+                        // Return error response.
+                        return new ObjectResult(apiResponseErrorLocked) { StatusCode = (int)StatusCodes.ErrorLocked };
                     }
-                    else if (signInResult.IsNotAllowed) // not allowed user
+                    else if (signInResult.IsNotAllowed) // not allowed user.
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, não está confirmado.\n");
 
-                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Email do usuário não está confirmado.") });
+                        // Response notAllowed.
+                        var apiResponseErrorNotAllowed = new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ErrorUnauthorized, "Email do usuário não está confirmado.") });
+
+                        // Return error response.
+                        return new ObjectResult(apiResponseErrorNotAllowed) { StatusCode = (int)StatusCodes.ErrorUnauthorized };
                     }
-                    else if (signInResult.RequiresTwoFactor) // requires two factor user
+                    else if (signInResult.RequiresTwoFactor) // requires two factor user.
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, requer verificação de dois fatores.\n");
 
-                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Usuário necessita de verificação de dois fatores.") });
+                        // Response twoFactor.
+                        var apiResponseErrorTwoFactor = new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ErrorUnauthorized, "Usuário necessita de verificação de dois fatores.") });
+
+                        // Return error response.
+                        return new ObjectResult(apiResponseErrorTwoFactor) { StatusCode = (int)StatusCodes.ErrorUnauthorized };
                     }
-                    else // incorrects params user
+                    else // incorrects params user.
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, dados incorretos.\n");
 
-                        return new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnauthorized, "Os dados do usuário estão inválidos ou usuário não existe.") });
+                        // Response error unathorized.
+                        var apiResponseErrorUnauthorized = new ApiResponse<object>(signInResult.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ErrorUnauthorized, "Os dados do usuário estão inválidos ou usuário não existe.") });
+
+                        // Return error response.
+                        return new ObjectResult(apiResponseErrorUnauthorized) { StatusCode = (int)StatusCodes.ErrorUnauthorized };
                     }
                 }
 
@@ -123,14 +140,21 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 Log.Information($"[LOG INFORMATION] - Token gerado {token.Value}.\n");
 
-                // return the token.
-                return new ApiResponse<object>(signInResult.Succeeded, token, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessAccepted, "Usuário autenticado com sucesso.")});
+                // Response success.
+                var apiResponseSuccess =  new ApiResponse<object>(signInResult.Succeeded, token, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, "Usuário autenticado com sucesso.") });
+
+                // Return the token.
+                return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                // Response error
+                var apiResponseError =  new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+                // Return error.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
             }
         }
         #endregion
@@ -141,7 +165,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest)
+        public async Task<ObjectResult> Create(PersonFastRequest personFastRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Create)}\n");
 
@@ -179,19 +203,28 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     await ConfirmeUserForEmail(user);
                     #endregion
 
+                    // Response success.
+                    var apiResponseSuccess =  new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });
+
                     // Return response success.
-                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });
+                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessCreated };
                 }
 
+                // Response not success.
+                var apiResponseError =  new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
+
                 // Return response not success.
-                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest};
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-                // Return error response.
-                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                // Create a apiResponse error.
+                var apiResponseError =  new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+                // Return a apiResponse error.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
             }
         }
         #endregion
@@ -202,7 +235,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="activateUserRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest)
+        public async Task<ObjectResult> Activate(ActivateUserRequest activateUserRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Activate)}\n");
 
@@ -223,21 +256,30 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
                     Log.Information($"[LOG INFORMATION] - Usuário ativado com sucesso.\n");
 
-                    // Return a success response.
-                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
+                    // Success response.
+                    var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Usuário ativado com sucesso.") });
+
+                    // Return response
+                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n");
 
-                // Return a not success response;
-                return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Falha ao ativar usuário.") });
+                // Response not success.
+                var apiResponseError = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Falha ao ativar usuário.") });
+
+                // Return response
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-                // Return error response.
-                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                // Error response.
+                var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+                // Return error.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
             }
         }
         #endregion
@@ -248,7 +290,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> AddClaim(string username, ClaimRequest claimRequest)
+        public async Task<ObjectResult> AddClaim(string username, ClaimRequest claimRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddClaim)}\n");
 
@@ -271,21 +313,30 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
                     Log.Information($"[LOG INFORMATION] - Claim adicionada com sucesso.\n");
 
+                    // Success response.
+                    var apiResponseSuccess =  new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+
                     // Return success response.
-                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha ao adicionar claim.\n");
 
+                // Not success response.
+                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
+
                 // Return not success response.
-                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-                // Return error response.
-                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                // Error response.
+                var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+                // Return error.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
             }
         }
 
@@ -295,7 +346,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> RemoveClaim(string username, ClaimRequest claimRequest)
+        public async Task<ObjectResult> RemoveClaim(string username, ClaimRequest claimRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveClaim)}\n");
 
@@ -318,21 +369,30 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
                     Log.Information($"[LOG INFORMATION] - Claim remvida com sucesso.\n");
 
-                    // Response success
-                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                    // Response success.
+                    var apiResponseSuccess =  new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+
+                    // Return response.
+                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha ao remover claim.\n");
 
                 // Response not success
-                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+
+                // Return response
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-                // Response error.
-                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                // Error response.
+                var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+                // Return error.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
             }
         }
 
@@ -342,7 +402,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> AddRole(string username, string roleName)
+        public async Task<ObjectResult> AddRole(string username, string roleName)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddRole)}\n");
 
@@ -365,21 +425,30 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
                     Log.Information($"[LOG INFORMATION] - Role adicionada com sucesso.\n");
 
-                    // Return response success.
-                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+                    // Response success.
+                    var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, $"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+
+                    // Return response.
+                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha ao adicionar role.\n");
 
-                // Return response not success
-                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                // Response not success
+                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+
+                // Return response
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-                // Return response erro.
-                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                // Error response.
+                var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+                // Return error.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
             }
         }
 
@@ -389,7 +458,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> RemoveRole(string username, string roleName)
+        public async Task<ObjectResult> RemoveRole(string username, string roleName)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveRole)}\n");
 
@@ -413,20 +482,29 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Role removida com sucesso.\n");
 
                     // Response success
-                    return new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, $"Role {roleName}, removida com sucesso do usuário {username}.") });
+                    var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, $"Role {roleName}, removida com sucesso do usuário {username}.") });
+
+                    // Return response.
+                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
 
-                // Response not success
-                return new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                // Response not success.
+                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
+
+                // Return response.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-                // Response erro.
-                return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                // Error response.
+                var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+                // Return error.
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
             }
         }
         #endregion

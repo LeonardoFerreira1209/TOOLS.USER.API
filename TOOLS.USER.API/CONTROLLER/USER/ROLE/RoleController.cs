@@ -37,7 +37,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> AddRole(RoleRequest roleRequest)
+        public async Task<ObjectResult> AddRole(RoleRequest roleRequest)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleRequest)))
@@ -59,7 +59,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> AddClaimToRole([Required] string roleName, List<ClaimRequest> claimRequests)
+        public async Task<ObjectResult> AddClaimToRole([Required] string roleName, List<ClaimRequest> claimRequests)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequests)))
@@ -82,7 +82,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> RemoverClaimToRole([Required] string roleName, ClaimRequest claimRequests)
+        public async Task<ObjectResult> RemoverClaimToRole([Required] string roleName, ClaimRequest claimRequests)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequests)))
@@ -104,7 +104,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> AddRoleToUser([Required] string username, string roleName)
+        public async Task<ObjectResult> AddRoleToUser([Required] string username, string roleName)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))
@@ -126,7 +126,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> RemoveRoleToUser([Required] string username, string roleName)
+        public async Task<ObjectResult> RemoveRoleToUser([Required] string username, string roleName)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))

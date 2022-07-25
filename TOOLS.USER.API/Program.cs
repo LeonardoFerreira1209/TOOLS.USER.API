@@ -56,7 +56,7 @@ try
         .UseAuthorization()
         .UseAuthentication()
         .UseCors("CorsPolicy")
-        .ConfigureHealthChecks()
+        .UseHealthChecks()
         .UseSwaggerConfigurations(configurations);
 
     // Chamando as configurações de Minimal APIS.

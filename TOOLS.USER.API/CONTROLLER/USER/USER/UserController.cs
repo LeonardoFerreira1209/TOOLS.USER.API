@@ -33,7 +33,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> Create(PersonFastRequest personRequest)
+        public async Task<ObjectResult> Create(PersonFastRequest personRequest)
         {
             using (LogContext.PushProperty("Controller", "UserController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personRequest)))
@@ -51,12 +51,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         [HttpPost("/security/authetication")]
         [EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
-        [ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status202Accepted)]
+        [ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status423Locked)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> Authentication(LoginRequest loginRequest)
+        public async Task<ObjectResult> Authentication(LoginRequest loginRequest)
         {
             using (LogContext.PushProperty("Controller", "UserController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(loginRequest)))
@@ -78,7 +78,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> Activate(string code, Guid userId)
+        public async Task<ObjectResult> Activate(string code, Guid userId)
         {
             var request = new ActivateUserRequest(code, userId);
 

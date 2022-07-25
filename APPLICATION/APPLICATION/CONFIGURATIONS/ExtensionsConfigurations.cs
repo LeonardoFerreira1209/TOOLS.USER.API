@@ -450,7 +450,7 @@ public static class ExtensionsConfigurations
     /// </summary>
     /// <param name="application"></param>
     /// <returns></returns>
-    public static IApplicationBuilder ConfigureHealthChecks(this IApplicationBuilder application)
+    public static IApplicationBuilder UseHealthChecks(this IApplicationBuilder application)
     {
         application.UseHealthChecks(ExtensionsConfigurations.HealthCheckEndpoint, new HealthCheckOptions
         {

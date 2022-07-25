@@ -1,5 +1,5 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 
@@ -10,14 +10,14 @@ public interface IRoleService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Create(RoleRequest request);
+    Task<ObjectResult> Create(RoleRequest request);
 
     /// <summary>
     /// Método responsável por adicionar uma nova claim na role.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> AddClaim(string roleName, List<ClaimRequest> claimRequests);
+    Task<ObjectResult> AddClaim(string roleName, List<ClaimRequest> claimRequests);
 
     /// <summary>
     /// Método responsavel por remover a claim da role.
@@ -25,5 +25,5 @@ public interface IRoleService
     /// <param name="roleName"></param>
     /// <param name="claimRequests"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> RemoveClaim(string roleName, ClaimRequest claimRequests);
+    Task<ObjectResult> RemoveClaim(string roleName, ClaimRequest claimRequests);
 }
