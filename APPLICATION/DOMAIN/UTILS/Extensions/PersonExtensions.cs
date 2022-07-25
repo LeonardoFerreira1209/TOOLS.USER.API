@@ -66,20 +66,23 @@ public static class PersonExtensions
         return new PersonResponse
         {
             Id = person.Id,
+
             FirstName = person.FirstName,
             LastName = person.LastName,
+
             Age = person.Age,
-            BirthDay = person.BirthDay.ToDateOnly(),
+            BirthDay = person.BirthDay,
 
-            Contacts = person.Contacts?.Select(contact => contact.ToResponse()).ToList(),
-
-            CPF = person.CPF,
             Gender = person.Gender,
 
-            Professions = person.Professions.Select(profession => profession.ToResponse()).ToList(),
+            Contacts = person.Contacts?.Select(contact => contact.ToResponse()).ToList(),
+            Professions = person.Professions?.Select(profession => profession.ToResponse()).ToList(),
 
             RG = person.RG,
+            CPF = person.CPF,
+
             UserId = person.UserId,
+            User = person.User
         };
     }
 }

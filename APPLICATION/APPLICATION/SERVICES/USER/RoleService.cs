@@ -51,7 +51,7 @@ public class RoleService : IRoleService
         }
         catch (Exception exception)
         {
-            Log.Error("[LOG ERROR]", exception, exception.Message);
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
         }
@@ -89,7 +89,7 @@ public class RoleService : IRoleService
         }
         catch (Exception exception)
         {
-            Log.Error("[LOG ERROR]", exception, exception.Message);
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
         }
@@ -122,7 +122,7 @@ public class RoleService : IRoleService
         }
         catch (Exception exception)
         {
-            Log.Error("[LOG ERROR]", exception, exception.Message);
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             return new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
         }

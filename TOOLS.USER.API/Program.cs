@@ -69,5 +69,5 @@ try
 }
 catch (Exception exception)
 {
-    Log.Error("[LOG ERROR] - Ocorreu um erro ao inicializar a aplicacao [TOOLS.USER.API]\n", exception.Message);
+    Log.Error($"[LOG ERROR] - Ocorreu um erro ao inicializar a aplicacao [TOOLS.USER.API] - {exception.Message}\n");
 }

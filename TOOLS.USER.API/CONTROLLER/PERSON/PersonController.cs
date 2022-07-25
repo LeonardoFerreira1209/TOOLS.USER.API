@@ -1,5 +1,6 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,28 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         public PersonController(IPersonService personService)
         {
             _personService = personService;
+        }
+
+        /// <summary>
+        /// Método responsável por completar o cadastro de uma pessoa
+        /// </summary>
+        /// <param name="personFullRequets"></param>
+        /// <returns></returns>
+        [HttpGet("/get")]
+        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [SwaggerOperation(Summary = "Recuperar uma pessoa", Description = "Método responsável por recuperar uma pessoa")]
+        [ProducesResponseType(typeof(ApiResponse<PersonResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ApiResponse<object>> Get(Guid personId)
+        {
+            using (LogContext.PushProperty("Controller", "PersonController"))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personId)))
+            using (LogContext.PushProperty("Metodo", "Get"))
+            {
+                return await Tracker.Time(() => _personService.Get(personId), "Recuperar uma pessoa através.");
+            }
         }
 
         /// <summary>

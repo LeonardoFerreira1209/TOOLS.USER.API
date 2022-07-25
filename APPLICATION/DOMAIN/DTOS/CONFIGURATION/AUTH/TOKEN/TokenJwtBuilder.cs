@@ -196,7 +196,7 @@ public class TokenJwtBuilder
         }
         catch (Exception exception)
         {
-            Log.Error("[LOG ERROR]", exception, exception.Message);
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             throw new Exception(exception.Message);
         }

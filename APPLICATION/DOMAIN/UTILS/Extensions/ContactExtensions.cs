@@ -10,6 +10,7 @@ public static class ContactExtensions
     {
         return new ContactResponse
         {
+            Id = contact.Id,
             Name = contact.Name,
             CEP = contact.CEP,
             Complement = contact.Complement,

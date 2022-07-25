@@ -10,13 +10,14 @@ public static class ProfessionExtensions
     {
         return new ProfessionResponse
         {
+            Id = profession.Id,
             PersonId = profession.PersonId,
             CompanyId = profession.CompanyId,
             Description = profession.Description,
 
-            StartDate = profession.StartDate.ToDateOnly(),
-            EndDate = profession.EndDate.ToDateOnly(),
-            Workload = profession.Workload.ToTimeOnly(),
+            StartDate = profession.StartDate,
+            EndDate = profession.EndDate,
+            Workload = profession.Workload,
 
             Office = profession.Office,
             Wage = profession.Wage,

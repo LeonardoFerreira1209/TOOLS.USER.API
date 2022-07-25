@@ -1,9 +1,12 @@
 ﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
+using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.UTILS.PERSON;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
 
@@ -22,25 +25,59 @@ public class PersonRepository : IPersonRepository
         _appSettings = appSettings;
     }
 
-    public async Task<bool> Create(PersonFastRequest personFastRequest, Guid userId)
+    public async Task<(bool success, Person person)> Create(PersonFastRequest personFastRequest, Guid userId)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
 
         try
         {
-            await _contexto.Persons.AddAsync(personFastRequest.ToEntity(userId)); await _contexto.SaveChangesAsync();
+            Log.Information($"[LOG INFORMATION] - Adicionando usuário no banco de dados.\n");
 
-            return true;
+            // Add user in database.
+            var entityEntry = await _contexto.Persons.AddAsync(personFastRequest.ToEntity(userId)); await _contexto.SaveChangesAsync();
+
+            // return true value and person.
+            return (true, entityEntry.Entity);
         }
         catch(Exception exception)
         {
-            Log.Error("[LOG ERROR]", exception, exception.Message);
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-            return false;
+            // retun false and a null value.
+            return (false, null);
         }
     }
 
-    public async Task<bool> CompleteRegister(PersonFullRequest personFullRequest)
+    public async Task<(bool success, Person person)> Get(Guid personId)
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
+
+        try
+        {
+            // Get person for Id.
+            var person = await _contexto.Persons
+                // Include user in Person.
+                .Include(person => person.User)
+                // Include list of contacts in Person. 
+                .Include(person => person.Contacts)
+                // Include list of professions in Person.
+                .Include(person => person.Professions)
+                // Return one Person when Id queal a pernsoId.
+                .FirstOrDefaultAsync(person => person.Id.Equals(personId));
+
+            // Return person.
+            return (true, person);
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+
+            // Return null value.
+            return (false, null);
+        }
+    }
+
+    public async Task<(bool success, Person person)> CompleteRegister(PersonFullRequest personFullRequest)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(CompleteRegister)}\n");
 
@@ -48,15 +85,18 @@ public class PersonRepository : IPersonRepository
         {
             Log.Information($"[LOG INFORMATION] - Atualizando dados do usuário.\n");
 
-            _contexto.Persons.Update(personFullRequest.ToEntity()); await _contexto.SaveChangesAsync();
+            // Update person in database.
+            var entityEntry = _contexto.Persons.Update(personFullRequest.ToEntity()); await _contexto.SaveChangesAsync();
 
-            return true;
+            // Return true and person value.
+            return (true, entityEntry.Entity);
         }
         catch(Exception exception)
         {
-            Log.Error("[LOG ERROR]", exception, exception.Message);
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
-            return false;
+            // return false and null value.
+            return (false, null);
         }
     }
 }

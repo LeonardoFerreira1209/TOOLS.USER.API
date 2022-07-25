@@ -1,11 +1,7 @@
 ﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PROFESSION;
 using APPLICATION.ENUMS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 
@@ -35,7 +31,7 @@ public class PersonResponse
     /// <summary>
     /// Data de aniversário.
     /// </summary>
-    public DateOnly BirthDay { get; set; }
+    public DateTime BirthDay { get; set; }
 
     /// <summary>
     /// Gênero.
@@ -60,6 +56,8 @@ public class PersonResponse
     /// Id do usuário.
     /// </summary>
     public Guid UserId { get; set; }
+
+    public IdentityUser<Guid> User { get; set; }
     #endregion
 
     #region Profession
