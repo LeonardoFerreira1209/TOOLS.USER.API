@@ -70,7 +70,8 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
         /// <summary>
         /// Método responsável por adicionar uma imagem de perfil em uma pessoa.
         /// </summary>
-        /// <param name="profileImage"></param>
+        /// <param name="personId"></param>
+        /// <param name="formFile"></param>
         /// <returns></returns>
         [HttpPatch("/profileImage/{personId}")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
@@ -85,7 +86,7 @@ namespace TOOLS.USER.API.CONTROLLER.PERSON
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(formFile)))
             using (LogContext.PushProperty("Metodo", "ProfileImage"))
             {
-                return await Tracker.Time(() => _personService.ProfileImage(personId, formFile), "Método responsável por grava a imagem do usuário.");
+                return await Tracker.Time(() => _personService.ProfileImage(personId, formFile), "Adicionar imagem na pessoa.");
             }
         }
     }

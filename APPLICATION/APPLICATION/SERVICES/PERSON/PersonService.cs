@@ -1,9 +1,8 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
-using APPLICATION.DOMAIN.ENUM;
+using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.PERSON;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using Microsoft.AspNetCore.Http;
@@ -73,7 +72,7 @@ public class PersonService : IPersonService
             Log.Information($"[LOG INFORMATION] - Recuperando uma pessoa.\n");
 
             // Get person for Id.
-            var (success, person) = await _personRepository.Get(personId);
+            var (success, person) = await _personRepository.Get(personId, true);
 
             // Is success or person is null.
             if (success is false || person is null)
@@ -181,46 +180,57 @@ public class PersonService : IPersonService
         {
             Log.Information($"[LOG INFORMATION] - Adicionando imagem na pessoa.\n");
 
-            // Declare a memory stream.
-            var memoryStream = new MemoryStream();
-
-            // Copy formFile to memoryStream.
-            await formFile.CopyToAsync(memoryStream);
-
-            // Get a person.
-            var (personSuccess, person) = await _personRepository.Get(personId);
-
-            if (personSuccess && person is not null)
+            if (formFile.ContentType.FileTypesAllowed())
             {
-                // Add image in person.
-                var (imageSuccess, image) = await _personRepository.ProfileImage(person, memoryStream.ToArray());
+                // Declare a memory stream.
+                var memoryStream = new MemoryStream();
 
-                // Is false.
-                if (imageSuccess is false)
+                // Copy formFile to memoryStream.
+                await formFile.CopyToAsync(memoryStream);
+
+                // Get a person.
+                var (personSuccess, person) = await _personRepository.Get(personId, false);
+
+                if (personSuccess && person is not null)
                 {
-                    Log.Information($"[LOG INFORMATION] - Falha ao adicionar imagem na pessoa.\n");
+                    // Add image in person.
+                    var (imageSuccess, image) = await _personRepository.ProfileImage(person, memoryStream.ToArray());
 
-                    // Response error.
-                    var apiResponseError = new ApiResponse<object>(imageSuccess, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Adicionar imagem na pessoa falhou.") });
+                    // Is false.
+                    if (imageSuccess is false)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Falha ao adicionar imagem na pessoa.\n");
+
+                        // Response error.
+                        var apiResponseError = new ApiResponse<object>(imageSuccess, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Adicionar imagem na pessoa falhou.") });
+
+                        // Return error.
+                        return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorBadRequest };
+                    }
+
+                    Log.Information($"[LOG INFORMATION] - Imagem adicionada com sucesso na pessoa.\n");
+
+                    // Response success.
+                    var apiResponseSuccess = new ApiResponse<object>(imageSuccess, new FileContentResult(image, "image/jpg"), new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Imagem adicionada com sucesso.") });
 
                     // Return error.
-                    return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorBadRequest };
+                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessOK };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Imagem adicionada com sucesso na pessoa.\n");
+                Log.Information($"[LOG INFORMATION] - Pessoa não foi encontrada.\n");
 
-                // Response success.
-                var apiResponseSuccess = new ApiResponse<object>(imageSuccess, image, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Imagem adicionada com sucesso.") });
+                // Response error.
+                var apiResponseErrorNotFound = new ApiResponse<object>(personSuccess, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, "Pessoa não encontada.") });
 
                 // Return error.
-                return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessOK };
+                return new ObjectResult(apiResponseErrorNotFound) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
             }
 
             // Response error.
-            var apiResponseErrorNotFound = new ApiResponse<object>(personSuccess, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, "Pessoa não encontada.") });
+            var apiResponseErrorUnsupportedMediaType = new ApiResponse<object>(false, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnsupportedMediaType, "Tipo de arquivo não é permitido.") });
 
             // Return error.
-            return new ObjectResult(apiResponseErrorNotFound) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
+            return new ObjectResult(apiResponseErrorUnsupportedMediaType) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorUnsupportedMediaType };
         }
         catch (Exception exception)
         {

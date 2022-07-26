@@ -19,7 +19,7 @@ public interface IPersonRepository
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    Task<(bool success, Person person)> Get(Guid personId);
+    Task<(bool success, Person person)> Get(Guid personId, bool withDependencies);
 
     /// <summary>
     /// Método responsavel por Completar o registro de um usuário.
@@ -28,5 +28,11 @@ public interface IPersonRepository
     /// <returns></returns>
     Task<(bool success, Person person)> CompleteRegister(PersonFullRequest personFullRequest);
 
+    /// <summary>
+    /// Métodor responsavel por cadastrar a imagem de perfil do usuário.
+    /// </summary>
+    /// <param name="person"></param>
+    /// <param name="image"></param>
+    /// <returns></returns>
     Task<(bool success, byte[] image)> ProfileImage(Person person, byte[] image);
 }

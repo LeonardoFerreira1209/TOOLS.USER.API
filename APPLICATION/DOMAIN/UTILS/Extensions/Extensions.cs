@@ -122,5 +122,17 @@ public static class Extensions
     {
         return new DateTime(0001, 01, 01, timeOnly.Hour, timeOnly.Minute, timeOnly.Second);
     }
+
+    /// <summary>
+    /// Verifica se o tipo de arquivo é aceito.
+    /// </summary>
+    /// <param name="fileType"></param>
+    /// <returns></returns>
+    public static bool FileTypesAllowed(this string fileType)
+    {
+        var typesAllowed = new List<string> { "image/jpeg", "image/jpg", "image/png", "image/gif" };
+
+        return typesAllowed.Select(types => types.Equals(fileType)).Any(verify => verify is true);
+    }
 }
 

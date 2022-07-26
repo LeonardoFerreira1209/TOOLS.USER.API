@@ -5,7 +5,6 @@ using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.UTILS.PERSON;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -25,6 +24,12 @@ public class PersonRepository : IPersonRepository
         _appSettings = appSettings;
     }
 
+    /// <summary>
+    /// Create a Person
+    /// </summary>
+    /// <param name="personFastRequest"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     public async Task<(bool success, Person person)> Create(PersonFastRequest personFastRequest, Guid userId)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
@@ -48,25 +53,42 @@ public class PersonRepository : IPersonRepository
         }
     }
 
-    public async Task<(bool success, Person person)> Get(Guid personId)
+    /// <summary>
+    /// Get person for Id
+    /// </summary>
+    /// <param name="personId"></param>
+    /// <param name="withDependencies"></param>
+    /// <returns></returns>
+    public async Task<(bool success, Person person)> Get(Guid personId, bool withDependencies)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
 
         try
         {
-            // Get person for Id.
-            var person = await _contexto.Persons
-                // Include user in Person.
-                .Include(person => person.User)
-                // Include list of contacts in Person. 
-                .Include(person => person.Contacts)
-                // Include list of professions in Person.
-                .Include(person => person.Professions)
-                // Return one Person when Id queal a pernsoId.
-                .FirstOrDefaultAsync(person => person.Id.Equals(personId));
+            // Get person for Id without dependencies.
+            if (withDependencies)
+            {
+                var person = await _contexto.Persons
+                         // Include user in Person.
+                            .Include(person => person.User)
+                         // Include list of contacts in Person. 
+                            .Include(person => person.Contacts)
+                         // Include list of professions in Person.
+                            .Include(person => person.Professions)
+                         // Return one Person when Id queal a pernsoId.
+                        .FirstOrDefaultAsync(person => person.Id.Equals(personId));
 
-            // Return person.
-            return (true, person);
+                // Return person.
+                return (person is not null, person);
+            }
+            else // Get person for Id with dependencies.
+            {
+                var person = await _contexto.Persons
+                                        .FirstOrDefaultAsync(person => person.Id.Equals(personId));
+
+                // Return person.
+                return (person is not null, person);
+            }
         }
         catch (Exception exception)
         {
@@ -77,6 +99,11 @@ public class PersonRepository : IPersonRepository
         }
     }
 
+    /// <summary>
+    /// Complete register person
+    /// </summary>
+    /// <param name="personFullRequest"></param>
+    /// <returns></returns>
     public async Task<(bool success, Person person)> CompleteRegister(PersonFullRequest personFullRequest)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(CompleteRegister)}\n");
@@ -100,6 +127,12 @@ public class PersonRepository : IPersonRepository
         }
     }
 
+    /// <summary>
+    /// Add image profile in person
+    /// </summary>
+    /// <param name="person"></param>
+    /// <param name="image"></param>
+    /// <returns></returns>
     public async Task<(bool success, byte[] image)> ProfileImage(Person person, byte[] image)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(ProfileImage)}\n");

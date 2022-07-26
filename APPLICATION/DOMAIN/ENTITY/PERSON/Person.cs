@@ -2,7 +2,6 @@
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
-using System.Diagnostics.Contracts;
 
 namespace APPLICATION.DOMAIN.ENTITY.PERSON
 {

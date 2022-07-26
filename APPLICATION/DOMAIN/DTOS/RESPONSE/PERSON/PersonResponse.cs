@@ -2,6 +2,7 @@
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PROFESSION;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 
@@ -41,7 +42,7 @@ public class PersonResponse
     /// <summary>
     /// Imagem da Pessoa.
     /// </summary>
-    public byte[] Image { get; set; }
+    public FileContentResult Image { get; set; }
     #endregion
 
     #region Docs

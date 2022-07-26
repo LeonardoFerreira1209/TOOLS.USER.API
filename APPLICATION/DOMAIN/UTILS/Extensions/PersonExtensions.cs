@@ -3,6 +3,7 @@ using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.UTILS.Extensions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APPLICATION.DOMAIN.UTILS.PERSON;
 
@@ -74,6 +75,8 @@ public static class PersonExtensions
             BirthDay = person.BirthDay,
 
             Gender = person.Gender,
+
+            Image = new FileContentResult(person.Image, "image/jpg"),
 
             Contacts = person.Contacts?.Select(contact => contact.ToResponse()).ToList(),
             Professions = person.Professions?.Select(profession => profession.ToResponse()).ToList(),
