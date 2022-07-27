@@ -100,6 +100,47 @@ public class PersonRepository : IPersonRepository
     }
 
     /// <summary>
+    /// Método responsavel por recuperar todas as pessoas.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<(bool success, IEnumerable<Person> persons)> GetAll(bool withDependencies)
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
+
+        try
+        {
+            // Get person for Id with dependencies.
+            if (withDependencies)
+            {
+                var persons = await _contexto.Persons
+                            // Include user in Person.
+                            .Include(person => person.User)
+                            // Include list of contacts in Person. 
+                            .Include(person => person.Contacts)
+                            // Include list of professions in Person.
+                            .Include(person => person.Professions).ToListAsync();
+
+                // Return person.
+                return (persons is not null, persons);
+            }
+            else // Get person for Id without dependencies.
+            {
+                var persons = await _contexto.Persons.ToListAsync();
+
+                // Return person.
+                return (persons is not null && persons.Any() is true, persons);
+            }
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+
+            // Return null value.
+            return (false, null);
+        }
+    }
+
+    /// <summary>
     /// Complete register person
     /// </summary>
     /// <param name="personFullRequest"></param>

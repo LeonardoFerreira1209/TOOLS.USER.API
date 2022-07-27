@@ -28,7 +28,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        [HttpPost("/security/addclaim")]
+        [HttpPost("addclaim")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Adicionar claim no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
@@ -50,7 +50,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpDelete("/security/removeclaim")]
+        [HttpDelete("removeclaim")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]

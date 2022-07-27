@@ -31,7 +31,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// </summary>
         /// <param name="roleRequest"></param>
         /// <returns></returns>
-        [HttpPost("/security/addRole")]
+        [HttpPost("addRole")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Adicionar role", Description = "Método responsável por Adicionar uma role")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
@@ -53,7 +53,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="roleName"></param>
         /// <param name="claimRequests"></param>
         /// <returns></returns>
-        [HttpPost("/security/addClaimToRole")]
+        [HttpPost("addClaimToRole")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Adicionar uma claim na role", Description = "Método responsável por Adicionar uma claim na role")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
@@ -75,7 +75,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="roleName"></param>
         /// <param name="claimRequests"></param>
         /// <returns></returns>
-        [HttpDelete("/security/removeClaimToRole")]
+        [HttpDelete("removeClaimToRole")]
         [Authorize(Policy = "User")]
         [EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover uma claim na role", Description = "Método responsável por Remover uma claim na role")]
@@ -98,7 +98,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpPost("/security/addRoleToUser")]
+        [HttpPost("addRoleToUser")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Adicionar role no usuário", Description = "Método responsável por Adicionar uma role no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
@@ -120,7 +120,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpDelete("/security/removeRoleToUser")]
+        [HttpDelete("removeRoleToUser")]
         [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover role do usuário", Description = "Método responsável por Remover uma role do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]

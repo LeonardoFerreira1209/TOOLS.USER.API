@@ -24,6 +24,12 @@ public interface IPersonService
     Task<ObjectResult> Get(Guid personId);
 
     /// <summary>
+    /// Método reponsavel por recuperar todas as pessoas.
+    /// </summary>
+    /// <returns></returns>
+    Task<ObjectResult> GetAll();
+
+    /// <summary>
     /// Métodod responsavel por completar i cadastro de uma pessoa.
     /// </summary>
     /// <param name="personFullRequest"></param>

@@ -119,6 +119,65 @@ public class PersonService : IPersonService
     }
 
     /// <summary>
+    /// Método responsavel por recuperar todas as pessoas.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ObjectResult> GetAll()
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(GetAll)}\n");
+
+        try
+        {
+            Log.Information($"[LOG INFORMATION] - Recuperando todas as pessosa.\n");
+
+            // Get all persons.
+            var (success, persons) = await _personRepository.GetAll(true);
+
+            // Is success or persons is null.
+            if (success is false || persons is null || persons.Any() is false) 
+            {
+                // Persons is null.
+                if (persons  is null || persons.Any() is false)
+                {
+                    Log.Information($"[LOG INFORMATION] - Pessoas não encontrada.\n");
+
+                    // Response error.
+                    var apiResponseError = new ApiResponse<object>(success, persons, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, "Pessoa não encontrada!") });
+
+                    // Return response.
+                    return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoas.\n");
+
+                // Response error.
+                var apiResponseErrorFailed = new ApiResponse<object>(success, persons, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, "Falha ao recuperar pessoa!") });
+
+                // Return response erro.
+                return new ObjectResult(apiResponseErrorFailed) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+            }
+
+            Log.Information($"[LOG INFORMATION] - Pessoas recuperadas com sucesso.\n");
+
+            // Response success
+            var apiResponseSuccess = new ApiResponse<object>(success, persons.Select(person => person.ToResponse()), new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Pessoa recuperada com sucesso!") });
+
+            // Return repsonse.
+            return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessOK };
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+
+            // Error response.
+            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
+
+            // Return error.
+            return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+        }
+    }
+
+    /// <summary>
     /// Métodod responsavel por completar i cadastro de uma pessoa.
     /// </summary>
     /// <param name="personFullRequest"></param>

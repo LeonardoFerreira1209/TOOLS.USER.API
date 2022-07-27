@@ -27,7 +27,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// </summary>
         /// <param name="personRequest"></param>
         /// <returns></returns>
-        [HttpPost("/security/create")]
+        [HttpPost("create")]
         [EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
@@ -48,7 +48,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// </summary>
         /// <param name="loginRequest"></param>
         /// <returns></returns>
-        [HttpPost("/security/authetication")]
+        [HttpPost("authetication")]
         [EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
         [ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
@@ -72,7 +72,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// <param name="code"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("/security/activate/{code}/{userId}")]
+        [HttpGet("activate/{code}/{userId}")]
         [EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Ativar usuário", Description = "Método responsável por Ativar usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]

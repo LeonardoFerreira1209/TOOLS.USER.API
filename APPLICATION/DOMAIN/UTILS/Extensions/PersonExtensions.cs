@@ -76,7 +76,7 @@ public static class PersonExtensions
 
             Gender = person.Gender,
 
-            Image = new FileContentResult(person.Image, "image/jpg"),
+            Image = person.Image is not null ? new FileContentResult(person.Image, "image/jpg") : null,
 
             Contacts = person.Contacts?.Select(contact => contact.ToResponse()).ToList(),
             Professions = person.Professions?.Select(profession => profession.ToResponse()).ToList(),
