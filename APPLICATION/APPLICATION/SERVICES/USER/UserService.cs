@@ -84,7 +84,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 // sigin user wirh username & password.
                 var signInResult = await _signInManager.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, true, true);
-                              
+
                 // return error response.
                 if (signInResult.Succeeded is false)
                 {
@@ -141,7 +141,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Token gerado {token.Value}.\n");
 
                 // Response success.
-                var apiResponseSuccess =  new ApiResponse<object>(signInResult.Succeeded, token, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, "Usuário autenticado com sucesso.") });
+                var apiResponseSuccess = new ApiResponse<object>(signInResult.Succeeded, token, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, "Usuário autenticado com sucesso.") });
 
                 // Return the token.
                 return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
@@ -151,7 +151,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
                 // Response error
-                var apiResponseError =  new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
 
                 // Return error.
                 return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
@@ -195,33 +195,44 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 {
                     #region Person create
                     // Create a new person.
-                    await _personService.Create(personFastRequest, user.Id);
+                    var responsePerson = await _personService.Create(personFastRequest, user.Id);
                     #endregion
 
-                    #region Invite e-mail confirmation
-                    // Confirm user for e-mail.
-                    await ConfirmeUserForEmail(user);
-                    #endregion
+                    if (responsePerson.StatusCode == (int)StatusCodes.SuccessCreated)
+                    {
+                        #region Invite e-mail confirmation
+                        // Confirm user for e-mail.
+                        await ConfirmeUserForEmail(user);
+                        #endregion
 
-                    // Response success.
-                    var apiResponseSuccess =  new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });
+                        // Response success.
+                        var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessCreated, "Usuário criado com sucesso.") });
 
-                    // Return response success.
-                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessCreated };
+                        // Return response success.
+                        return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessCreated };
+                    }
+                    else
+                    {
+                        // Response not success.
+                        var apiResponsePersonError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, "Falha ao cadastra usuário. tente novamento")).ToList());
+
+                        // Return response not success.
+                        return new ObjectResult(apiResponsePersonError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
+                    }
                 }
 
                 // Response not success.
-                var apiResponseError =  new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
+                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
 
                 // Return response not success.
-                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest};
+                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
                 // Create a apiResponse error.
-                var apiResponseError =  new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
+                var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
 
                 // Return a apiResponse error.
                 return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
@@ -314,7 +325,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Claim adicionada com sucesso.\n");
 
                     // Success response.
-                    var apiResponseSuccess =  new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                    var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.SuccessOK, $"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
 
                     // Return success response.
                     return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
@@ -370,7 +381,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Claim remvida com sucesso.\n");
 
                     // Response success.
-                    var apiResponseSuccess =  new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                    var apiResponseSuccess = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, $"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
 
                     // Return response.
                     return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
@@ -525,9 +536,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information("[LOG INFORMATION] - Criando usuário\n");
 
                 // Create User.
-                var identityResult =  await _userManager.CreateAsync(user, userRequest.Password);
+                var identityResult = await _userManager.CreateAsync(user, userRequest.Password);
 
-                if(identityResult.Succeeded)
+                if (identityResult.Succeeded)
                 {
                     Log.Information($"[LOG INFORMATION] - Usuário criado com sucesso {user.UserName}, dados {JsonConvert.SerializeObject(userRequest)}\n");
 

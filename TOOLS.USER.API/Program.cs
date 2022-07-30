@@ -1,6 +1,8 @@
 using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+using APPLICATION.INFRAESTRUTURE.SIGNALR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
 
 try
@@ -10,6 +12,8 @@ try
 
     // Pegando configurações do appsettings.json.
     var configurations = builder.Configuration;
+
+    builder.Services.AddSignalR();
 
     /// <summary>
     /// Chamada das configurações do projeto.
@@ -33,6 +37,7 @@ try
         .ConfigureSerilog()
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()
+        .ConfigureRegisterJobs()
         .AddControllers(options =>
         {
             options.EnableEndpointRouting = false;
@@ -57,7 +62,13 @@ try
         .UseAuthentication()
         .UseCors("CorsPolicy")
         .UseHealthChecks()
-        .UseSwaggerConfigurations(configurations);
+        .UseSwaggerConfigurations(configurations)
+        .UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+
+            endpoints.MapHub<Hubs>("/notify");
+        });
 
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);

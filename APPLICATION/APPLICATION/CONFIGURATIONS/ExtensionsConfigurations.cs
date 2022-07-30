@@ -7,6 +7,7 @@ using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
+using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
@@ -17,7 +18,12 @@ using APPLICATION.DOMAIN.ENTITY.PROFESSION;
 using APPLICATION.ENUMS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
+using APPLICATION.INFRAESTRUTURE.JOBS;
+using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY;
+using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
+using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
+using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -205,7 +211,7 @@ public static class ExtensionsConfigurations
 
                 OnTokenValidated = context =>
                 {
-                    Log.Information($"[LOG INFORMATION] {nameof(JwtBearerEvents)} - OnTokenValidated - {context.SecurityToken}");
+                    Log.Information($"[LOG INFORMATION] {nameof(JwtBearerEvents)} - OnTokenValidated - {context.SecurityToken}\n");
 
                     return Task.CompletedTask;
                 }
@@ -394,6 +400,7 @@ public static class ExtensionsConfigurations
             // Facades
             .AddSingleton<EmailFacade, EmailFacade>()
             // Repository
+            .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IPersonRepository, PersonRepository>();
 
 
@@ -443,6 +450,35 @@ public static class ExtensionsConfigurations
                 policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
             });
         });
+    }
+
+    /// <summary>
+    /// Registro de Jobs.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureRegisterJobs(this IServiceCollection services)
+    {
+        services.AddTransient<IRegistryJobs, RegistryJobs>();
+
+        services.AddTransient<IProcessDeleteUserWithoutPersonJob, ProcessDeleteUserWithoutPersonJob>();
+
+        services.ConfigureStartJobs();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Iniciar Jobs.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureStartJobs(this IServiceCollection services)
+    {
+        // Iniciar os Jobs.
+        new ScheduledTasksManager(services.GetProvider()).StartJobs();
+
+        return services;
     }
 
     /// <summary>
@@ -645,4 +681,8 @@ public static class ExtensionsConfigurations
         return application;
     }
 
+    private static ServiceProvider GetProvider(this IServiceCollection services)
+    {
+        return services.BuildServiceProvider();
+    }
 }

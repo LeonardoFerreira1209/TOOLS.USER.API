@@ -1,4 +1,5 @@
-﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+﻿using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.BASE;
+using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
@@ -11,19 +12,20 @@ using Serilog;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
 
-public class PersonRepository : IPersonRepository
+public class PersonRepository : BaseRepository, IPersonRepository
 {
     private readonly Contexto _contexto;
 
     private readonly IOptions<AppSettings> _appSettings;
 
-    public PersonRepository(IOptions<AppSettings> appSettings, Contexto contexto)
+    public PersonRepository(IOptions<AppSettings> appSettings, Contexto contexto) : base(appSettings)
     {
         _contexto = contexto;
 
         _appSettings = appSettings;
     }
 
+    #region EF Core
     /// <summary>
     /// Create a Person
     /// </summary>
@@ -69,13 +71,13 @@ public class PersonRepository : IPersonRepository
             if (withDependencies)
             {
                 var person = await _contexto.Persons
-                         // Include user in Person.
+                            // Include user in Person.
                             .Include(person => person.User)
-                         // Include list of contacts in Person. 
+                            // Include list of contacts in Person. 
                             .Include(person => person.Contacts)
-                         // Include list of professions in Person.
+                            // Include list of professions in Person.
                             .Include(person => person.Professions)
-                         // Return one Person when Id queal a pernsoId.
+                        // Return one Person when Id queal a pernsoId.
                         .FirstOrDefaultAsync(person => person.Id.Equals(personId));
 
                 // Return person.
@@ -196,4 +198,9 @@ public class PersonRepository : IPersonRepository
             return (false, null);
         }
     }
+    #endregion
+
+    #region Dapper
+    
+    #endregion
 }
