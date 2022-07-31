@@ -445,6 +445,11 @@ public static class ExtensionsConfigurations
     {
         return services.AddCors(options =>
         {
+            options.AddPolicy("HubPolicy", policy =>
+            {
+                policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://toolswebapp.netlify.app/").AllowCredentials();
+            });
+
             options.AddPolicy("CorsPolicy", policy =>
             {
                 policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();

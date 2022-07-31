@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
 namespace APPLICATION.INFRAESTRUTURE.SIGNALR;
 
 public class Hubs : Hub
 {
+    [EnableCors("HubPolicy")]
     public async Task Notifycations()
     {
         while (true)
