@@ -1,15 +1,23 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Serilog;
 
 namespace APPLICATION.INFRAESTRUTURE.SIGNALR;
 
 public class Hubs : Hub
 {
-    public async IAsyncEnumerable<DateTime> Notifycations(CancellationToken cancellationToken)
+    public async Task Notifycations()
     {
         while (true)
         {
-            yield return DateTime.UtcNow;
-            await Task.Delay(1000, cancellationToken);
+            await Clients.All.SendAsync("ReceiveNotification", new
+            {
+                message = "Nova mensagem teste 123",
+                date = DateTime.Now,
+            });
+
+            Log.Information("Adicionado");
+
+           await Task.Delay(5000);
         }
     }
 }

@@ -233,7 +233,7 @@ public static class ExtensionsConfigurations
         services
             .AddAuthorization(options =>
             {
-                options.AddPolicy("User", policy => policy.RequireClaim("permission", "admin", "master"));
+                options.AddPolicy("User", policy => policy.RequireClaim("permission", "admin"));
             });
 
         return services;
@@ -447,7 +447,7 @@ public static class ExtensionsConfigurations
         {
             options.AddPolicy("CorsPolicy", policy =>
             {
-                policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5173", "https://toolswebapp.netlify.app/").AllowCredentials();
             });
         });
     }
@@ -681,6 +681,11 @@ public static class ExtensionsConfigurations
         return application;
     }
 
+    /// <summary>
+    /// Retorna um provider do service.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
     private static ServiceProvider GetProvider(this IServiceCollection services)
     {
         return services.BuildServiceProvider();

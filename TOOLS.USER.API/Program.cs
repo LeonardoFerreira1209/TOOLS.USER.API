@@ -65,8 +65,6 @@ try
         .UseSwaggerConfigurations(configurations)
         .UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
-
             endpoints.MapHub<Hubs>("/notify");
         });
 
