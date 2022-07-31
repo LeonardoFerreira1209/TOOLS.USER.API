@@ -447,7 +447,7 @@ public static class ExtensionsConfigurations
         {
             options.AddPolicy("CorsPolicy", policy =>
             {
-                policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://toolswebapp.netlify.app/").AllowCredentials();
+                policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
             });
         });
     }
