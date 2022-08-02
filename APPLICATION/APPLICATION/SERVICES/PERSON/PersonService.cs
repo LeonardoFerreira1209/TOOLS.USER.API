@@ -1,12 +1,15 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
+using APPLICATION.DOMAIN.CONTRACTS.SIGNALR;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.PERSON;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
+using APPLICATION.INFRAESTRUTURE.SIGNALR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
 namespace APPLICATION.APPLICATION.SERVICES.PERSON;
@@ -15,8 +18,11 @@ public class PersonService : IPersonService
 {
     private readonly IPersonRepository _personRepository;
 
-    public PersonService(IPersonRepository personRepository)
+    private readonly IHubContext<TetseHub, ISignalR> _hub;
+
+    public PersonService(IPersonRepository personRepository, IHubContext<TetseHub, ISignalR> hub)
     {
+        _hub = hub;
         _personRepository = personRepository;
     }
 
@@ -35,16 +41,23 @@ public class PersonService : IPersonService
             Log.Information($"[LOG INFORMATION] - Criando pessoa referente ao usuário.\n");
 
             // Create person
-            await _personRepository.Create(personFastRequest, userId);
+            var (success, person) = await _personRepository.Create(personFastRequest, userId);
 
-            Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
+            if (success is true)
+            {
+                Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
 
-            // Response success.
-            var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Pessoa criada com sucesso!") });
+                // Response success.
+                var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Pessoa criada com sucesso!") });
 
-            // Return response.
-            return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessCreated };
+                // SignalR
+                await new Hubs().Notifications($"Pessoa cadastrada com sucesso: {person.FirstName} {person.LastName}");
 
+                // Return response.
+                return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessCreated };
+            }
+
+            throw new Exception("Erro ao adicionar Pessoa.");
         }
         catch (Exception exception)
         {
@@ -134,10 +147,10 @@ public class PersonService : IPersonService
             var (success, persons) = await _personRepository.GetAll(true);
 
             // Is success or persons is null.
-            if (success is false || persons is null || persons.Any() is false) 
+            if (success is false || persons is null || persons.Any() is false)
             {
                 // Persons is null.
-                if (persons  is null || persons.Any() is false)
+                if (persons is null || persons.Any() is false)
                 {
                     Log.Information($"[LOG INFORMATION] - Pessoas não encontrada.\n");
 
@@ -156,6 +169,8 @@ public class PersonService : IPersonService
                 // Return response erro.
                 return new ObjectResult(apiResponseErrorFailed) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
             }
+
+            await _hub.Clients.All.ReceiveMessage("teste");
 
             Log.Information($"[LOG INFORMATION] - Pessoas recuperadas com sucesso.\n");
 

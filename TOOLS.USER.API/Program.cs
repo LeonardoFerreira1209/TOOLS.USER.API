@@ -2,7 +2,6 @@ using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.INFRAESTRUTURE.SIGNALR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
 
 try

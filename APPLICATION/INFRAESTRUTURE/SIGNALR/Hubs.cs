@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
@@ -6,20 +6,21 @@ namespace APPLICATION.INFRAESTRUTURE.SIGNALR;
 
 public class Hubs : Hub
 {
-    [EnableCors("HubPolicy")]
-    public async Task Notifycations()
+    #region Person
+    public async Task GetPersonToView(PersonResponse personResponse)
     {
-        while (true)
+        await Clients.All.SendAsync("ReceivePersonToView", personResponse);
+    }
+    #endregion
+
+    public async Task Notifications(string message)
+    {
+        await Clients.All.SendAsync("ReceiveNotification", new
         {
-            await Clients.All.SendAsync("ReceiveNotification", new
-            {
-                message = "Nova mensagem teste 123",
-                date = DateTime.Now,
-            });
+            message = message,
+            date = DateTime.Now,
+        });
 
-            Log.Information("Adicionado");
-
-           await Task.Delay(5000);
-        }
+        Log.Information("Adicionado");
     }
 }
