@@ -1,7 +1,8 @@
 using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.INFRAESTRUTURE.SIGNALR;
+using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
 
 try
@@ -62,10 +63,7 @@ try
         .UseCors("CorsPolicy")
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
-        .UseEndpoints(endpoints =>
-        {
-            endpoints.MapHub<Hubs>("/notify");
-        });
+        .UseEndpoints();
 
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);

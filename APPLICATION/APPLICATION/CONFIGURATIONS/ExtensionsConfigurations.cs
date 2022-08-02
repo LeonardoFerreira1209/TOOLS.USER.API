@@ -24,6 +24,7 @@ using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
 using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
+using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -510,6 +511,22 @@ public static class ExtensionsConfigurations
 
                 await context.Response.WriteAsync(result);
             }
+        });
+
+        return application;
+    }
+
+    /// <summary>
+    /// Coniguras os endpoints & Hubs
+    /// </summary>
+    /// <param name="application"></param>
+    /// <returns></returns>
+    public static IApplicationBuilder UseEndpoints(this IApplicationBuilder application)
+    {
+        application.UseEndpoints(endpoints =>
+        {
+            endpoints.MapHub<HubNotify>("/notify");
+            endpoints.MapHub<HubPerson>("/person");
         });
 
         return application;

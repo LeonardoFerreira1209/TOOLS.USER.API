@@ -1,12 +1,13 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
-using APPLICATION.DOMAIN.CONTRACTS.SIGNALR;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.PERSON;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
-using APPLICATION.INFRAESTRUTURE.SIGNALR;
+using APPLICATION.INFRAESTRUTURE.SIGNALR.CLIENTS;
+using APPLICATION.INFRAESTRUTURE.SIGNALR.DTOS;
+using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -18,11 +19,14 @@ public class PersonService : IPersonService
 {
     private readonly IPersonRepository _personRepository;
 
-    private readonly IHubContext<TetseHub, ISignalR> _hub;
+    private readonly IHubContext<HubNotify, INotifyClient> _hubNotify;
+    private readonly IHubContext<HubPerson, IPersonClient> _hubPerson;
 
-    public PersonService(IPersonRepository personRepository, IHubContext<TetseHub, ISignalR> hub)
+    public PersonService(IPersonRepository personRepository, IHubContext<HubNotify, INotifyClient> hubNotify, IHubContext<HubPerson, IPersonClient> hubPerson)
     {
-        _hub = hub;
+        _hubNotify = hubNotify;
+        _hubPerson = hubPerson;
+
         _personRepository = personRepository;
     }
 
@@ -51,7 +55,7 @@ public class PersonService : IPersonService
                 var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Pessoa criada com sucesso!") });
 
                 // SignalR
-                await new Hubs().Notifications($"Pessoa cadastrada com sucesso: {person.FirstName} {person.LastName}");
+                await _hubPerson.Clients.All.ReceiveMessage(person.ToResponse()); await _hubNotify.Clients.All.ReceiveMessage(new Notify($"{person.FirstName} {person.LastName} foi adicionado com sucesso."));
 
                 // Return response.
                 return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessCreated };
@@ -169,8 +173,6 @@ public class PersonService : IPersonService
                 // Return response erro.
                 return new ObjectResult(apiResponseErrorFailed) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
             }
-
-            await _hub.Clients.All.ReceiveMessage("teste");
 
             Log.Information($"[LOG INFORMATION] - Pessoas recuperadas com sucesso.\n");
 
