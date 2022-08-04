@@ -116,7 +116,7 @@ jobs:
           # comma separated list of XML/JSON/YAML files in which tokens are to be substituted. Files names must be specified relative to the folder-path.
           files: '${{env.DOTNET_ROOT}}/myapp/appsettings.json'
         env:
-          ConnectionStrings.BaseDados: ${{ __CONNECTION_STRING_BASE__ }}
+          ConnectionStrings.BaseDados: ${{ "Tetse" }}
   
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
