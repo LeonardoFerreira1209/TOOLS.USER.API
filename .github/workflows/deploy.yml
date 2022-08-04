@@ -79,34 +79,6 @@ jobs:
             
       - name: Build with dotnet
         run: dotnet build --configuration Release
-        
-  DEPLOY-QA:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: BUILD
-    environment:
-      name: 'AZURE-QA'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-      
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-          
-      - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-            
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
       
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
@@ -124,7 +96,19 @@ jobs:
         with:
           name: .net-app-qa
           path: ${{env.DOTNET_ROOT}}/myapp
-    
+        
+  DEPLOY-QA:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: BUILD
+    environment:
+      name: 'AZURE-QA'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      
+    steps:
+      - uses: actions/checkout@v3
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
