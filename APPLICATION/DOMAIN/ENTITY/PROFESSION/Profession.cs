@@ -1,16 +1,12 @@
-﻿using APPLICATION.DOMAIN.ENTITY.COMPANY;
+﻿using APPLICATION.DOMAIN.ENTITY.BASE;
+using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 
 namespace APPLICATION.DOMAIN.ENTITY.PROFESSION;
 
-public class Profession
+public class Profession: BaseEntity
 {
     #region Base
-    /// <summary>
-    /// Idemtificador da profissão.
-    /// </summary>
-    public Guid Id { get; set; }
-
     /// <summary>
     /// Cargo
     /// </summary>

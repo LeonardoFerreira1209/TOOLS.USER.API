@@ -74,8 +74,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                        .AddClaims(claims.ToList())
                        .Builder(user));
 
-                    // Save tokenin database
-                    //await _userManager.GenerateUserTokenAsync(user, "TOOLS.USER.API", token.Value);
+                    Log.Information($"[LOG INFORMATION] - Token gerado {token.Value}.\n");
 
                     return token;
                 }

@@ -1,7 +1,7 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using Microsoft.AspNetCore.Identity;
 
-namespace APPLICATION.DOMAIN.UTILS.Extensions;
+namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class UserExtensions
 {

@@ -1,18 +1,14 @@
-﻿using APPLICATION.DOMAIN.ENTITY.CONTACT;
+﻿using APPLICATION.DOMAIN.ENTITY.BASE;
+using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
 
 namespace APPLICATION.DOMAIN.ENTITY.PERSON
 {
-    public class Person
+    public class Person : BaseEntity
     {
         #region Base
-        /// <summary>
-        /// Identificador.
-        /// </summary>
-        public Guid Id { get; set; }
-
         /// <summary>
         /// Primeiro nome.
         /// </summary>

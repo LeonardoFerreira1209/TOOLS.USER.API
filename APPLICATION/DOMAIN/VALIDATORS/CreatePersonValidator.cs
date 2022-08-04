@@ -1,5 +1,5 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
-using APPLICATION.DOMAIN.UTILS.Extensions;
+using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.ENUMS;
 using DocumentValidator;
 using FluentValidation;
@@ -8,6 +8,9 @@ namespace APPLICATION.DOMAIN.VALIDATORS;
 
 public class CreatePersonValidator : AbstractValidator<PersonFastRequest>
 {
+    /// <summary>
+    /// Classe responsavel por validar pessoas.
+    /// </summary>
     public CreatePersonValidator()
     {
         #region Person
@@ -29,7 +32,17 @@ public class CreatePersonValidator : AbstractValidator<PersonFastRequest>
         #endregion
     }
 
+    /// <summary>
+    /// Método responsavel por validar um CPF.
+    /// </summary>
+    /// <param name="CPF"></param>
+    /// <returns></returns>
     private static bool CPFValidate(string CPF) => CpfValidation.Validate(CPF);
 
+    /// <summary>
+    /// Método responsavel por validar um sexo.
+    /// </summary>
+    /// <param name="gender"></param>
+    /// <returns></returns>
     private static bool GenderValidate(Gender gender) => gender == Gender.Male || gender == Gender.Female;
 }

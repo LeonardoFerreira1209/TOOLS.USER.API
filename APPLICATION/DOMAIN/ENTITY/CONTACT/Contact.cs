@@ -1,14 +1,10 @@
-﻿using APPLICATION.DOMAIN.ENTITY.PERSON;
+﻿using APPLICATION.DOMAIN.ENTITY.BASE;
+using APPLICATION.DOMAIN.ENTITY.PERSON;
 
 namespace APPLICATION.DOMAIN.ENTITY.CONTACT;
 
-public class Contact
+public class Contact : BaseEntity
 {
-    /// <summary>
-    /// Identificador
-    /// </summary>
-    public Guid Id { get; set; }
-
     /// <summary>
     /// Name
     /// </summary>

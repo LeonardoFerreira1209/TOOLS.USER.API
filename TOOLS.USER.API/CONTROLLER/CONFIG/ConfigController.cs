@@ -9,6 +9,6 @@ public class ConfigController : ControllerBase
     [HttpOptions("options")]
     public async Task<ApiResponse<object>> Options()
     {
-        return await Task.FromResult(new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(APPLICATION.DOMAIN.ENUM.StatusCodes.SuccessAccepted, "Headers suportados pela aplicação.") }));
+        return await Task.FromResult(new ApiResponse<object>(true, APPLICATION.DOMAIN.ENUM.StatusCodes.SuccessAccepted, new List<DadosNotificacao> { new DadosNotificacao("Headers suportados pela aplicação.") }));
     }
 }

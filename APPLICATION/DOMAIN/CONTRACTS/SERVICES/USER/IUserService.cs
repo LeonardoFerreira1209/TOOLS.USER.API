@@ -1,5 +1,7 @@
-﻿using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
+﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
@@ -10,23 +12,23 @@ public interface IUserService
     /// <summary>
     /// Método responsável por fazer a autenticação do usuário
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="loginRequest"></param>
     /// <returns></returns>
-    public Task<ObjectResult> Authentication(LoginRequest loginRequest);
+    public Task<ApiResponse<object>> Authentication(LoginRequest loginRequest);
 
     /// <summary>
     /// Método responsável por criar um novo usuário.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="personFastRequest"></param>
     /// <returns></returns>
-    public Task<ObjectResult> Create(PersonFastRequest personFastRequest);
+    public Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest);
 
     /// <summary>
     /// Método responsavel por ativar um usuário.
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ObjectResult> Activate(ActivateUserRequest activateUserRequest);
+    public Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest);
     #endregion
 
     #region Claims
@@ -36,7 +38,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="claimRequest"></param>
     /// <returns></returns>
-    Task<ObjectResult> AddClaim(string username, ClaimRequest claimRequest);
+    Task<ApiResponse<object>> AddClaim(string username, ClaimRequest claimRequest);
 
     /// <summary>
     /// Método responsavel por remover uma claim do usuário.
@@ -44,7 +46,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="claimRequest"></param>
     /// <returns></returns>
-    Task<ObjectResult> RemoveClaim(string username, ClaimRequest claimRequest);
+    Task<ApiResponse<object>> RemoveClaim(string username, ClaimRequest claimRequest);
     #endregion
 
     #region Roles
@@ -54,7 +56,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="roleName"></param>
     /// <returns></returns>
-    Task<ObjectResult> AddRole(string username, string roleName);
+    Task<ApiResponse<object>> AddRole(string username, string roleName);
 
     /// <summary>
     /// Método responsavel por remover uma role do usuário.
@@ -62,6 +64,6 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="roleName"></param>
     /// <returns></returns>
-    Task<ObjectResult> RemoveRole(string username, string roleName);
+    Task<ApiResponse<object>> RemoveRole(string username, string roleName);
     #endregion
 }

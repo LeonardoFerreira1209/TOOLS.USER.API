@@ -2,6 +2,7 @@
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
+using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -9,18 +10,16 @@ using Newtonsoft.Json;
 using Serilog.Context;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+using TOOLS.USER.API.CONTROLLER.BASE;
 
 namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
 {
-    [Route("api/[controller]")] [ApiController]
-    public class ClaimController : ControllerBase
+    [Route("api/[controller]")][ApiController]
+    public class ClaimController : BaseController
     {
         private readonly IUserService _userService;
 
-        public ClaimController(IUserService userService)
-        {
-            _userService = userService;
-        }
+        public ClaimController(IUserService userService) { _userService = userService; }
 
         /// <summary>
         /// Método responsável por adicionar uma claim no usuário
@@ -28,13 +27,13 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        [HttpPost("addclaim")]
-        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        
+        [HttpPost("addclaim")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Adicionar claim no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ObjectResult> AddClaim([Required] string username, [FromBody] ClaimRequest claimRequest)
+        public async Task<ApiResponse<object>> AddClaim([Required] string username, [FromBody] ClaimRequest claimRequest)
         {
             using (LogContext.PushProperty("Controller", "ClaimController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequest)))
@@ -50,13 +49,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpDelete("removeclaim")]
-        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [HttpDelete("removeclaim")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ObjectResult> RemoveClaim([Required] string username, string claimName)
+        public async Task<ApiResponse<object>> RemoveClaim([Required] string username, string claimName)
         {
             using (LogContext.PushProperty("Controller", "ClaimController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimName)))
