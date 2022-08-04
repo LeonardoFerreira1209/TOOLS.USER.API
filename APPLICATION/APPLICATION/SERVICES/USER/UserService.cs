@@ -148,7 +148,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Response error
                 var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -211,25 +211,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         // Return response success.
                         return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessCreated };
                     }
-                    else
-                    {
-                        // Response not success.
-                        var apiResponsePersonError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, "Falha ao cadastra usuário. tente novamento")).ToList());
 
-                        // Return response not success.
-                        return new ObjectResult(apiResponsePersonError) { StatusCode = (int)StatusCodes.ServerErrorInternalServerError };
-                    }
+                    throw new Exception("Falha ao cadastra usuário. tente novamento!");
                 }
 
-                // Response not success.
-                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
-
-                // Return response not success.
-                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
+                throw new Exception("Falha ao cadastra usuário. tente novamento!");
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Create a apiResponse error.
                 var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -274,17 +264,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n");
-
-                // Response not success.
-                var apiResponseError = new ApiResponse<object>(response.Succeeded, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Falha ao ativar usuário.") });
-
-                // Return response
-                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
+                Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n"); throw new Exception("Falha ao ativar usuário.");
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
                 var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -331,17 +315,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao adicionar claim.\n");
-
-                // Not success response.
-                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(StatusCodes.ErrorBadRequest, e.Description)).ToList());
-
-                // Return not success response.
-                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
+                Log.Information($"[LOG ERROR] - Falha ao adicionar claim.\n");  throw new Exception("Falha ao adicionar claim.");
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
                 var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -387,17 +365,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao remover claim.\n");
-
-                // Response not success
-                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
-
-                // Return response
-                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
+                Log.Information($"[LOG ERROR] - Falha ao remover claim.\n"); throw new Exception("Falha ao remover claim.");
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
                 var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -443,17 +415,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao adicionar role.\n");
-
-                // Response not success
-                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
-
-                // Return response
-                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
+                Log.Information($"[LOG ERROR] - Falha ao adicionar role.\n"); throw new Exception("Falha ao adicionar role.");
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
                 var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -499,17 +465,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     return new ObjectResult(apiResponseSuccess) { StatusCode = (int)StatusCodes.SuccessOK };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
-
-                // Response not success.
-                var apiResponseError = new ApiResponse<object>(response.Succeeded, response.Errors.Select(e => new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, e.Description)).ToList());
-
-                // Return response.
-                return new ObjectResult(apiResponseError) { StatusCode = (int)StatusCodes.ErrorBadRequest };
+                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n"); throw new Exception("Falha ao remover role.");
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
                 var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -548,14 +508,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     return identityResult;
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
-
-                // Return identity result.
-                return identityResult;
+                throw new Exception("Falha ao cadastra usuário. tente novamento!");
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error.
                 throw new Exception(exception.Message);
@@ -598,7 +555,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error.
                 throw new Exception(exception.Message);

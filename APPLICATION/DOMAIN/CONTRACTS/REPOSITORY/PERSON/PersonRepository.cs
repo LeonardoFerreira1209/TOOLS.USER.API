@@ -107,7 +107,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     /// <returns></returns>
     public async Task<(bool success, IEnumerable<Person> persons)> GetAll(bool withDependencies)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(GetAll)}\n");
 
         try
         {
@@ -163,7 +163,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // return false and null value.
             return (false, null);

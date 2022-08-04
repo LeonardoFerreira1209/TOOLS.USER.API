@@ -65,7 +65,7 @@ public class PersonService : IPersonService
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
             var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -106,13 +106,7 @@ public class PersonService : IPersonService
                     return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoa.\n");
-
-                // Response error.
-                var apiResponseErrorFailed = new ApiResponse<object>(success, person, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, "Falha ao recuperar pessoa!") });
-
-                // Return response erro.
-                return new ObjectResult(apiResponseErrorFailed) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+                Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoa.\n"); throw new Exception("Falha ao recuperar pessoa.");
             }
 
             Log.Information($"[LOG INFORMATION] - Pessoa recuperada com sucesso.\n");
@@ -125,7 +119,7 @@ public class PersonService : IPersonService
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
             var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -165,13 +159,7 @@ public class PersonService : IPersonService
                     return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoas.\n");
-
-                // Response error.
-                var apiResponseErrorFailed = new ApiResponse<object>(success, persons, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, "Falha ao recuperar pessoa!") });
-
-                // Return response erro.
-                return new ObjectResult(apiResponseErrorFailed) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+                Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoas.\n"); throw new Exception("Falha ao recuperar pessoas.");
             }
 
             Log.Information($"[LOG INFORMATION] - Pessoas recuperadas com sucesso.\n");
@@ -184,7 +172,7 @@ public class PersonService : IPersonService
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
             var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -211,16 +199,7 @@ public class PersonService : IPersonService
             var (success, person) = await _personRepository.CompleteRegister(personFullRequest);
 
             // Is not success
-            if (success is false)
-            {
-                Log.Information($"[LOG INFORMATION] - Falha ao finalizar registro da pessoa {personFullRequest.FirstName} {personFullRequest.LastName}.\n");
-
-                // Response error.
-                var apiResponseError = new ApiResponse<object>(success, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Registro da pessoa falhou.") });
-
-                // Return error.
-                return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorBadRequest };
-            }
+            if (success is false) throw new Exception("Registro de pessoa falhou.");
 
             Log.Information($"[LOG INFORMATION] - Registro de usuário completado com sucesso {person.FirstName} {person.LastName}.\n");
 
@@ -232,7 +211,7 @@ public class PersonService : IPersonService
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
             var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
@@ -310,7 +289,7 @@ public class PersonService : IPersonService
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
             var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
