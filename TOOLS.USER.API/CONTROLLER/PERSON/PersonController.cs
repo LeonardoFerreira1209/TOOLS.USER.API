@@ -12,30 +12,25 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace TOOLS.USER.API.CONTROLLER.PERSON;
 
-[Route("api/[controller]")]
-[ApiController]
+[Route("api/[controller]")][ApiController]
 public class PersonController : ControllerBase
 {
     private readonly IPersonService _personService;
 
-    public PersonController(IPersonService personService)
-    {
-        _personService = personService;
-    }
+    public PersonController(IPersonService personService) { _personService = personService; }
 
     /// <summary>
     /// Método responsavel por personId.
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    [HttpGet("get/{personId}")]
-    [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+    [HttpGet("get/{personId}")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Recuperar uma pessoa", Description = "Método responsável por recuperar uma pessoa")]
     [ProducesResponseType(typeof(ApiResponse<PersonResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-    public async Task<ObjectResult> Get(Guid personId)
+    public async Task<ApiResponse<object>> Get(Guid personId)
     {
         using (LogContext.PushProperty("Controller", "PersonController"))
         using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personId)))
@@ -50,14 +45,13 @@ public class PersonController : ControllerBase
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    [HttpGet("getAll")]
-    [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+    [HttpGet("getAll")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Recuperar todas as pessoas", Description = "Método responsável por recuperar todas as pessoa")]
     [ProducesResponseType(typeof(ApiResponse<List<PersonResponse>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-    public async Task<ObjectResult> GetAll()
+    public async Task<ApiResponse<object>> GetAll()
     {
         using (LogContext.PushProperty("Controller", "PersonController"))
         using (LogContext.PushProperty("Payload", null))
@@ -72,14 +66,13 @@ public class PersonController : ControllerBase
     /// </summary>
     /// <param name="personFullRequets"></param>
     /// <returns></returns>
-    [HttpPost("completeRegister")]
-    [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+    [HttpPost("completeRegister")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Completar cadastro da Pessoa", Description = "Método responsável por completar o cadastro de uma pessoa")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-    public async Task<ObjectResult> CompleteRegister(PersonFullRequest personFullRequets)
+    public async Task<ApiResponse<object>> CompleteRegister(PersonFullRequest personFullRequets)
     {
         using (LogContext.PushProperty("Controller", "PersonController"))
         using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personFullRequets)))
@@ -95,14 +88,13 @@ public class PersonController : ControllerBase
     /// <param name="personId"></param>
     /// <param name="formFile"></param>
     /// <returns></returns>
-    [HttpPatch("profileImage/{personId}")]
-    [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+    [HttpPatch("profileImage/{personId}")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Adicionar imagem de perfil na Pessoa", Description = "Método responsável por adicionar uma imagem de perfil em uma pessoa.")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-    public async Task<ObjectResult> ProfileImage(Guid personId, IFormFile formFile)
+    public async Task<ApiResponse<object>> ProfileImage(Guid personId, IFormFile formFile)
     {
         using (LogContext.PushProperty("Controller", "PersonController"))
         using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(formFile)))

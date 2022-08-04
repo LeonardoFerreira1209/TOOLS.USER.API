@@ -7,15 +7,7 @@ namespace APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 /// </summary>
 public class DadosNotificacao
 {
-    public DadosNotificacao(StatusCodes statusCodes, string mensagem)
-    {
-        StatusCode = statusCodes; Mensagem = mensagem;
-    }
-
-    /// <summary>
-    /// Código de status da requisição.
-    /// </summary>
-    public StatusCodes StatusCode { get; set; }
+    public DadosNotificacao(string mensagem) { Mensagem = mensagem; }
 
     /// <summary>
     /// Mensagem da notificação.
@@ -31,15 +23,20 @@ public class ApiResponse<T> where T : class
 {
     public ApiResponse() { }
 
-    public ApiResponse(bool sucesso, List<DadosNotificacao> notificacaos = null)
+    public ApiResponse(bool sucesso, StatusCodes statusCode, List<DadosNotificacao> notificacaos = null)
     {
-        Sucesso = sucesso; Notificacoes = notificacaos;
+        Sucesso = sucesso; StatusCode = statusCode; Notificacoes = notificacaos;
     }
 
-    public ApiResponse(bool sucesso, T dados = null, List<DadosNotificacao> notificacoes = null)
+    public ApiResponse(bool sucesso, StatusCodes statusCode, T dados = null, List<DadosNotificacao> notificacoes = null)
     {
-        Sucesso = sucesso; Dados = dados; Notificacoes = notificacoes;
+        Sucesso = sucesso; StatusCode = statusCode; Dados = dados; Notificacoes = notificacoes;
     }
+
+    /// <summary>
+    /// Status cde.
+    /// </summary>
+    public StatusCodes StatusCode { get; set; }
 
     /// <summary>
     /// Retorna true se a requisição para API foi bem sucedida.

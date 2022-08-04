@@ -15,6 +15,7 @@ using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.ENUMS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
@@ -214,6 +215,8 @@ public static class ExtensionsConfigurations
                 {
                     Log.Information($"[LOG INFORMATION] {nameof(JwtBearerEvents)} - OnTokenValidated - {context.SecurityToken}\n");
 
+                    GlobalData<object>.GlobalItems.Add(new KeyValuePair<string, object>("Authorization", context.SecurityToken));
+
                     return Task.CompletedTask;
                 }
             };
@@ -391,6 +394,7 @@ public static class ExtensionsConfigurations
             _applicationInsightsKey = configurations.GetValue<string>("ApplicationInsights:InstrumentationKey");
         }
 
+
         services
             .AddTransient(x => configurations)
             // Services
@@ -403,7 +407,7 @@ public static class ExtensionsConfigurations
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IPersonRepository, PersonRepository>();
-
+            
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -616,6 +620,9 @@ public static class ExtensionsConfigurations
                 CPF = "32965808086",
                 RG = "371061775",
                 Gender = Gender.Male,
+                Status = Status.Active,
+                CreatedUserId = user.Id,
+                Created = DateTime.Now,
             };
 
             // Set data in Contact.
@@ -630,6 +637,9 @@ public static class ExtensionsConfigurations
                     Number = 545,
                     PhoneNumber = "+55(18)99776-8856",
                     PersonId = person.Id,
+                    Status = Status.Active,
+                    CreatedUserId = user.Id,
+                    Created = DateTime.Now,
                 }
             };
 
@@ -639,6 +649,9 @@ public static class ExtensionsConfigurations
                 Name = "HYPER.IO",
                 Description = "tecnology & future solutions.",
                 StartDate = DateTime.Now,
+                Status = Status.Active,
+                CreatedUserId = user.Id,
+                Created = DateTime.Now,
             };
 
             // Add Company.
@@ -656,7 +669,10 @@ public static class ExtensionsConfigurations
                     StartDate = DateTime.Now,
                     EndDate = DateTime.Now,
                     Wage = 11000,
-                    Workload = DateTime.Now
+                    Workload = DateTime.Now,
+                    Status = Status.Active,
+                    CreatedUserId = user.Id,
+                    Created = DateTime.Now,
                 }
             };
 

@@ -1,15 +1,11 @@
-﻿using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+﻿using APPLICATION.DOMAIN.ENTITY.BASE;
+using APPLICATION.DOMAIN.ENTITY.PROFESSION;
 
 namespace APPLICATION.DOMAIN.ENTITY.COMPANY;
 
-public class Company
+public class Company : BaseEntity
 {
     #region Base
-    /// <summary>
-    /// Identificador.
-    /// </summary>
-    public Guid Id { get; set; }
-
     /// <summary>
     /// Nome da empresa.
     /// </summary>

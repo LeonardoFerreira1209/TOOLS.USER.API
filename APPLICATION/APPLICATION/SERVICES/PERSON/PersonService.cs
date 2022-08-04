@@ -2,8 +2,7 @@
 using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
-using APPLICATION.DOMAIN.UTILS.Extensions;
-using APPLICATION.DOMAIN.UTILS.PERSON;
+using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.CLIENTS;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.DTOS;
@@ -36,7 +35,7 @@ public class PersonService : IPersonService
     /// <param name="personFastRequest"></param>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<ObjectResult> Create(PersonFastRequest personFastRequest, Guid userId)
+    public async Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest, Guid userId)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(Create)}\n");
 
@@ -47,31 +46,27 @@ public class PersonService : IPersonService
             // Create person
             var (success, person) = await _personRepository.Create(personFastRequest, userId);
 
+            // Is success...
             if (success is true)
             {
                 Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
 
-                // Response success.
-                var apiResponseSuccess = new ApiResponse<object>(true, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessCreated, "Pessoa criada com sucesso!") });
-
                 // SignalR
                 await _hubPerson.Clients.All.ReceiveMessage(person.ToResponse()); await _hubNotify.Clients.All.ReceiveMessage(new Notify($"{person.FirstName} {person.LastName} foi adicionado com sucesso."));
 
-                // Return response.
-                return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessCreated };
+                // Response success.
+                return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessCreated, new List<DadosNotificacao> { new DadosNotificacao("Pessoa criada com sucesso!") });
             }
 
-            throw new Exception("Erro ao adicionar Pessoa.");
+            // Response error.
+            return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Falha ao criar pessoa!") });
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
-            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
-
-            // Return error.
-            return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 
@@ -80,7 +75,7 @@ public class PersonService : IPersonService
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    public async Task<ObjectResult> Get(Guid personId)
+    public async Task<ApiResponse<object>> Get(Guid personId)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(Get)}\n");
 
@@ -100,10 +95,7 @@ public class PersonService : IPersonService
                     Log.Information($"[LOG INFORMATION] - Pessoa não encontrada.\n");
 
                     // Response error.
-                    var apiResponseError = new ApiResponse<object>(success, person, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, "Pessoa não encontrada!") });
-
-                    // Return response.
-                    return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
+                    return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.ErrorNotFound, person, new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontrada!") });
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoa.\n"); throw new Exception("Falha ao recuperar pessoa.");
@@ -112,20 +104,14 @@ public class PersonService : IPersonService
             Log.Information($"[LOG INFORMATION] - Pessoa recuperada com sucesso.\n");
 
             // Response success
-            var apiResponseSuccess = new ApiResponse<object>(success, person.ToResponse(), new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Pessoa recuperada com sucesso!") });
-
-            // Return repsonse.
-            return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessOK };
+            return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessOK, person.ToResponse(), new List<DadosNotificacao> { new DadosNotificacao("Pessoa recuperada com sucesso!") });
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
-            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
-
-            // Return error.
-            return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 
@@ -133,7 +119,7 @@ public class PersonService : IPersonService
     /// Método responsavel por recuperar todas as pessoas.
     /// </summary>
     /// <returns></returns>
-    public async Task<ObjectResult> GetAll()
+    public async Task<ApiResponse<object>> GetAll()
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(GetAll)}\n");
 
@@ -153,10 +139,7 @@ public class PersonService : IPersonService
                     Log.Information($"[LOG INFORMATION] - Pessoas não encontrada.\n");
 
                     // Response error.
-                    var apiResponseError = new ApiResponse<object>(success, persons, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, "Pessoa não encontrada!") });
-
-                    // Return response.
-                    return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
+                    return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.ErrorNotFound , persons, new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontrada!") });
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoas.\n"); throw new Exception("Falha ao recuperar pessoas.");
@@ -165,20 +148,14 @@ public class PersonService : IPersonService
             Log.Information($"[LOG INFORMATION] - Pessoas recuperadas com sucesso.\n");
 
             // Response success
-            var apiResponseSuccess = new ApiResponse<object>(success, persons.Select(person => person.ToResponse()), new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Pessoa recuperada com sucesso!") });
-
-            // Return repsonse.
-            return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessOK };
+            return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessOK, persons.Select(person => person.ToResponse()), new List<DadosNotificacao> { new DadosNotificacao("Pessoa recuperada com sucesso!") });
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
-            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
-
-            // Return error.
-            return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 
@@ -187,7 +164,7 @@ public class PersonService : IPersonService
     /// </summary>
     /// <param name="personFullRequest"></param>
     /// <returns></returns>
-    public async Task<ObjectResult> CompleteRegister(PersonFullRequest personFullRequest)
+    public async Task<ApiResponse<object>> CompleteRegister(PersonFullRequest personFullRequest)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(CompleteRegister)}\n");
 
@@ -198,26 +175,20 @@ public class PersonService : IPersonService
             // Complete Register.
             var (success, person) = await _personRepository.CompleteRegister(personFullRequest);
 
-            // Is not success
-            if (success is false) throw new Exception("Registro de pessoa falhou.");
+            // Is not success...
+            if (success is false) return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Falaha ao completar registro de pessoa.") });
 
             Log.Information($"[LOG INFORMATION] - Registro de usuário completado com sucesso {person.FirstName} {person.LastName}.\n");
 
             // Response success.
-            var apiResponseSuccess = new ApiResponse<object>(success, person, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Registro da pessoa completado com sucesso") });
-
-            // Return response.
-            return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessOK };
+            return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessOK, person, new List<DadosNotificacao> { new DadosNotificacao("Registro da pessoa completado com sucesso") });
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
-            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
-
-            // Return error.
-            return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 
@@ -227,7 +198,7 @@ public class PersonService : IPersonService
     /// <param name="imagem"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<ObjectResult> ProfileImage(Guid personId, IFormFile formFile)
+    public async Task<ApiResponse<object>> ProfileImage(Guid personId, IFormFile formFile)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(ProfileImage)}\n");
 
@@ -257,45 +228,30 @@ public class PersonService : IPersonService
                         Log.Information($"[LOG INFORMATION] - Falha ao adicionar imagem na pessoa.\n");
 
                         // Response error.
-                        var apiResponseError = new ApiResponse<object>(imageSuccess, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorBadRequest, "Adicionar imagem na pessoa falhou.") });
-
-                        // Return error.
-                        return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorBadRequest };
+                        return new ApiResponse<object>(imageSuccess, DOMAIN.ENUM.StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Adicionar imagem na pessoa falhou.") });
                     }
 
                     Log.Information($"[LOG INFORMATION] - Imagem adicionada com sucesso na pessoa.\n");
 
                     // Response success.
-                    var apiResponseSuccess = new ApiResponse<object>(imageSuccess, new FileContentResult(image, "image/jpg"), new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.SuccessOK, "Imagem adicionada com sucesso.") });
-
-                    // Return error.
-                    return new ObjectResult(apiResponseSuccess) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.SuccessOK };
+                    return new ApiResponse<object>(imageSuccess, DOMAIN.ENUM.StatusCodes.SuccessOK, new FileContentResult(image, "image/jpg"), new List<DadosNotificacao> { new DadosNotificacao("Imagem adicionada com sucesso.") });
                 }
 
                 Log.Information($"[LOG INFORMATION] - Pessoa não foi encontrada.\n");
 
                 // Response error.
-                var apiResponseErrorNotFound = new ApiResponse<object>(personSuccess, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorNotFound, "Pessoa não encontada.") });
-
-                // Return error.
-                return new ObjectResult(apiResponseErrorNotFound) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorNotFound };
+                return new ApiResponse<object>(personSuccess, DOMAIN.ENUM.StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontada.") });
             }
 
             // Response error.
-            var apiResponseErrorUnsupportedMediaType = new ApiResponse<object>(false, null, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ErrorUnsupportedMediaType, "Tipo de arquivo não é permitido.") });
-
-            // Return error.
-            return new ObjectResult(apiResponseErrorUnsupportedMediaType) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ErrorUnsupportedMediaType };
+            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ErrorUnsupportedMediaType, null, new List<DadosNotificacao> { new DadosNotificacao("Tipo de arquivo não é permitido.") });
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
-            var apiResponseError = new ApiResponse<object>(false, new List<DadosNotificacao> { new DadosNotificacao(DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, exception.Message) });
-
-            // Return error.
-            return new ObjectResult(apiResponseError) { StatusCode = (int)DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError };
+            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 }

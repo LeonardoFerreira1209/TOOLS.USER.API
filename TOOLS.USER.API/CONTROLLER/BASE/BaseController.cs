@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using APPLICATION.DOMAIN.UTILS.GLOBAL;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TOOLS.USER.API.CONTROLLER.BASE
 {
-    [Route("api/[controller]")] [ApiController]
-    public class BaseController : ControllerBase
-    {
-
-    }
+    public class BaseController : ControllerBase { }
 }

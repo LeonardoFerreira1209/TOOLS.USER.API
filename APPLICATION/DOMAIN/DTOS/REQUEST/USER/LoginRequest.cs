@@ -5,6 +5,12 @@
 /// </summary>
 public class LoginRequest
 {
+    public LoginRequest(string username, string password)
+    {
+        Username = username;
+        Password = password;
+    }
+
     /// <summary>
     /// Email do usuário
     /// </summary>

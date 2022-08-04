@@ -5,7 +5,7 @@ using FluentValidation.Results;
 using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace APPLICATION.DOMAIN.UTILS.Extensions;
+namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class Extensions
 {
@@ -77,7 +77,7 @@ public static class Extensions
 
         foreach (var erro in resultado.Errors)
         {
-            erros.Add(new DadosNotificacao((StatusCodes)Convert.ToInt32(erro.ErrorCode), erro.ErrorMessage));
+            erros.Add(new DadosNotificacao(erro.ErrorMessage));
         }
 
         return erros;

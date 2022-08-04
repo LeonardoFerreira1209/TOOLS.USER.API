@@ -12,8 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]")][ApiController]
     public class RoleController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -31,13 +30,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// </summary>
         /// <param name="roleRequest"></param>
         /// <returns></returns>
-        [HttpPost("addRole")]
-        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [HttpPost("addRole")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Adicionar role", Description = "Método responsável por Adicionar uma role")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ObjectResult> AddRole(RoleRequest roleRequest)
+        public async Task<ApiResponse<object>> AddRole(RoleRequest roleRequest)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleRequest)))
@@ -53,13 +51,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="roleName"></param>
         /// <param name="claimRequests"></param>
         /// <returns></returns>
-        [HttpPost("addClaimToRole")]
-        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [HttpPost("addClaimToRole")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Adicionar uma claim na role", Description = "Método responsável por Adicionar uma claim na role")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ObjectResult> AddClaimToRole([Required] string roleName, List<ClaimRequest> claimRequests)
+        public async Task<ApiResponse<object>> AddClaimToRole([Required] string roleName, List<ClaimRequest> claimRequests)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequests)))
@@ -75,14 +72,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="roleName"></param>
         /// <param name="claimRequests"></param>
         /// <returns></returns>
-        [HttpDelete("removeClaimToRole")]
-        [Authorize(Policy = "User")]
-        [EnableCors("CorsPolicy")]
+        [HttpDelete("removeClaimToRole")] [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover uma claim na role", Description = "Método responsável por Remover uma claim na role")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ObjectResult> RemoverClaimToRole([Required] string roleName, ClaimRequest claimRequests)
+        public async Task<ApiResponse<object>> RemoverClaimToRole([Required] string roleName, ClaimRequest claimRequests)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequests)))
@@ -98,13 +93,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpPost("addRoleToUser")]
-        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [HttpPost("addRoleToUser")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Adicionar role no usuário", Description = "Método responsável por Adicionar uma role no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ObjectResult> AddRoleToUser([Required] string username, string roleName)
+        public async Task<ApiResponse<object>> AddRoleToUser([Required] string username, string roleName)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))
@@ -120,13 +114,12 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpDelete("removeRoleToUser")]
-        [Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [HttpDelete("removeRoleToUser")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover role do usuário", Description = "Método responsável por Remover uma role do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ObjectResult> RemoveRoleToUser([Required] string username, string roleName)
+        public async Task<ApiResponse<object>> RemoveRoleToUser([Required] string username, string roleName)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))
