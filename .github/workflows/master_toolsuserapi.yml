@@ -133,7 +133,7 @@ jobs:
     permissions:
       contents: none
     runs-on: windows-latest
-    needs: BUILD
+    needs: AZURE-HOMOL
     environment:
       name: 'AZURE-HOMOL'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
