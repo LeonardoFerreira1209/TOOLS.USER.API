@@ -78,20 +78,6 @@ jobs:
             
       - name: Build with dotnet
         run: dotnet build --configuration Release
-          
-  DEPLOY-QA:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: BUILD
-    environment:
-      name: 'AZURE-QA'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-      
-    steps:
-      
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
         
       #substitute production appsettings entries to appsettings json file
       - name: App Settings Variable Substitution
@@ -103,17 +89,28 @@ jobs:
         
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-        
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app-qa
           path: ${{env.DOTNET_ROOT}}/myapp
+          
+  DEPLOY-QA:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: BUILD
+    environment:
+      name: 'AZURE-QA'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      
+    steps:
     
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: .net-app-qa
+          name: .net-app
           
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
