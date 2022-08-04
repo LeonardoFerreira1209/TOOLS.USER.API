@@ -108,8 +108,12 @@ jobs:
       name: 'AZURE-QA'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
       
- 
     steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+
       - name: Variable Substitution
         uses: microsoft/variable-substitution@v1
         with:
@@ -117,11 +121,6 @@ jobs:
           files: '${{env.DOTNET_ROOT}}/myapp/appsettings.json'
         env:
           ConnectionStrings.BaseDados: TESTE
-  
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
