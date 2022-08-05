@@ -102,7 +102,7 @@ jobs:
         with:
           files: '${{env.DOTNET_ROOT}}/myapp/appsettings.json'
         env:
-          ConnectionStrings.BaseDados: ${{ secrets.__CONNECTION_STRING_DATABASE__    
+          ConnectionStrings.BaseDados: ${{ secrets.__CONNECTION_STRING_DATABASE__ }}
       
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
