@@ -1,5 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.ENUMS;
+using System.Text.Json.Serialization;
 
 namespace APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE
 {
@@ -10,6 +11,7 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE
 
         public string LastName { get; set; }
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public Gender Gender { get; set; }
         #endregion
 

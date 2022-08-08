@@ -419,32 +419,21 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(BuildUser)}\n");
 
-            try
-            {
-                Log.Information("[LOG INFORMATION] - Criando usuário\n");
+            Log.Information("[LOG INFORMATION] - Criando usuário\n");
 
-                // Create User.
-                var identityResult = await _userManager.CreateAsync(user, userRequest.Password);
+            // Create User.
+            var identityResult = await _userManager.CreateAsync(user, userRequest.Password);
 
-                // Is not success...
-                if (identityResult.Succeeded is false) throw new Exception("Falha ao criar usuário.");
+            // Is not success...
+            if (identityResult.Succeeded is false) throw new Exception("Falha ao criar usuário.");
 
-                Log.Information($"[LOG INFORMATION] - Usuário criado com sucesso {user.UserName}, dados {JsonConvert.SerializeObject(userRequest)}\n");
+            Log.Information($"[LOG INFORMATION] - Usuário criado com sucesso {user.UserName}, dados {JsonConvert.SerializeObject(userRequest)}\n");
 
-                // Add Login to user.
-                await _userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
+            // Add Login to user.
+            await _userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
 
-                // Return result.
-                return identityResult;
-
-            }
-            catch (Exception exception)
-            {
-                Log.Error($"[LOG ERROR] - {exception.Message}\n");
-
-                // Error.
-                throw new Exception(exception.Message);
-            }
+            // Return result.
+            return identityResult;
         }
 
         /// <summary>
@@ -455,36 +444,27 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         private async Task ConfirmeUserForEmail(IdentityUser<Guid> user)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(ConfirmeUserForEmail)}\n");
+          
+            Log.Information($"[LOG INFORMATION] - Gerando codigo de confirmação de e-mail.\n");
 
-            try
+            // Generate email code.
+            var emailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // Codify email code.
+            var codifyEmailCode = HttpUtility.UrlEncode(emailCode).Replace("%", ";");
+
+            Log.Information($"[LOG INFORMATION] - Código gerado - {codifyEmailCode}.\n");
+
+            // Invite email code.
+            await _emailFacade.Invite(new MailRequest
             {
-                Log.Information($"[LOG INFORMATION] - Gerando codigo de confirmação de e-mail.\n");
-
-                // Generate email code.
-                var emailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                // Codify email code.
-                var codifyEmailCode = HttpUtility.UrlEncode(emailCode).Replace("%", ";");
-
-                Log.Information($"[LOG INFORMATION] - Código gerado - {codifyEmailCode}.\n");
-
-                // Invite email code.
-                await _emailFacade.Invite(new MailRequest
-                {
-                    Receivers = new List<string> { user.Email },
-                    Link = $"{_appsettings.Value.UrlBase.BASE_URL}/security/activate/{codifyEmailCode}/{user.Id}",
-                    Subject = "Ativação de e-mail",
-                    Content = $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
-                    ButtonText = "Clique para ativar o e-mail",
-                    TemplateName = "Welcome.Template"
-
-                });
-            }
-            catch (Exception exception)
-            {
-                // Error.
-                throw new Exception(exception.Message, exception.InnerException);
-            }
+                Receivers = new List<string> { user.Email },
+                Link = $"{_appsettings.Value.UrlBase.BASE_URL}/security/activate/{codifyEmailCode}/{user.Id}",
+                Subject = "Ativação de e-mail",
+                Content = $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
+                ButtonText = "Clique para ativar o e-mail",
+                TemplateName = "Welcome.Template"
+            });
         }
         #endregion
     }

@@ -24,15 +24,6 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
         Database.EnsureCreated();
     }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        #region SEED
-        //UserSeed.SEED(modelBuilder);
-        #endregion
-
-        base.OnModelCreating(builder);
-    }
-
     #region C
     public DbSet<Company> Companies { get; set; }
 

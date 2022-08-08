@@ -298,8 +298,6 @@ public static class ExtensionsConfigurations
 
         var applicationInsightsServiceOptions = new ApplicationInsightsServiceOptions
         {
-
-
             InstrumentationKey = _applicationInsightsKey
         };
 
