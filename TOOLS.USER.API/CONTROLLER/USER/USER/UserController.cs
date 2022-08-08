@@ -46,7 +46,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// </summary>
         /// <param name="loginRequest"></param>
         /// <returns></returns>
-        [HttpPost("authetication")][EnableCors("CorsPolicy")]
+        [HttpGet("authetication")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
         [ProducesResponseType(typeof(ApiResponse<TokenJWT>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
