@@ -8,6 +8,7 @@ using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENUM;
+using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
@@ -18,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Serilog;
+using System;
 using System.Security.Claims;
 using System.Web;
 
@@ -179,11 +181,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     }
 
                     // Response error.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário.") });
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário!") });
                 }
 
                 // Response error.
-                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário.") });
+                return new ApiResponse<object>(response.Succeeded, StatusCodes.ErrorBadRequest, null, response.Errors.Select((e) => new DadosNotificacao(e.Code.CustomExceptionMessage())).ToList());
             }
             catch (Exception exception)
             {
@@ -424,14 +426,6 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             // Create User.
             var identityResult = await _userManager.CreateAsync(user, userRequest.Password);
 
-            // Is not success...
-            if (identityResult.Succeeded is false) throw new Exception("Falha ao criar usuário.");
-
-            Log.Information($"[LOG INFORMATION] - Usuário criado com sucesso {user.UserName}, dados {JsonConvert.SerializeObject(userRequest)}\n");
-
-            // Add Login to user.
-            await _userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
-
             // Return result.
             return identityResult;
         }
@@ -444,7 +438,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         private async Task ConfirmeUserForEmail(IdentityUser<Guid> user)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(ConfirmeUserForEmail)}\n");
-          
+
             Log.Information($"[LOG INFORMATION] - Gerando codigo de confirmação de e-mail.\n");
 
             // Generate email code.
