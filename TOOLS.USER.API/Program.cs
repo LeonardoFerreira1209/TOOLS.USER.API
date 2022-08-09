@@ -33,7 +33,7 @@ try
         .ConfigureDependencies(configurations)
         .ConfigureRefit(configurations)
         .ConfigureTelemetry(configurations)
-        .ConfigureApplicationInsights()
+        .ConfigureApplicationInsights(configurations)
         .ConfigureSerilog()
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()

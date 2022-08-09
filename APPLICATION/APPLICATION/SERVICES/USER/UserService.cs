@@ -453,11 +453,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             await _emailFacade.Invite(new MailRequest
             {
                 Receivers = new List<string> { user.Email },
-                Link = $"{_appsettings.Value.UrlBase.BASE_URL}/security/activate/{codifyEmailCode}/{user.Id}",
+                Link = $"https://toolswebapp.netlify.app/confirmemail/{codifyEmailCode}/{user.Id}",
                 Subject = "Ativação de e-mail",
                 Content = $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
                 ButtonText = "Clique para ativar o e-mail",
-                TemplateName = "Welcome.Template"
+                TemplateName = "Activate.Template"
             });
         }
         #endregion
