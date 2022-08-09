@@ -57,8 +57,6 @@ public static class ExtensionsConfigurations
 
     private static string _applicationInsightsKey;
 
-    private static string _connectionStringApplicationInsightsKey;
-
     private static TelemetryConfiguration _telemetryConfig;
 
     private static TelemetryClient _telemetryClient;
