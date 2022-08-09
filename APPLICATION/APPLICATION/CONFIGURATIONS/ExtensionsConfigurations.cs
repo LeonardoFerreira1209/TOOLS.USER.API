@@ -57,6 +57,8 @@ public static class ExtensionsConfigurations
 
     private static string _applicationInsightsKey;
 
+    private static string _connectionStringApplicationInsightsKey;
+
     private static TelemetryConfiguration _telemetryConfig;
 
     private static TelemetryClient _telemetryClient;
@@ -220,7 +222,6 @@ public static class ExtensionsConfigurations
                     return Task.CompletedTask;
                 }
             };
-
         });
 
         return services;
@@ -257,7 +258,6 @@ public static class ExtensionsConfigurations
             options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
             options.SlidingExpiration = true;
-
         });
     }
 
@@ -265,7 +265,6 @@ public static class ExtensionsConfigurations
     /// Configuração de métricas
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="httpContextAccessor"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
     public static IServiceCollection ConfigureTelemetry(this IServiceCollection services, IConfiguration configuration)
@@ -274,7 +273,7 @@ public static class ExtensionsConfigurations
 
         _telemetryConfig = TelemetryConfiguration.CreateDefault();
 
-        _telemetryConfig.InstrumentationKey = _applicationInsightsKey;
+        _telemetryConfig.ConnectionString = configuration.GetSection("ApplicationInsights:ConnectionStringApplicationInsightsKey").Value;
 
         _telemetryConfig.TelemetryInitializers.Add(new ApplicationInsightsInitializer(configuration, httpContextAccessor));
 
@@ -292,13 +291,13 @@ public static class ExtensionsConfigurations
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection ConfigureApplicationInsights(this IServiceCollection services)
+    public static IServiceCollection ConfigureApplicationInsights(this IServiceCollection services, IConfiguration configuration)
     {
         var metrics = new ApplicationInsightsMetrics(_telemetryClient, _applicationInsightsKey);
 
         var applicationInsightsServiceOptions = new ApplicationInsightsServiceOptions
         {
-            InstrumentationKey = _applicationInsightsKey
+            ConnectionString = configuration.GetSection("ApplicationInsights:ConnectionStringApplicationInsightsKey").Value
         };
 
         services
@@ -392,7 +391,6 @@ public static class ExtensionsConfigurations
             _applicationInsightsKey = configurations.GetValue<string>("ApplicationInsights:InstrumentationKey");
         }
 
-
         services
             .AddTransient(x => configurations)
             // Services
@@ -452,8 +450,6 @@ public static class ExtensionsConfigurations
             {
                 policy.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((host) => true).AllowCredentials();
             });
-
-           
         });
     }
 

@@ -9,7 +9,6 @@ namespace APPLICATION.APPLICATION.CONFIGURATIONS.APPLICATIONINSIGHTS;
 [ExcludeFromCodeCoverage]
 public sealed class ApplicationInsightsMetrics : IApplicationInsightsMetrics
 {
-
     private readonly TelemetryClient _telemetry;
 
     public ApplicationInsightsMetrics(TelemetryClient telemetry, string key)
@@ -23,7 +22,6 @@ public sealed class ApplicationInsightsMetrics : IApplicationInsightsMetrics
 
         if (metrica != null)
         {
-
             _telemetry.TrackMetric(new MetricTelemetry
             {
                 Name = metrica.NomeMetrica,
