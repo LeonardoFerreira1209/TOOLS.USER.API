@@ -463,7 +463,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Subject = "Ativação de e-mail",
                 Content = $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
                 ButtonText = "Clique para ativar o e-mail",
-                TemplateName = "Welcome.Template"
+                TemplateName = "Activate.Template"
             });
         }
         #endregion
