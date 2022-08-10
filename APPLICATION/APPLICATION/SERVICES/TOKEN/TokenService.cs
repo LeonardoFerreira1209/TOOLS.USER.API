@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace APPLICATION.APPLICATION.SERVICES.TOKEN

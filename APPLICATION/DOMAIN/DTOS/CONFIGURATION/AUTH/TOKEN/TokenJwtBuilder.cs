@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 
@@ -148,15 +147,15 @@ public class TokenJwtBuilder
     /// <exception cref="ArgumentNullException"></exception>
     private (bool success, string? message) EnsureArguments()
     {
-        if (this.securityKey == null) return (true, "securotyKey não existe!");
+        if (this.securityKey == null) return (false, "securotyKey não existe!");
 
-        if (String.IsNullOrEmpty(this.subject)) return (true, "subject não existe!");
+        if (String.IsNullOrEmpty(this.subject)) return (false, "subject não existe!");
 
-        if (String.IsNullOrEmpty(this.issuer)) return (true, "issuer não existe!");
+        if (String.IsNullOrEmpty(this.issuer)) return (false, "issuer não existe!");
 
-        if (String.IsNullOrEmpty(this.audience)) return (true, "audience não existe!");
+        if (String.IsNullOrEmpty(this.audience)) return (false, "audience não existe!");
 
-        return (false, null);
+        return (true, null);
     }
 
     /// <summary>
