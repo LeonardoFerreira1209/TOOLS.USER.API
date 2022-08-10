@@ -123,11 +123,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 Log.Information($"[LOG INFORMATION] - Gerando token.\n");
 
-                // Create token.
-                var token = await _tokenService.CreateJsonWebToken(loginRequest.Username);
-
-                // Response success.
-                return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.SuccessOK, token, new List<DadosNotificacao> { new DadosNotificacao("Usuário autenticado com sucesso.") });
+                return await _tokenService.CreateJsonWebToken(loginRequest.Username);
             }
             catch (Exception exception)
             {

@@ -1,6 +1,8 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using APPLICATION.DOMAIN.ENUM;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -34,7 +36,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// <param name="username"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<TokenJWT> CreateJsonWebToken(string username)
+        public async Task<ApiResponse<object>> CreateJsonWebToken(string username)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenService)} - METHOD {nameof(CreateJsonWebToken)}\n");
 
@@ -43,16 +45,17 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                 Log.Information($"[LOG INFORMATION] - Recuperando dados do token do usuário\n");
 
                 #region Configurations user
-
                 // Return de user.
                 var user = await User(username);
 
                 // Return token saved in database.
                 var tokenSaved = await TokenSaved(user);
+                #endregion
 
                 // verify data in token.
                 if (tokenSaved is null)
                 {
+                    #region Configurations user
                     // Return user roles.
                     var roles = await Roles(user);
 
@@ -63,7 +66,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                     Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
 
                     // Create de token and return.
-                    var token = await Task.FromResult(new TokenJwtBuilder()
+                    var response = await Task.FromResult(new TokenJwtBuilder()
                        .AddUsername(username)
                        .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
                        .AddSubject("HYPER.IO PROJECTS L.T.D.A")
@@ -74,18 +77,20 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                        .AddClaims(claims.ToList())
                        .Builder(user));
 
-                    Log.Information($"[LOG INFORMATION] - Token gerado {token.Value}.\n");
-
-                    return token;
+                    return response;
                 }
+                else
+                {
+                    Log.Error($"[LOG ERROR] - Falha ao salvar token.\n");
 
-                return new TokenJWT(new JwtSecurityTokenHandler().ReadJwtToken(tokenSaved));
+                    return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao salvar token.") });
+                }
             }
             catch (Exception exception)
             {
-                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
-                throw new Exception(exception.Message);
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
         #endregion

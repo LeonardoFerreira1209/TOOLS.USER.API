@@ -1,4 +1,5 @@
 ﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN
 {
@@ -8,6 +9,6 @@ namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN
         /// Criação do token.
         /// </summary>
         /// <returns></returns>
-        Task<TokenJWT> CreateJsonWebToken(string username);
+        Task<ApiResponse<object>> CreateJsonWebToken(string username);
     }
 }

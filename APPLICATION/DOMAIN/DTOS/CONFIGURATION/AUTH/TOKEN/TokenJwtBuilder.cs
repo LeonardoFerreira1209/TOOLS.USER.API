@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using APPLICATION.DOMAIN.ENUM;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
@@ -144,32 +146,39 @@ public class TokenJwtBuilder
     /// Método que verifica se os dados estão validos.
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
-    private void EnsureArguments()
+    private (bool success, string? message) EnsureArguments()
     {
-        if (this.securityKey == null) throw new ArgumentNullException("Security Key");
+        if (this.securityKey == null) return (true, "securotyKey não existe!");
 
-        if (String.IsNullOrEmpty(this.subject)) throw new ArgumentNullException("Subject");
+        if (String.IsNullOrEmpty(this.subject)) return (true, "subject não existe!");
 
-        if (String.IsNullOrEmpty(this.issuer)) throw new ArgumentNullException("Issuer");
+        if (String.IsNullOrEmpty(this.issuer)) return (true, "issuer não existe!");
 
-        if (String.IsNullOrEmpty(this.audience)) throw new ArgumentNullException("Audience");
+        if (String.IsNullOrEmpty(this.audience)) return (true, "audience não existe!");
+
+        return (false, null);
     }
 
     /// <summary>
     /// Método que cria e retorna o token.
     /// </summary>
     /// <returns></returns>
-    public TokenJWT Builder(IdentityUser<Guid> user)
+    public ApiResponse<object> Builder(IdentityUser<Guid> user)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenJwtBuilder)} - METHOD {nameof(Builder)}\n");
 
         try
         {
             // Verifica os dados.
-            EnsureArguments();
+            var (success, message) = EnsureArguments(); if(success is false)
+            {
+                Log.Error($"[LOG ERROR] - {message}\n");
+
+                return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(message) });
+            }
 
             // Adiciona as claims a uma lista.
-            var claims = new[]
+            var baseClaims = new[]
             {
                 new Claim("id", user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, this.username),
@@ -186,19 +195,19 @@ public class TokenJwtBuilder
             var token = new JwtSecurityToken(
                 issuer: this.issuer,
                 audience: this.audience,
-                claims: claims,
+                claims: baseClaims,
                 expires: DateTime.Now.AddMinutes(this.expiryInMinutes),
-                signingCredentials: new SigningCredentials(this.securityKey, SecurityAlgorithms.HmacSha256)
-            );
+                signingCredentials: new SigningCredentials(this.securityKey, SecurityAlgorithms.HmacSha256));
 
-            // retornando o token.
-            return new TokenJWT(token);
+            Log.Information($"[LOG INFORMATION] - Token gerado {token}.\n");
+
+            return new ApiResponse<object>(true, StatusCodes.SuccessCreated, new TokenJWT(token), new List<DadosNotificacao> { new DadosNotificacao("Token gerado com sucesso.") });
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
-            throw new Exception(exception.Message);
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 }
