@@ -145,7 +145,7 @@ public class TokenJwtBuilder
     /// Método que verifica se os dados estão validos.
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
-    private (bool success, string? message) EnsureArguments()
+    private (bool success, string message) EnsureArguments()
     {
         if (this.securityKey == null) return (false, "securotyKey não existe!");
 

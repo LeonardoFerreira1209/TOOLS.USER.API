@@ -52,7 +52,7 @@ public class PersonService : IPersonService
                 Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
 
                 // SignalR
-                await _hubPerson.Clients.All.ReceiveMessage(person.ToResponse()); await _hubNotify.Clients.All.ReceiveMessage(new Notify($"{person.FirstName} {person.LastName} foi adicionado com sucesso."));
+                await _hubPerson.Clients.All.ReceiveMessage(person.ToResponse()); await _hubNotify.Clients.All.ReceiveMessage(new Notify("Novo usuário", $"{person.FirstName} {person.LastName} foi adicionado com sucesso."));
 
                 // Response success.
                 return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessCreated, new List<DadosNotificacao> { new DadosNotificacao("Pessoa criada com sucesso!") });

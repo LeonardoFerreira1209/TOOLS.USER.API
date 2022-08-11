@@ -46,44 +46,31 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                 #region Configurations user
                 // Return de user.
                 var user = await User(username);
-
-                // Return token saved in database.
-                var tokenSaved = await TokenSaved(user);
                 #endregion
 
-                // verify data in token.
-                if (tokenSaved is null)
-                {
-                    #region Configurations user
-                    // Return user roles.
-                    var roles = await Roles(user);
+                #region Configurations user
+                // Return user roles.
+                var roles = await Roles(user);
 
-                    // Return user claims.
-                    var claims = await Claims(user, roles);
-                    #endregion
+                // Return user claims.
+                var claims = await Claims(user, roles);
+                #endregion
 
-                    Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
+                Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
 
-                    // Create de token and return.
-                    var response = await Task.FromResult(new TokenJwtBuilder()
-                       .AddUsername(username)
-                       .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
-                       .AddSubject("HYPER.IO PROJECTS L.T.D.A")
-                       .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
-                       .AddAudience(_appsettings.Value.Auth.ValidAudience)
-                       .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
-                       .AddRoles(roles.ToList())
-                       .AddClaims(claims.ToList())
-                       .Builder(user));
+                // Create de token and return.
+                var response = await Task.FromResult(new TokenJwtBuilder()
+                   .AddUsername(username)
+                   .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
+                   .AddSubject("HYPER.IO PROJECTS L.T.D.A")
+                   .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
+                   .AddAudience(_appsettings.Value.Auth.ValidAudience)
+                   .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
+                   .AddRoles(roles.ToList())
+                   .AddClaims(claims.ToList())
+                   .Builder(user));
 
-                    return response;
-                }
-                else
-                {
-                    Log.Error($"[LOG ERROR] - Falha ao salvar token.\n");
-
-                    return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao salvar token.") });
-                }
+                return response;
             }
             catch (Exception exception)
             {
@@ -138,7 +125,6 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         #endregion
 
         #region Token
-        private async Task<string> TokenSaved(IdentityUser<Guid> user) => await _userManager.GetAuthenticationTokenAsync(user, "TOOLS.USER.API", "AUTHTOKEN");
         #endregion
 
         #endregion

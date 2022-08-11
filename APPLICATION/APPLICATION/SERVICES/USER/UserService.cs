@@ -171,11 +171,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         await ConfirmeUserForEmail(user);
 
                         // Response success.
-                        return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, responsePerson, new List<DadosNotificacao> { new DadosNotificacao("Usuário criado com sucesso.") });
+                        return new ApiResponse<object>(responsePerson.Sucesso, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário criado com sucesso.") });
                     }
 
                     // Response error.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário!") });
+                    return new ApiResponse<object>(responsePerson.Sucesso, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário!") });
                 }
 
                 // Response error.

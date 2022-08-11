@@ -7,6 +7,7 @@ namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN
         /// <summary>
         /// Criação do token.
         /// </summary>
+        /// <param name="username"></param>
         /// <returns></returns>
         Task<ApiResponse<object>> CreateJsonWebToken(string username);
     }
