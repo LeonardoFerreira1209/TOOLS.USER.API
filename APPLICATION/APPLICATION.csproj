@@ -59,6 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="INFRAESTRUTURE\CONTEXTO\SEEDS\" />
     <Folder Include="MIGRATIONS\" />
   </ItemGroup>
 
