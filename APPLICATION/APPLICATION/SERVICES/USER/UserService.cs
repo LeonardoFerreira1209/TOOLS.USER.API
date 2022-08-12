@@ -39,12 +39,10 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
         private readonly ITokenService _tokenService;
 
-        private readonly IMapper _mapper;
-
         private readonly IPersonService _personService;
         #endregion
 
-        public UserService(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IMapper mapper, IPersonService personService)
+        public UserService(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IPersonService personService)
         {
             _signInManager = signInManager;
 
@@ -55,8 +53,6 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             _emailFacade = emailFacade;
 
             _tokenService = tokenService;
-
-            _mapper = mapper;
 
             _personService = personService;
         }
@@ -94,28 +90,28 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, está bloqueado.\n");
 
                         // Response Locked.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorLocked, new List<DadosNotificacao> { new DadosNotificacao("Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
+                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorLocked, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
                     }
                     else if (signInResult.IsNotAllowed) // not allowed user.
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, não está confirmado.\n");
 
                         // Response notAllowed.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, new List<DadosNotificacao> { new DadosNotificacao("Email do usuário não está confirmado.") });
+                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Email do usuário não está confirmado.") });
                     }
                     else if (signInResult.RequiresTwoFactor) // requires two factor user.
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, requer verificação de dois fatores.\n");
 
                         // Response twoFactor.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, new List<DadosNotificacao> { new DadosNotificacao("Usuário necessita de verificação de dois fatores.") });
+                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário necessita de verificação de dois fatores.") });
                     }
                     else // incorrects params user.
                     {
                         Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, dados incorretos.\n");
 
                         // Response error unathorized.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, new List<DadosNotificacao> { new DadosNotificacao("Os dados do usuário estão inválidos ou usuário não existe.") });
+                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Os dados do usuário estão inválidos ou usuário não existe.") });
                     }
                 }
 
@@ -128,7 +124,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Response error
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
         #endregion
@@ -175,7 +171,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     }
 
                     // Response error.
-                    return new ApiResponse<object>(responsePerson.Sucesso, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário!") });
+                    return new ApiResponse<object>(responsePerson.Sucesso, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário!") });
                 }
 
                 // Response error.
@@ -186,7 +182,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Response error.
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
         #endregion
@@ -219,17 +215,19 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Usuário ativado com sucesso.\n");
 
                     // Success response.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, new List<DadosNotificacao> { new DadosNotificacao("Usuário ativado com sucesso.") });
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário ativado com sucesso.") });
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n"); throw new Exception("Falha ao ativar usuário.");
+                Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n");
+
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha na ativãção do usuário!") });
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
         #endregion
@@ -263,17 +261,20 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Claim adicionada com sucesso.\n");
 
                     // Success response.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
                 }
 
-                Log.Information($"[LOG ERROR] - Falha ao adicionar claim.\n"); throw new Exception("Falha ao adicionar claim.");
+                Log.Information($"[LOG ERROR] - Falha ao adicionar claim.\n");
+
+                // Response error.
+                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar claim!") });
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
 
@@ -305,17 +306,20 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Claim remvida com sucesso.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
                 }
 
-                Log.Information($"[LOG ERROR] - Falha ao remover claim.\n"); throw new Exception("Falha ao remover claim.");
+                Log.Information($"[LOG ERROR] - Falha ao remover claim.\n");
+
+                // Response error.
+                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover claim!") });
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
 
@@ -347,10 +351,13 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Role adicionada com sucesso.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
                 }
 
-                Log.Information($"[LOG ERROR] - Falha ao adicionar role.\n"); throw new Exception("Falha ao adicionar role.");
+                Log.Information($"[LOG ERROR] - Falha ao adicionar role.\n");
+
+                // Response error.
+                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar role!") });
             }
             catch (Exception exception)
             {
@@ -389,17 +396,20 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Role removida com sucesso.\n");
 
                     // Response success
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, removida com sucesso do usuário {username}.") });
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, removida com sucesso do usuário {username}.") });
                 }
 
-                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n"); throw new Exception("Falha ao remover role.");
+                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
+
+                // Response error.
+                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover role.!") });
             }
             catch (Exception exception)
             {
                 Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
                 // Error response.
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
         #endregion

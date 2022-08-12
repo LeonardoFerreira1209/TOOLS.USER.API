@@ -4,7 +4,6 @@ using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENUM;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Security.Claims;
@@ -54,21 +53,21 @@ public class RoleService : IRoleService
                 roleRequest.Claims.ForEach(claim => _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value)));
 
                 // Response success.
-                return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, new List<DadosNotificacao> { new DadosNotificacao("Role criado com sucesso.") });
+                return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Role criado com sucesso.") });
             }
             #endregion
 
             Log.Information($"[LOG INFORMATION] - Falha ao criar role.\n");
 
             // Response error.
-            return new ApiResponse<object>(response.Succeeded, StatusCodes.ErrorBadRequest, response.Errors.Select(e => new DadosNotificacao(e.Description)).ToList());
+            return new ApiResponse<object>(response.Succeeded, StatusCodes.ErrorBadRequest, null, response.Errors.Select(e => new DadosNotificacao(e.Description)).ToList());
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             // Error response.
-            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError,null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
     #endregion
@@ -105,19 +104,19 @@ public class RoleService : IRoleService
                 }
 
                 // Response success.
-                return new ApiResponse<object>(true, StatusCodes.SuccessOK, new List<DadosNotificacao> { new DadosNotificacao($"Claim adicionada a role {roleName} com sucesso.") });
+                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim adicionada a role {roleName} com sucesso.") });
             }
             #endregion
 
             // Response error.
-            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleName} não existe.") });
+            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleName} não existe.") });
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             // Error response.
-            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 
@@ -145,19 +144,23 @@ public class RoleService : IRoleService
                 // Remove remove claim.
                 await _roleManager.RemoveClaimAsync(role, new Claim(claimRequests.Type, claimRequests.Value));
 
+                Log.Information($"[LOG INFORMATION] - Claim removida com sucesso.");
+
                 // Response success.
-               return new ApiResponse<object>(true, StatusCodes.SuccessOK, new List<DadosNotificacao> { new DadosNotificacao($"Claim removida da role {roleName} com sucesso.") });
+                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim removida da role {roleName} com sucesso.") });
             }
             #endregion
 
-            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleName} não existe.") });
+            Log.Information($"[LOG INFORMATION] - Role não existe.\n");
+
+            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleName} não existe.") });
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
-            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
     #endregion
