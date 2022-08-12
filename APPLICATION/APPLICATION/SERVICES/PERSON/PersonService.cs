@@ -103,6 +103,7 @@ public class PersonService : IPersonService
 
             Log.Information($"[LOG INFORMATION] - Pessoa recuperada com sucesso.\n");
 
+
             // Response success
             return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessOK, person.ToResponse(), new List<DadosNotificacao> { new DadosNotificacao("Pessoa recuperada com sucesso!") });
         }

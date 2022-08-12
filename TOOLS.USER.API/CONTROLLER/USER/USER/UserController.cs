@@ -44,7 +44,8 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// <summary>
         /// Método responsável por Ativar usuário
         /// </summary>
-        /// <param name="loginRequest"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
         /// <returns></returns>
         [HttpGet("authetication")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Autenticação do usuário", Description = "Método responsável por Autenticar usuário")]
