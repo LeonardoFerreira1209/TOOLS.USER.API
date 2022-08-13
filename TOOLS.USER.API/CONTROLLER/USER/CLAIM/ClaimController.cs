@@ -2,7 +2,6 @@
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
-using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using TOOLS.USER.API.CONTROLLER.BASE;
 
-namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
+namespace TOOLS.admin.API.CONTROLLER.admin.CLAIM
 {
     [Route("api/[controller]")][ApiController]
     public class ClaimController : BaseController
@@ -28,7 +27,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         /// <param name="claimRequest"></param>
         /// <returns></returns>
         
-        [HttpPost("addclaim")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [HttpPost("addclaim")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Adicionar claim no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -49,7 +48,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpDelete("removeclaim")][Authorize(Policy = "User")][EnableCors("CorsPolicy")]
+        [HttpDelete("removeclaim")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

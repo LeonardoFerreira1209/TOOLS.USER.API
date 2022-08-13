@@ -98,7 +98,14 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task<IList<string>> Roles(IdentityUser<Guid> user) => await _userManager.GetRolesAsync(user);
+        private async Task<IList<Claim>> Roles(IdentityUser<Guid> user)
+        {
+            // Return roles.
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // Return IList of Claims role type.
+            return roles.Select(roles => new Claim("role", roles)).ToList();
+        }
         #endregion
 
         #region Claims
@@ -107,19 +114,28 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task<List<Claim>> Claims(IdentityUser<Guid> user, IList<string> roles)
+        private async Task<List<Claim>> Claims(IdentityUser<Guid> user, IList<Claim> roles)
         {
+            // Instance Claim list.
             var claims = new List<Claim>();
 
+            // Return all user claims.
             claims.AddRange(await _userManager.GetClaimsAsync(user));
 
+            // Set a list of role names.
+            var rolesName = roles.Select(role => role.Value).ToList();
+
+            // Roles not null and have any value.
             if (roles is not null && roles.Any())
             {
-                var identityRoles = await _roleManager.Roles.Where(r => roles.Contains(r.Name)).ToListAsync();
+                // Select roles id.
+                var identityRoles = await _roleManager.Roles.Where(role => rolesName.Contains(role.Name)).ToListAsync();
 
+                // Get role claims and add in claim array.
                 identityRoles.ForEach(identityRole => claims.AddRange(_roleManager.GetClaimsAsync(identityRole).Result));
             }
 
+            // Return claims.
             return claims;
         }
         #endregion

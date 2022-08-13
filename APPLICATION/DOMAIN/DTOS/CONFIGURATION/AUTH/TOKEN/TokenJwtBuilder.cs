@@ -17,7 +17,7 @@ public class TokenJwtBuilder
 
     private string subject, issuer, audience, username = String.Empty;
 
-    private List<Claim> claims = new(); private List<string> roles = new();
+    private List<Claim> claims = new(); private List<Claim> roles = new();
 
     private int expiryInMinutes = 10;
 
@@ -86,7 +86,7 @@ public class TokenJwtBuilder
     /// </summary>
     /// <param name="role"></param>
     /// <returns></returns>
-    public TokenJwtBuilder AddRole(string role)
+    public TokenJwtBuilder AddRole(Claim role)
     {
         this.roles.Add(role);
 
@@ -98,7 +98,7 @@ public class TokenJwtBuilder
     /// </summary>
     /// <param name="roles"></param>
     /// <returns></returns>
-    public TokenJwtBuilder AddRoles(List<string> roles)
+    public TokenJwtBuilder AddRoles(List<Claim> roles)
     {
         this.roles.AddRange(roles);
 
@@ -188,7 +188,7 @@ public class TokenJwtBuilder
                 new Claim("phoneNumber", user.PhoneNumber),
                 new Claim(JwtRegisteredClaimNames.Website, "https://toolsuserapi.azurewebsites.net/")
 
-            }.Union(this.claims);
+            }.Union(this.roles).Union(this.claims);
 
             // Gera o token com os dados passados.
             var token = new JwtSecurityToken(

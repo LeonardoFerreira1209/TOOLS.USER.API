@@ -236,7 +236,7 @@ public static class ExtensionsConfigurations
         services
             .AddAuthorization(options =>
             {
-                options.AddPolicy("User", policy => policy.RequireClaim("permission", "admin"));
+                options.AddPolicy("admin", policy => policy.RequireClaim("access", "all"));
             });
 
         return services;

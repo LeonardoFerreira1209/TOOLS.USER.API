@@ -2,6 +2,7 @@
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENUM;
+using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,7 @@ public class RoleService : IRoleService
         {
             #region User create & set roles & claims
             // Mapper to entity.
-            var role = _autoMapper.Map<IdentityRole<Guid>>(roleRequest);
+            var role = roleRequest.ToIdentityRole();
 
             Log.Information($"[LOG INFORMATION] - Criando nova Role {roleRequest.Name}\n");
 
@@ -49,8 +50,13 @@ public class RoleService : IRoleService
             {
                 Log.Information($"[LOG INFORMATION] - Adicionando claims na role {roleRequest.Name}\n");
 
+                foreach(var claim in roleRequest.Claims)
+                {
+                    await _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value));
+                }
+
                 // foreach and add claims in request
-                roleRequest.Claims.ForEach(claim => _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value)));
+               // roleRequest.Claims.Select(async claim => await _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value)));
 
                 // Response success.
                 return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Role criado com sucesso.") });
