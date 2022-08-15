@@ -17,7 +17,7 @@ public class TokenJwtBuilder
 
     private string subject, issuer, audience, username = String.Empty;
 
-    private List<Claim> claims = new(); private List<Claim> roles = new();
+    private readonly List<Claim> claims = new(); private readonly List<Claim> roles = new();
 
     private int expiryInMinutes = 10;
 
