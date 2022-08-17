@@ -1,12 +1,14 @@
-﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.DOMAIN.ENTITY.COMPANY;
+﻿using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.COMPANY;
+using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.CONTACT;
+using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.PROFESSION;
+using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.USER;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace APPLICATION.INFRAESTRUTURE.CONTEXTO;
 
@@ -15,13 +17,32 @@ namespace APPLICATION.INFRAESTRUTURE.CONTEXTO;
 /// </summary>
 public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {
-    private readonly IOptions<AppSettings> _appSettings;
-
-    public Contexto(DbContextOptions<Contexto> options, IOptions<AppSettings> appsettings) : base(options)
+    public Contexto(DbContextOptions<Contexto> options) : base(options)
     {
-        _appSettings = appsettings;
-
         Database.EnsureCreated();
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Configutrations
+        modelBuilder
+            // User
+            .ApplyConfiguration(new UsersTypeConfiguration())
+            .ApplyConfiguration(new UserTokensTypeConfiguration())
+            .ApplyConfiguration(new UserLoginsTypeConfiguration())
+            .ApplyConfiguration(new UserClaimsTypeConfiguration())
+            .ApplyConfiguration(new UserRolesTypeConfiguration())
+            // Roles
+            .ApplyConfiguration(new RolesTypeConfiguration())
+            .ApplyConfiguration(new RoleClaimsTypeConfiguration())
+            // Profession
+            .ApplyConfiguration(new ProfessionTypesConfiguration())
+            // Contact
+            .ApplyConfiguration(new ContactTypesConfiguration())
+            // Company
+            .ApplyConfiguration(new CompanyTypesConfiguration());
+
+        base.OnModelCreating(modelBuilder);
     }
 
     #region C

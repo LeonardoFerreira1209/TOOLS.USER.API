@@ -17,7 +17,7 @@ namespace APPLICATION.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.7")
+                .HasAnnotation("ProductVersion", "6.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -35,9 +35,11 @@ namespace APPLICATION.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -54,7 +56,7 @@ namespace APPLICATION.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.Contact", b =>
@@ -76,10 +78,13 @@ namespace APPLICATION.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("Number")
                         .HasColumnType("int");
@@ -103,7 +108,7 @@ namespace APPLICATION.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("Contacts");
+                    b.ToTable("Contacts", (string)null);
                 });
 
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.Person", b =>
@@ -167,7 +172,7 @@ namespace APPLICATION.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CompanyId")
+                    b.Property<Guid?>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
@@ -176,14 +181,23 @@ namespace APPLICATION.Migrations
                     b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Current")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Office")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uniqueidentifier");
@@ -203,8 +217,9 @@ namespace APPLICATION.Migrations
                     b.Property<decimal>("Wage")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("Workload")
-                        .HasColumnType("datetime2");
+                    b.Property<decimal>("Workload")
+                        .HasMaxLength(4)
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -212,7 +227,7 @@ namespace APPLICATION.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("Professions");
+                    b.ToTable("Professions", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -442,9 +457,7 @@ namespace APPLICATION.Migrations
                 {
                     b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", "Company")
                         .WithMany("Professions")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.Person", "Person")
                         .WithMany("Professions")

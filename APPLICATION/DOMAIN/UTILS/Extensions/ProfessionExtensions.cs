@@ -21,6 +21,8 @@ public static class ProfessionExtensions
 
             Office = profession.Office,
             Wage = profession.Wage,
+
+            Company = profession.Company?.ToResponse()
         };
     }
 

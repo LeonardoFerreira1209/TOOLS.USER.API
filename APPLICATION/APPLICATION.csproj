@@ -59,7 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="INFRAESTRUTURE\CONTEXTO\SEEDS\" />
+    <Folder Include="INFRAESTRUTURE\SIGNALR\DTOS\" />
     <Folder Include="MIGRATIONS\" />
   </ItemGroup>
 

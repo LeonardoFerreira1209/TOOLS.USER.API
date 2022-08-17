@@ -28,6 +28,6 @@ public class CompanyRequest
     /// <summary>
     /// Data em que a empresa foi fundada
     /// </summary>
-    public DateOnly StartDate { get; set; }
+    public DateTime StartDate { get; set; }
     #endregion
 }
