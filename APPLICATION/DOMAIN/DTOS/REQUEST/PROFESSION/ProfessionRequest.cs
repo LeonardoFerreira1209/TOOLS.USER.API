@@ -1,7 +1,4 @@
-﻿using APPLICATION.DOMAIN.DTOS.REQUEST.COMPANY;
-using APPLICATION.DOMAIN.ENTITY;
-
-namespace APPLICATION.DOMAIN.DTOS.REQUEST.PROFESSION;
+﻿namespace APPLICATION.DOMAIN.DTOS.REQUEST.PROFESSION;
 
 public class ProfessionRequest
 {
@@ -39,7 +36,7 @@ public class ProfessionRequest
     /// <summary>
     /// Carga horária
     /// </summary>
-    public DateTime Workload { get; set; }
+    public decimal Workload { get; set; }
     #endregion
 
     #region Person

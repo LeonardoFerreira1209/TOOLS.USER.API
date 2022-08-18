@@ -28,7 +28,7 @@ public class ProfessionResponse
     /// <summary>
     /// Data de término
     /// </summary>
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     /// <summary>
     /// Sálario
@@ -38,7 +38,7 @@ public class ProfessionResponse
     /// <summary>
     /// Carga horária
     /// </summary>
-    public DateTime Workload { get; set; }
+    public decimal Workload { get; set; }
     #endregion
 
     #region Person
@@ -52,7 +52,7 @@ public class ProfessionResponse
     /// <summary>
     /// Id da compania em que trabalha
     /// </summary>
-    public Guid CompanyId { get; set; }
+    public Guid? CompanyId { get; set; }
 
     /// <summary>
     /// Dados da compania.

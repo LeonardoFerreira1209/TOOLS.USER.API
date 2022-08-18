@@ -114,7 +114,7 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureContexto(this IServiceCollection services, IConfiguration configurations)
     {
         services
-            .AddDbContext<Contexto>(options => options.UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados")));
+            .AddDbContext<Contexto>(options => options.UseLazyLoadingProxies().UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados")));
 
         return services;
     }
@@ -521,7 +521,6 @@ public static class ExtensionsConfigurations
     {
         application.UseEndpoints(endpoints =>
         {
-            endpoints.MapHub<HubNotify>("/notify");
             endpoints.MapHub<HubPerson>("/person");
         });
 
@@ -590,13 +589,13 @@ public static class ExtensionsConfigurations
             await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
 
             // Set data in role.
-            var role = new IdentityRole<Guid> { Name = "DefaultUser" };
+            var role = new IdentityRole<Guid> { Name = "admin" };
 
             // Create role.
             await roleManager.CreateAsync(role);
 
             // Add claim in role.
-            await roleManager.AddClaimAsync(role, new Claim("permission", "admin"));
+            await roleManager.AddClaimAsync(role, new Claim("access", "all"));
 
             // Add role to user.
             await userManager.AddToRoleAsync(user, role.Name);
@@ -661,7 +660,7 @@ public static class ExtensionsConfigurations
                     StartDate = DateTime.Now,
                     EndDate = DateTime.Now,
                     Wage = 11000,
-                    Workload = DateTime.Now,
+                    Workload = 8.30M,
                     Status = Status.Active,
                     CreatedUserId = user.Id,
                     Created = DateTime.Now,

@@ -8,7 +8,7 @@ public class UsersTypeConfiguration : IEntityTypeConfiguration<IdentityUser<Guid
 {
     public void Configure(EntityTypeBuilder<IdentityUser<Guid>> builder)
     {
-        builder.ToTable("Users");
+        builder.ToTable("Users").HasKey(user => user.Id);
     }
 }
 
@@ -28,13 +28,22 @@ public class UserLoginsTypeConfiguration : IEntityTypeConfiguration<IdentityUser
     }
 }
 
-public class RoleTypeConfiguration : IEntityTypeConfiguration<IdentityUserClaim<Guid>>
+public class UserClaimsTypeConfiguration : IEntityTypeConfiguration<IdentityUserClaim<Guid>>
 {
     public void Configure(EntityTypeBuilder<IdentityUserClaim<Guid>> builder)
     {
         builder.ToTable("UserClaims");
     }
 }
+
+public class UserRolesTypeConfiguration : IEntityTypeConfiguration<IdentityUserRole<Guid>>
+{
+    public void Configure(EntityTypeBuilder<IdentityUserRole<Guid>> builder)
+    {
+        builder.ToTable("UserRoles");
+    }
+}
+
 
 public class RolesTypeConfiguration : IEntityTypeConfiguration<IdentityRole<Guid>>
 {

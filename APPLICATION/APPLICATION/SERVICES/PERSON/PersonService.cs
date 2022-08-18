@@ -5,7 +5,6 @@ using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.CLIENTS;
-using APPLICATION.INFRAESTRUTURE.SIGNALR.DTOS;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +17,10 @@ public class PersonService : IPersonService
 {
     private readonly IPersonRepository _personRepository;
 
-    private readonly IHubContext<HubNotify, INotifyClient> _hubNotify;
     private readonly IHubContext<HubPerson, IPersonClient> _hubPerson;
 
-    public PersonService(IPersonRepository personRepository, IHubContext<HubNotify, INotifyClient> hubNotify, IHubContext<HubPerson, IPersonClient> hubPerson)
+    public PersonService(IPersonRepository personRepository, IHubContext<HubPerson, IPersonClient> hubPerson)
     {
-        _hubNotify = hubNotify;
         _hubPerson = hubPerson;
 
         _personRepository = personRepository;
@@ -50,9 +47,6 @@ public class PersonService : IPersonService
             if (success is true)
             {
                 Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
-
-                // SignalR
-                await _hubPerson.Clients.All.ReceiveMessage(person.ToResponse()); await _hubNotify.Clients.All.ReceiveMessage(new Notify("Novo usuário", $"{person.FirstName} {person.LastName} foi adicionado com sucesso."));
 
                 // Response success.
                 return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Pessoa criada com sucesso!") });

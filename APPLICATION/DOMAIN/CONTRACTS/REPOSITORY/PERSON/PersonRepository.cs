@@ -76,7 +76,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
                             // Include list of contacts in Person. 
                             .Include(person => person.Contacts)
                             // Include list of professions in Person.
-                            .Include(person => person.Professions)
+                            .Include(person => person.Professions).ThenInclude(profession => profession.Company)
                             // Return one Person when Id queal a pernsoId.
                             .AsSplitQuery().FirstOrDefaultAsync(person => person.Id.Equals(personId));
 
@@ -120,7 +120,9 @@ public class PersonRepository : BaseRepository, IPersonRepository
                             // Include list of contacts in Person. 
                             .Include(person => person.Contacts)
                             // Include list of professions in Person.
-                            .Include(person => person.Professions).AsSplitQuery().ToListAsync();
+                            .Include(person => person.Professions).ThenInclude(profession => profession.Company)
+                            // Return an list of persons.
+                            .AsSplitQuery().ToListAsync();
 
                 // Return person.
                 return (persons is not null, persons);

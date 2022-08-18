@@ -25,7 +25,12 @@ public class Profession: BaseEntity
     /// <summary>
     /// Data de término
     /// </summary>
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
+
+    /// <summary>
+    /// trabalho Atualmente
+    /// </summary>
+    public bool Current { get => EndDate == null; set { } }
 
     /// <summary>
     /// Sálario
@@ -35,7 +40,7 @@ public class Profession: BaseEntity
     /// <summary>
     /// Carga horária
     /// </summary>
-    public DateTime Workload { get; set; }
+    public decimal Workload { get; set; }
     #endregion
 
     #region Person
@@ -47,15 +52,18 @@ public class Profession: BaseEntity
     /// <summary>
     /// Dados da pessoa.
     /// </summary>
-    public Person Person { get; set; }
+    public virtual Person Person { get; set; }
     #endregion
 
     #region Company
     /// <summary>
     /// Id da compania em que trabalha
     /// </summary>
-    public Guid CompanyId { get; set; }
+    public Guid? CompanyId { get; set; }
 
+    /// <summary>
+    /// Dados da empresa.
+    /// </summary>
     public virtual Company Company { get; set; }
     #endregion
 }
