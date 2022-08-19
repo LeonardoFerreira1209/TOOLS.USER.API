@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace TOOLS.USER.API.CONTROLLER.PERSON;
 
-[Route("api/[controller]")][ApiController]
+[Route("api/[controller]")]
 public class PersonController : ControllerBase
 {
     private readonly IPersonService _personService;
