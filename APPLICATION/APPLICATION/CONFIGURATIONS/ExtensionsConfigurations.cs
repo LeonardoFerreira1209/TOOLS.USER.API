@@ -688,20 +688,7 @@ public static class ExtensionsConfigurations
     public static WebApplication UseMinimalAPI(this WebApplication application, IConfiguration configurations)
     {
         #region User's
-        //application.MapPost("/security/create",
-        //[EnableCors("CorsPolicy")][SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
-        //[ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(DOMAIN.DTOS.RESPONSE.ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        //async ([Service] IUserService userService, PersonRequest request) =>
-        //{
-        //    using (LogContext.PushProperty("Controller", "UserController"))
-        //    using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(request)))
-        //    using (LogContext.PushProperty("Metodo", "Create"))
-        //    {
-        //        return await Tracker.Time(() => userService.Create(request), "Criar usuário");
-        //    }
-        //});
+      
         #endregion
 
         return application;
