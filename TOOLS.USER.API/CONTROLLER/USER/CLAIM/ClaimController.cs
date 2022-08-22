@@ -27,7 +27,7 @@ namespace TOOLS.admin.API.CONTROLLER.admin.CLAIM
         /// <param name="claimRequest"></param>
         /// <returns></returns>
         
-        [HttpPost("addclaim")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
+        [HttpPost("addclaim")][Authorize(Policy = "accessClaim")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Adicionar claim no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -48,7 +48,7 @@ namespace TOOLS.admin.API.CONTROLLER.admin.CLAIM
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpDelete("removeclaim")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
+        [HttpDelete("removeclaim")][Authorize(Policy = "accessClaim")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

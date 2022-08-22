@@ -236,7 +236,15 @@ public static class ExtensionsConfigurations
         services
             .AddAuthorization(options =>
             {
-                options.AddPolicy("admin", policy => policy.RequireRole("admin").RequireClaim("access", "all")) ;
+                #region Person controller
+                options.AddPolicy("accessPerson", policy => policy.RequireClaim("accessPerson", "get", "post", "put", "patch", "delete"));
+                #endregion
+
+                #region Claim & Roles controller
+                options.AddPolicy("accessClaim", policy => policy.RequireClaim("accessClaim", "get", "post", "put", "patch", "delete"));
+
+                options.AddPolicy("accessRole", policy => policy.RequireClaim("accessRole", "get", "post", "put", "patch", "delete"));
+                #endregion
             });
 
         return services;
@@ -580,7 +588,7 @@ public static class ExtensionsConfigurations
             };
 
             // Generate a password hash.
-            user.PasswordHash = new PasswordHasher<IdentityUser<Guid>>().HashPassword(user, "Admin@123");
+            user.PasswordHash = new PasswordHasher<IdentityUser<Guid>>().HashPassword(user, "Admin@123456789");
 
             // Create user.
             await userManager.CreateAsync(user);
@@ -589,13 +597,29 @@ public static class ExtensionsConfigurations
             await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
 
             // Set data in role.
-            var role = new IdentityRole<Guid> { Name = "admin" };
+            var role = new IdentityRole<Guid> { Name = "administrator" };
 
             // Create role.
             await roleManager.CreateAsync(role);
 
             // Add claim in role.
-            await roleManager.AddClaimAsync(role, new Claim("access", "all"));
+            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "get"));
+            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "post"));
+            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "put"));
+            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "patch"));
+            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "delete"));
+
+            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "get"));
+            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "post"));
+            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "put"));
+            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "patch"));
+            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "delete"));
+
+            await roleManager.AddClaimAsync(role, new Claim("accessRole", "get"));
+            await roleManager.AddClaimAsync(role, new Claim("accessRole", "post"));
+            await roleManager.AddClaimAsync(role, new Claim("accessRole", "put"));
+            await roleManager.AddClaimAsync(role, new Claim("accessRole", "patch"));
+            await roleManager.AddClaimAsync(role, new Claim("accessRole", "delete"));
 
             // Add role to user.
             await userManager.AddToRoleAsync(user, role.Name);

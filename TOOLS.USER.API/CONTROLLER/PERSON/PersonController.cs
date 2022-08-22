@@ -24,7 +24,7 @@ public class PersonController : ControllerBase
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    [HttpGet("get/{personId}")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
+    [HttpGet("get/{personId}")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Recuperar uma pessoa", Description = "Método responsável por recuperar uma pessoa")]
     [ProducesResponseType(typeof(ApiResponse<PersonResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -45,7 +45,7 @@ public class PersonController : ControllerBase
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    [HttpGet("getAll")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
+    [HttpGet("getAll")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Recuperar todas as pessoas", Description = "Método responsável por recuperar todas as pessoa")]
     [ProducesResponseType(typeof(ApiResponse<List<PersonResponse>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -66,7 +66,7 @@ public class PersonController : ControllerBase
     /// </summary>
     /// <param name="personFullRequets"></param>
     /// <returns></returns>
-    [HttpPost("completeRegister")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
+    [HttpPost("completeRegister")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Completar cadastro da Pessoa", Description = "Método responsável por completar o cadastro de uma pessoa")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -88,7 +88,7 @@ public class PersonController : ControllerBase
     /// <param name="personId"></param>
     /// <param name="formFile"></param>
     /// <returns></returns>
-    [HttpPatch("profileImage/{personId}")][Authorize(Policy = "admin")][EnableCors("CorsPolicy")]
+    [HttpPatch("profileImage/{personId}")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Adicionar imagem de perfil na Pessoa", Description = "Método responsável por adicionar uma imagem de perfil em uma pessoa.")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

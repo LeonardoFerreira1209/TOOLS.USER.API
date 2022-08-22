@@ -1,8 +1,6 @@
 using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR.Client;
 using Serilog;
 
 try
@@ -60,7 +58,7 @@ try
         .UseRouting()
         .UseAuthorization()
         .UseAuthentication()
-        .UseCors("CorsPolicy")
+        .UseCors("accessPerson")
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
         .UseEndpoints();
