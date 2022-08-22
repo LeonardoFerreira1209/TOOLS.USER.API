@@ -22,6 +22,10 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
         Database.EnsureCreated();
     }
 
+    /// <summary>
+    /// Configrações fos datatypes.
+    /// </summary>
+    /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Configutrations
@@ -45,6 +49,11 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
         base.OnModelCreating(modelBuilder);
     }
 
+    /// <summary>
+    /// Sets de tabelas no banco.
+    /// </summary>
+    #region Dbset's
+
     #region C
     public DbSet<Company> Companies { get; set; }
 
@@ -55,5 +64,7 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
     public DbSet<Person> Persons { get; set; }
 
     public DbSet<Profession> Professions { get; set; }
+    #endregion
+
     #endregion
 }
