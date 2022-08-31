@@ -27,7 +27,7 @@ namespace APPLICATION.DOMAIN.ENTITY.PERSON
         /// <summary>
         /// Data de aniversário.
         /// </summary>
-        public DateTime BirthDay { get; set; }
+        public string BirthDay { get; set; }
 
         /// <summary>
         /// Gênero.

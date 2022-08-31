@@ -120,8 +120,8 @@ namespace APPLICATION.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("BirthDay")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("BirthDay")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CPF")
                         .HasColumnType("nvarchar(max)");

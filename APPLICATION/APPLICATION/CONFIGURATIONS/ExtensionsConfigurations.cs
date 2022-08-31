@@ -215,7 +215,10 @@ public static class ExtensionsConfigurations
                 {
                     Log.Information($"[LOG INFORMATION] {nameof(JwtBearerEvents)} - OnTokenValidated - {context.SecurityToken}\n");
 
-                    GlobalData<object>.GlobalItems.Add(new KeyValuePair<string, object>("Authorization", context.SecurityToken));
+                    GlobalData<object>.GlobalUser = new DOMAIN.DTOS.USER.UserData
+                    {
+                        Id = Guid.Parse(context.Principal.Claims.FirstOrDefault().Value)
+                    };
 
                     return Task.CompletedTask;
                 }
@@ -631,7 +634,7 @@ public static class ExtensionsConfigurations
                 FirstName = "Admin",
                 LastName = "Admin",
                 Age = 1,
-                BirthDay = DateTime.Now,
+                BirthDay = "12/09/1999",
                 CPF = "32965808086",
                 RG = "371061775",
                 Gender = Gender.Male,

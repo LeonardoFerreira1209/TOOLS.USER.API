@@ -1,6 +1,7 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.CONTACT;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PROFESSION;
 using APPLICATION.ENUMS;
+using System.Text.Json.Serialization;
 
 namespace APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 
@@ -31,11 +32,13 @@ public class PersonFullRequest
     /// <summary>
     /// Data de aniversário.
     /// </summary>
-    public DateTime BirthDay { get; set; }  
+    public string BirthDay { get; set; }
 
     /// <summary>
     /// Gênero.
     /// </summary>
+    /// 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Gender Gender { get; set; }
     #endregion
 
@@ -49,6 +52,12 @@ public class PersonFullRequest
     /// CPF.
     /// </summary>
     public string CPF { get; set; }
+
+    /// <summary>
+    /// Status.
+    /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public Status Status { get; set; }
     #endregion
 
     #region User

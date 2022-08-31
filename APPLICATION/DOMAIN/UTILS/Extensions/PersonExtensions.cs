@@ -2,6 +2,7 @@
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
+using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
@@ -52,7 +53,11 @@ public static class PersonExtensions
             RG = personFullRequest.RG,
             CPF = personFullRequest.CPF,
 
-            UserId = personFullRequest.UserId
+            Status = personFullRequest.Status,
+
+            UserId = personFullRequest.UserId,
+
+            UpdatedUserId = GlobalData<object>.GlobalUser.Id
         };
     }
 
@@ -61,7 +66,7 @@ public static class PersonExtensions
     /// </summary>
     /// <param name="person"></param>
     /// <returns></returns>
-    public static PersonResponse  ToResponse(this Person person)
+    public static PersonResponse ToResponse(this Person person)
     {
         return new PersonResponse
         {
@@ -84,7 +89,9 @@ public static class PersonExtensions
             CPF = person.CPF,
 
             UserId = person.UserId,
-            User = person.User
+            User = person.User,
+
+            Status = person.Status
         };
     }
 }

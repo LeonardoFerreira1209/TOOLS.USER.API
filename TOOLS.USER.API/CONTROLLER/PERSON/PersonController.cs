@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace TOOLS.USER.API.CONTROLLER.PERSON;
 
-[Route("api/[controller]")]
+[Route("api/[controller]")][ApiController]
 public class PersonController : ControllerBase
 {
     private readonly IPersonService _personService;
@@ -66,7 +66,7 @@ public class PersonController : ControllerBase
     /// </summary>
     /// <param name="personFullRequets"></param>
     /// <returns></returns>
-    [HttpPost("completeRegister")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
+    [HttpPut("completeRegister")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Completar cadastro da Pessoa", Description = "Método responsável por completar o cadastro de uma pessoa")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

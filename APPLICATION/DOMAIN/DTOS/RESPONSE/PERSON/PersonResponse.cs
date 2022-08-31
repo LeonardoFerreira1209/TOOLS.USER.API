@@ -32,7 +32,7 @@ public class PersonResponse
     /// <summary>
     /// Data de aniversário.
     /// </summary>
-    public DateTime BirthDay { get; set; }
+    public string BirthDay { get; set; }
 
     /// <summary>
     /// Gênero.
@@ -55,6 +55,11 @@ public class PersonResponse
     /// CPF.
     /// </summary>
     public string CPF { get; set; }
+    
+    /// <summary>
+    /// Status.
+    /// </summary>
+    public Status Status { get; set; }
     #endregion
 
     #region User
