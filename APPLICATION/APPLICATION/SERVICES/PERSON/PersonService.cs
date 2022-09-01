@@ -1,9 +1,9 @@
-﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
-using APPLICATION.DOMAIN.DTOS.REQUEST.PEOPLE;
+﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
-using APPLICATION.DOMAIN.UTILS.GLOBAL;
+using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.CLIENTS;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
@@ -172,6 +172,8 @@ public class PersonService : IPersonService
         try
         {
             Log.Information($"[LOG INFORMATION] - Completando registro da pessoa {personFullRequest.FirstName} {personFullRequest.LastName}.\n");
+
+            var validation = await new CompletePersonValidator().ValidateAsync(personFullRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
 
             // Complete Register.
             var (success, person) = await _personRepository.CompleteRegister(personFullRequest);
