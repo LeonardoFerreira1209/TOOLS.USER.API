@@ -100,7 +100,7 @@ public class PersonController : ControllerBase
         using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(formFile)))
         using (LogContext.PushProperty("Metodo", "ProfileImage"))
         {
-            return await Tracker.Time(() => _personService.ProfileImage(personId, formFile), "Adicionar imagem na pessoa.");
+            return await Tracker.Time(() => _personService.ProfileImage(personId, formFile ??= Request.Form.Files.FirstOrDefault()), "Adicionar imagem na pessoa.");
         }
     }
 }

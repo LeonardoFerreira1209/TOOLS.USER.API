@@ -54,6 +54,11 @@ public class PersonFullRequest
     public string CPF { get; set; }
 
     /// <summary>
+    /// Imagem de perfil.
+    /// </summary>
+    public byte[] Image { get; set; }
+
+    /// <summary>
     /// Status.
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter))]

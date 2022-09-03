@@ -52,6 +52,8 @@ public static class PersonExtensions
             RG = personFullRequest.RG,
             CPF = personFullRequest.CPF,
 
+            Image = personFullRequest.Image,
+
             Status = personFullRequest.Status,
 
             UserId = personFullRequest.UserId,
