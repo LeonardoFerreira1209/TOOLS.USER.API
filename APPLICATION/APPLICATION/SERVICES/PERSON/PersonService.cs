@@ -209,6 +209,8 @@ public class PersonService : IPersonService
         {
             Log.Information($"[LOG INFORMATION] - Adicionando imagem na pessoa.\n");
 
+            var validation = await new ImageProfileUploadValidator().ValidateAsync(formFile); if (validation.IsValid is false) return validation.CarregarErrosValidator();
+
             if (formFile.ContentType.FileTypesAllowed())
             {
                 // Declare a memory stream.
