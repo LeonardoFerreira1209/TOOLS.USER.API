@@ -115,6 +115,7 @@ jobs:
           ConnectionStrings.BaseDados: ${{ secrets.__CONNECTION_STRING_DATABASE__ }}
           ApplicationInsights.InstrumentationKey: ${{ secrets.__APPINSIGHTS_INSTRUMENTATION_KEY__ }}
           ApplicationInsights.ConnectionStringApplicationInsightsKey: ${{ secrets.__CONNECTION_STRING_APPLICATION_INSIGHTS_KEY__ }}
+          ApplicationInsights.CloudRoleName: ${{ secrets.__CLOUD_ROLE_NAME__ }}
           Auth.ValidIssuer: ${{ secrets.__HYPER_SECURITY_SSUER_BEARER__ }}
           Auth.ValidAudience: ${{ secrets.__HYPER_SECURITY_AUDIENCE_BEARER__ }}
           Auth.SecurityKey: ${{ secrets.__HYPER_SECURITY_KEY__ }}
