@@ -12,6 +12,7 @@ using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -56,7 +57,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             _personService = personService;
         }
 
-        #region Authentication
+        #region User
         /// <summary>
         /// Método responsável por fazer a authorização do usuário.
         /// </summary>
@@ -126,9 +127,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
-        #endregion
 
-        #region Create
         /// <summary>
         /// Método responsavel por criar um novo usuário.
         /// </summary>
@@ -184,9 +183,53 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
-        #endregion
 
-        #region Activate
+        /// <summary>
+        /// Método responsável por atualizar um usuário.
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<object>> Update(UserUpdateRequest userUpdateRequest)
+        {
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Update)}\n");
+
+            try
+            {
+                Log.Information($"[LOG INFORMATION] - Validando request.\n");
+
+                // Validate de userRequest.
+                var validation = await new UpdateUserValidator().ValidateAsync(userUpdateRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
+
+                Log.Information($"[LOG INFORMATION] - Request validado com sucesso.\n");
+
+                Log.Information($"[LOG INFORMATION] - Atualizando dados do usuário {JsonConvert.SerializeObject(userUpdateRequest)}.\n");
+
+                // convert to Entity.
+                var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userUpdateRequest.Id);
+
+                // update username.
+                await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
+
+                await _userManager.ChangePasswordAsync(user, userUpdateRequest.CurrentPassword, userUpdateRequest.Password);
+
+                await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
+
+                await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
+
+                Log.Information($"[LOG INFORMATION] - Usuário atualizado com sucesso.\n");
+
+                // Response success.
+                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário atualizado com sucesso.") });
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
+
+                // Response error
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            }
+        }
+
         /// <summary>
         /// Método responsavel por ativar um novo usuário.
         /// </summary>
@@ -420,7 +463,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="user"></param>
         /// <param name="userRequest"></param>
         /// <returns></returns>
-        private async Task<IdentityResult> BuildUser(IdentityUser<Guid> user, UserRequest userRequest)
+        private async Task<IdentityResult> BuildUser(IdentityUser<Guid> user, UserCreateRequest userRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(BuildUser)}\n");
 

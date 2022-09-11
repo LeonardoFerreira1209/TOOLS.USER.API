@@ -15,7 +15,7 @@ public class TokenJwtBuilder
 {
     private SecurityKey securityKey = null;
 
-    private string subject, issuer, audience, username = String.Empty;
+    private string subject, issuer, audience, username, personId = String.Empty;
 
     private readonly List<Claim> claims = new(); private readonly List<Claim> roles = new();
 
@@ -29,6 +29,13 @@ public class TokenJwtBuilder
     public TokenJwtBuilder AddUsername(string username)
     {
         this.username = username;
+
+        return this;
+    }
+
+    public TokenJwtBuilder AddPersonId(Guid personId)
+    {
+        this.personId = personId.ToString();
 
         return this;
     }
@@ -180,7 +187,8 @@ public class TokenJwtBuilder
             var baseClaims = new[]
             {
                 new Claim("id", user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, this.username),
+                new Claim("personId", personId),
+                new Claim(JwtRegisteredClaimNames.UniqueName, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(JwtRegisteredClaimNames.Typ, "Bearer"),

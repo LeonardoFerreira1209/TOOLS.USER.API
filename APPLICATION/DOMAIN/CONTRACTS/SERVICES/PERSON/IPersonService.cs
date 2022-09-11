@@ -22,6 +22,13 @@ public interface IPersonService
     Task<ApiResponse<object>> Get(Guid personId);
 
     /// <summary>
+    /// Método responsável por recuperar o Id de uma pessoa pelo userId.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<ApiResponse<string>> GetIdWithUserId(Guid userId);
+
+    /// <summary>
     /// Método reponsavel por recuperar todas as pessoas.
     /// </summary>
     /// <returns></returns>

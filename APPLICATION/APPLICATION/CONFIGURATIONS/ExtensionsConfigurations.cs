@@ -114,7 +114,13 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureContexto(this IServiceCollection services, IConfiguration configurations)
     {
         services
-            .AddDbContext<Contexto>(options => options.UseLazyLoadingProxies().UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados")));
+            .AddDbContext<Contexto>(options =>
+            {
+                options.UseLazyLoadingProxies().UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados"));
+
+                // Removendo trackeamento.
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            });
 
         return services;
     }
@@ -404,9 +410,9 @@ public static class ExtensionsConfigurations
             .AddTransient(x => configurations)
             // Services
             .AddTransient<IPersonService, PersonService>()
-            .AddTransient<IUserService, UserService>()
             .AddTransient<IRoleService, RoleService>()
             .AddTransient<ITokenService, TokenService>()
+            .AddTransient<IUserService, UserService>()
             // Facades
             .AddSingleton<EmailFacade, EmailFacade>()
             // Repository

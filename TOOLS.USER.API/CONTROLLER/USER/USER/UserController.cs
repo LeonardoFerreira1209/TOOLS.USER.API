@@ -42,6 +42,26 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         }
 
         /// <summary>
+        /// Método responsável por atualizar um  usuario.
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
+        [HttpPut("update")][EnableCors("CorsPolicy")]
+        [SwaggerOperation(Summary = "Atualizar uauário.", Description = "Método responsavel por atualizar usuário")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ApiResponse<object>> Update(UserUpdateRequest userUpdateRequest)
+        {
+            using (LogContext.PushProperty("Controller", "UserController"))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(userUpdateRequest)))
+            using (LogContext.PushProperty("Metodo", "Create"))
+            {
+                return await Tracker.Time(() => _userService.Update(userUpdateRequest), "Criar usuário");
+            }
+        }
+
+        /// <summary>
         /// Método responsável por Ativar usuário
         /// </summary>
         /// <param name="username"></param>

@@ -66,7 +66,7 @@ public class PersonService : IPersonService
     }
 
     /// <summary>
-    /// Métodod responsável por recuperar uma pessoa por Id.
+    /// Método responsável por recuperar uma pessoa por Id.
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
@@ -110,6 +110,54 @@ public class PersonService : IPersonService
 
             // Error response.
             return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+        }
+    }
+
+    /// <summary>
+    /// Método responsável por recuperar o Id de uma pessoa pelo userId.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public async Task<ApiResponse<string>> GetIdWithUserId(Guid userId)
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(GetIdWithUserId)}\n");
+
+        try
+        {
+            Log.Information($"[LOG INFORMATION] - Recuperando Id de uma pessoa atráves do Id do usuário.\n");
+
+            // Get person for Id.
+            var (success, personId) = await _personRepository.GetIdWithUserId(userId);
+
+            // Is success or person is null.
+            if (success is false || Guid.Empty.Equals(personId))
+            {
+                // Person is null.
+                if (Guid.Empty.Equals(personId))
+                {
+                    Log.Information($"[LOG INFORMATION] - Pessoa não encontrada.\n");
+
+                    // Response error.
+                    return new ApiResponse<string>(success, DOMAIN.ENUM.StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontrada!") });
+                }
+
+                Log.Information($"[LOG INFORMATION] - Falha ao recuperar Id da  pessoa.\n");
+
+                // Response error.
+                return new ApiResponse<string>(success, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao recuperar Id da pessoa!") });
+            }
+
+            Log.Information($"[LOG INFORMATION] - Id da pessoa recuperada com sucesso.\n");
+
+            // Response success
+            return new ApiResponse<string>(success, DOMAIN.ENUM.StatusCodes.SuccessOK, personId.ToString(), new List<DadosNotificacao> { new DadosNotificacao("Id da pessoa recuperada com sucesso!") }) ;
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERROR] - {exception.Message}\n");
+
+            // Error response.
+            return new ApiResponse<string>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 

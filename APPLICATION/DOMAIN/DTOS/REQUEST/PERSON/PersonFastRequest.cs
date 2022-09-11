@@ -20,6 +20,6 @@ public class PersonFastRequest
     #endregion
 
     #region User
-    public UserRequest User { get; set; }
+    public UserCreateRequest User { get; set; }
     #endregion
 }

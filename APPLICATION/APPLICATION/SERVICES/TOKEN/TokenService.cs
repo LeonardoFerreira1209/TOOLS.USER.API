@@ -1,4 +1,5 @@
-﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
+﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
@@ -6,6 +7,7 @@ using APPLICATION.DOMAIN.ENUM;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Serilog;
 using System.Security.Claims;
 
@@ -17,13 +19,17 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
+        private readonly IPersonService _personService;
+
         private readonly IOptions<AppSettings> _appsettings;
 
-        public TokenService(UserManager<IdentityUser<Guid>> userManager, RoleManager<IdentityRole<Guid>> roleManager, IOptions<AppSettings> appsettings)
+        public TokenService(UserManager<IdentityUser<Guid>> userManager, RoleManager<IdentityRole<Guid>> roleManager, IPersonService personService, IOptions<AppSettings> appsettings)
         {
             _userManager = userManager;
 
             _roleManager = roleManager;
+
+            _personService = personService;
 
             _appsettings = appsettings;
         }
@@ -54,6 +60,9 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
                 // Return user claims.
                 var claims = await Claims(user, roles);
+
+                // Return personId
+                var personId = await PersonId(user.Id);
                 #endregion
 
                 Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
@@ -61,6 +70,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                 // Create de token and return.
                 var response = await Task.FromResult(new TokenJwtBuilder()
                    .AddUsername(username)
+                   .AddPersonId(personId)
                    .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
                    .AddSubject("HYPER.IO PROJECTS L.T.D.A")
                    .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
@@ -140,7 +150,8 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         }
         #endregion
 
-        #region Token
+        #region Person
+        private async Task<Guid> PersonId(Guid userId) => await Task.FromResult(Guid.Parse(_personService.GetIdWithUserId(userId).Result.Dados));
         #endregion
 
         #endregion

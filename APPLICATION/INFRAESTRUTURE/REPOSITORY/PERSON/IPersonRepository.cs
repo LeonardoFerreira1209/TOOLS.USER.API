@@ -21,6 +21,13 @@ public interface IPersonRepository
     Task<(bool success, Person person)> Get(Guid personId, bool withDependencies);
 
     /// <summary>
+    /// Método responsável por recuperar o Id de uma pessoa pelo userId.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<(bool success, Guid personId)> GetIdWithUserId(Guid userId);
+
+    /// <summary>
     /// Método responsavel por recuperar todas as pessoas.
     /// </summary>
     /// <param name="withDependencies"></param>

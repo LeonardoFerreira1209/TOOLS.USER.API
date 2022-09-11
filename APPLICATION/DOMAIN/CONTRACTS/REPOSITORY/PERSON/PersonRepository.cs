@@ -5,6 +5,7 @@ using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -62,7 +63,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     /// <returns></returns>
     public async Task<(bool success, Person person)> Get(Guid personId, bool withDependencies)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Get)}\n");
 
         try
         {
@@ -97,6 +98,32 @@ public class PersonRepository : BaseRepository, IPersonRepository
 
             // Return null value.
             return (false, null);
+        }
+    }
+
+
+    /// <summary>
+    /// étodo responsável por recuperar o Id de uma pessoa pelo userId.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public async Task<(bool success, Guid personId)> GetIdWithUserId(Guid userId)
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(GetIdWithUserId)}\n");
+
+        try
+        {
+            var personId = _contexto.Persons
+                                    .FirstOrDefaultAsync(person => person.UserId.Equals(userId)).Result.Id;
+            // Return person.
+            return (!Guid.Empty.Equals(personId), await Task.FromResult(personId));
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+
+            // Returnguid empty.
+            return (false, Guid.Empty);
         }
     }
 
@@ -202,6 +229,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
     #endregion
 
     #region Dapper
-    
+
     #endregion
 }

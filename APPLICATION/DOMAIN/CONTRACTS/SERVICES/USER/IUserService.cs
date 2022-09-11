@@ -22,6 +22,13 @@ public interface IUserService
     public Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest);
 
     /// <summary>
+    /// Método responsável por atualizar um usuário.
+    /// </summary>
+    /// <param name="userRequest"></param>
+    /// <returns></returns>
+    Task<ApiResponse<object>> Update(UserUpdateRequest userRequest);
+
+    /// <summary>
     /// Método responsavel por ativar um usuário.
     /// </summary>
     /// <param name="request"></param>
