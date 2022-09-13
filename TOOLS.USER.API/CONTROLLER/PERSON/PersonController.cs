@@ -3,6 +3,9 @@ using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
+using APPLICATION.DOMAIN.UTILS.AUTH;
+using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
+using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +27,7 @@ public class PersonController : ControllerBase
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    [HttpGet("get/{personId}")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
+    [HttpGet("get/{personId}")][CustomAuthorize(Claims.Person, "get", "gdfgdf")][EnableCors("CorsPolicy")]
     [SwaggerOperation(Summary = "Recuperar uma pessoa", Description = "Método responsável por recuperar uma pessoa")]
     [ProducesResponseType(typeof(ApiResponse<PersonResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

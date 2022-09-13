@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+namespace APPLICATION.DOMAIN.UTILS.AUTH.TOKEN;
 
 public class JwtSecurityKey
 {

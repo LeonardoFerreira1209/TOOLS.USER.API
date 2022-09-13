@@ -6,18 +6,19 @@ using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.USER.ROLE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENUM;
 using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Serilog;
+using System.Data;
 using System.Security.Claims;
 using System.Web;
 
@@ -33,6 +34,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
         private readonly UserManager<IdentityUser<Guid>> _userManager;
 
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+
         private readonly IOptions<AppSettings> _appsettings;
 
         private readonly EmailFacade _emailFacade;
@@ -42,11 +45,13 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         private readonly IPersonService _personService;
         #endregion
 
-        public UserService(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IPersonService personService)
+        public UserService(SignInManager<IdentityUser<Guid>> signInManager, UserManager<IdentityUser<Guid>> userManager, RoleManager<IdentityRole<Guid>> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IPersonService personService)
         {
             _signInManager = signInManager;
 
             _userManager = userManager;
+
+            _roleManager = roleManager;
 
             _appsettings = appsettings;
 
@@ -208,13 +213,44 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userUpdateRequest.Id);
 
                 // update username.
-                await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
+                var setUsernameResponse = await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
 
-                await _userManager.ChangePasswordAsync(user, userUpdateRequest.CurrentPassword, userUpdateRequest.Password);
+                if (setUsernameResponse.Succeeded is false)
+                {
+                    Log.Information($"[LOG INFORMATION] - Erro ao atualizar nome de usuário.\n");
 
-                await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
+                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar nome de usuário.") });
+                }
 
-                await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
+                if (!string.IsNullOrEmpty(userUpdateRequest.Password))
+                {
+                    var changePasswordResponse = await _userManager.ChangePasswordAsync(user, userUpdateRequest.CurrentPassword, userUpdateRequest.Password);
+
+                    if (changePasswordResponse.Succeeded is false)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Erro ao trocar senha.\n");
+
+                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(changePasswordResponse.Errors.FirstOrDefault().Code.CustomExceptionMessage()) });
+                    }
+                }
+
+                var setEmailResponse = await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
+
+                if (setEmailResponse.Succeeded is false)
+                {
+                    Log.Information($"[LOG INFORMATION] - Erro ao atualizar e-mail de usuário.\n");
+
+                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar e-mail do usuário.") });
+                }
+
+                var setPhoneNumberResponse = await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
+
+                if (setPhoneNumberResponse.Succeeded is false)
+                {
+                    Log.Information($"[LOG INFORMATION] - Erro ao atualizar celular do usuário.\n");
+
+                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar celular do usuário.") });
+                }
 
                 Log.Information($"[LOG INFORMATION] - Usuário atualizado com sucesso.\n");
 
@@ -411,6 +447,59 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         }
 
         /// <summary>
+        /// Método responsável por recuperar roles de um usuário.
+        /// </summary>
+        /// <param name="roleRequest"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<object>> GetUserRoles(Guid userId)
+        {
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(GetUserRoles)}\n");
+
+            try
+            {
+                Log.Information($"[LOG INFORMATION] - Recuperando todas as roles do usuário.\n");
+
+                // Get user for Id.
+                var user = _userManager.Users.FirstAsync(user => user.Id.Equals(userId)).Result;
+
+                // Get roles.
+                var response = await _userManager.GetRolesAsync(user);
+
+                // Instance of role response
+                var roles = new List<RolesResponse>();
+
+                // for in response
+                foreach(var roleName in response)
+                {
+                    // get role.
+                    var roleEntity = await _roleManager.Roles.FirstOrDefaultAsync(role => role.Name.Equals(roleName));
+
+                    // get role claims
+                    var roleClaims = await _roleManager.GetClaimsAsync(roleEntity);
+
+                    // add roles.
+                    roles.Add(new RolesResponse {
+
+                        Name = roleName,
+                        Claims = roleClaims
+                    });
+                }
+
+                Log.Information($"[LOG INFORMATION] - Roles recuperadas.\n");
+
+                // Response success.
+                return new ApiResponse<object>(true, StatusCodes.SuccessOK, roles.ToList(), new List<DadosNotificacao> { new DadosNotificacao("Roles recuperadas com sucesso.") });
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+
+                // Error response.
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            }
+        }
+
+        /// <summary>
         /// Método responsavel por remover uma role ao usuário.
         /// </summary>
         /// <param name="username"></param>
@@ -499,10 +588,10 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             await _emailFacade.Invite(new MailRequest
             {
                 Receivers = new List<string> { user.Email },
-                Link = $"https://toolswebapp.netlify.app/confirmemail/{codifyEmailCode}/{user.Id}",
+                Link = $"{_appsettings.Value.UrlBase.TOOLS_WEB_APP}/confirmEmail/{codifyEmailCode}/{user.Id}",
                 Subject = "Ativação de e-mail",
-                Content = $"Olá {user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
-                ButtonText = "Clique para ativar o e-mail",
+                Content = $"{user.UserName}, estamos muito felizes com o seu cadastro em nosso sistema. Clique no botão para liberarmos o seu acesso.",
+                ButtonText = "Liberar acesso",
                 TemplateName = "Activate.Template"
             });
         }

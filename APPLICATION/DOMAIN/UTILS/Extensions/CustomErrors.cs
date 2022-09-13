@@ -23,6 +23,8 @@ public static class CustomErrors
 
         if (code == "PasswordRequiresLower") return "As senhas devem ter pelo menos uma letra minúscula ('a'-'z').";
 
+        if (code == "PasswordMismatch") return "Senha atual está incorreta.";
+
         return "Erro não foi tratado no servidor.";
     }
 }

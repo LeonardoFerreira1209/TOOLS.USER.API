@@ -4,10 +4,11 @@ using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENUM;
+using APPLICATION.DOMAIN.UTILS.AUTH;
+using APPLICATION.DOMAIN.UTILS.AUTH.TOKEN;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Serilog;
 using System.Security.Claims;
 

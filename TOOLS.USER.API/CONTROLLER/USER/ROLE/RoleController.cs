@@ -26,6 +26,26 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         }
 
         /// <summary>
+        /// Método responsável por recuperar roles do usuário.
+        /// </summary>
+        /// <param name="roleRequest"></param>
+        /// <returns></returns>
+        [HttpGet("getUserRoles/{userId}")][Authorize(Policy = "accessRole")][EnableCors("CorsPolicy")]
+        [SwaggerOperation(Summary = "Recuperar roles do usuário", Description = "Método responsável por recuperar roles do usuário")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ApiResponse<object>> GetUserRoles(Guid userId)
+        {
+            using (LogContext.PushProperty("Controller", "RoleController"))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(userId)))
+            using (LogContext.PushProperty("Metodo", "GetUserRoles"))
+            {
+                return await Tracker.Time(() => _userService.GetUserRoles(userId), "Recuperar roles do usuário.");
+            }
+        }
+
+        /// <summary>
         /// Método responsável por adicionar uma role.
         /// </summary>
         /// <param name="roleRequest"></param>

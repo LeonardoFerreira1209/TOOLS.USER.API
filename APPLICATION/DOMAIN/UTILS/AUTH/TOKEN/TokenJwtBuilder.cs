@@ -1,4 +1,5 @@
-﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENUM;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -6,7 +7,7 @@ using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
+namespace APPLICATION.DOMAIN.UTILS.AUTH.TOKEN;
 
 /// <summary>
 /// Classe responsável por fazer as operações com o token.
@@ -15,7 +16,7 @@ public class TokenJwtBuilder
 {
     private SecurityKey securityKey = null;
 
-    private string subject, issuer, audience, username, personId = String.Empty;
+    private string subject, issuer, audience, username, personId = string.Empty;
 
     private readonly List<Claim> claims = new(); private readonly List<Claim> roles = new();
 
@@ -95,7 +96,7 @@ public class TokenJwtBuilder
     /// <returns></returns>
     public TokenJwtBuilder AddRole(Claim role)
     {
-        this.roles.Add(role);
+        roles.Add(role);
 
         return this;
     }
@@ -119,7 +120,7 @@ public class TokenJwtBuilder
     /// <returns></returns>
     public TokenJwtBuilder AddClaim(Claim claim)
     {
-        this.claims.Add(claim);
+        claims.Add(claim);
 
         return this;
     }
@@ -154,13 +155,13 @@ public class TokenJwtBuilder
     /// <exception cref="ArgumentNullException"></exception>
     private (bool success, string message) EnsureArguments()
     {
-        if (this.securityKey == null) return (false, "securotyKey não existe!");
+        if (securityKey == null) return (false, "securotyKey não existe!");
 
-        if (String.IsNullOrEmpty(this.subject)) return (false, "subject não existe!");
+        if (string.IsNullOrEmpty(subject)) return (false, "subject não existe!");
 
-        if (String.IsNullOrEmpty(this.issuer)) return (false, "issuer não existe!");
+        if (string.IsNullOrEmpty(issuer)) return (false, "issuer não existe!");
 
-        if (String.IsNullOrEmpty(this.audience)) return (false, "audience não existe!");
+        if (string.IsNullOrEmpty(audience)) return (false, "audience não existe!");
 
         return (true, null);
     }
@@ -176,7 +177,7 @@ public class TokenJwtBuilder
         try
         {
             // Verifica os dados.
-            var (success, message) = EnsureArguments(); if(success is false)
+            var (success, message) = EnsureArguments(); if (success is false)
             {
                 Log.Error($"[LOG ERROR] - {message}\n");
 
@@ -196,15 +197,15 @@ public class TokenJwtBuilder
                 new Claim("phoneNumber", user.PhoneNumber),
                 new Claim(JwtRegisteredClaimNames.Website, "https://toolsuserapi.azurewebsites.net/")
 
-            }.Union(this.roles).Union(this.claims);
+            }.Union(roles).Union(claims);
 
             // Gera o token com os dados passados.
             var token = new JwtSecurityToken(
-                issuer: this.issuer,
-                audience: this.audience,
+                issuer: issuer,
+                audience: audience,
                 claims: baseClaims,
-                expires: DateTime.Now.AddMinutes(this.expiryInMinutes),
-                signingCredentials: new SigningCredentials(this.securityKey, SecurityAlgorithms.HmacSha256));
+                expires: DateTime.Now.AddMinutes(expiryInMinutes),
+                signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256));
 
             Log.Information($"[LOG INFORMATION] - Token gerado {token}.\n");
 

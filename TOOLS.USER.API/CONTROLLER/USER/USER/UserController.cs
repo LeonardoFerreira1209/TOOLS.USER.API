@@ -5,6 +5,7 @@ using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -46,7 +47,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// </summary>
         /// <param name="userRequest"></param>
         /// <returns></returns>
-        [HttpPut("update")][EnableCors("CorsPolicy")]
+        [HttpPut("update")][Authorize(Policy = "accessPerson")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Atualizar uauário.", Description = "Método responsavel por atualizar usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

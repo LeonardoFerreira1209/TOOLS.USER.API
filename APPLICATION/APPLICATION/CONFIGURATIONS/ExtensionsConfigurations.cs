@@ -410,15 +410,15 @@ public static class ExtensionsConfigurations
             .AddTransient(x => configurations)
             // Services
             .AddTransient<IPersonService, PersonService>()
+            .AddTransient<IUserService, UserService>()
             .AddTransient<IRoleService, RoleService>()
             .AddTransient<ITokenService, TokenService>()
-            .AddTransient<IUserService, UserService>()
             // Facades
             .AddSingleton<EmailFacade, EmailFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IPersonRepository, PersonRepository>();
-            
+
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -721,7 +721,7 @@ public static class ExtensionsConfigurations
     public static WebApplication UseMinimalAPI(this WebApplication application, IConfiguration configurations)
     {
         #region User's
-      
+
         #endregion
 
         return application;

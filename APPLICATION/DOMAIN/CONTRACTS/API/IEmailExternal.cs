@@ -8,6 +8,6 @@ namespace APPLICATION.DOMAIN.CONTRACTS.API;
 /// </summary>
 public interface IEmailExternal
 {
-    [Post("/mail/invite")]
+    [Post("/api/mail/invite")]
     Task<HttpResponseMessage> Invite(MailRequest request);
 }

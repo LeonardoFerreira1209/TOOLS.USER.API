@@ -12,14 +12,14 @@ public interface IUserService
     /// </summary>
     /// <param name="loginRequest"></param>
     /// <returns></returns>
-    public Task<ApiResponse<object>> Authentication(LoginRequest loginRequest);
+    Task<ApiResponse<object>> Authentication(LoginRequest loginRequest);
 
     /// <summary>
     /// Método responsável por criar um novo usuário.
     /// </summary>
     /// <param name="personFastRequest"></param>
     /// <returns></returns>
-    public Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest);
+    Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest);
 
     /// <summary>
     /// Método responsável por atualizar um usuário.
@@ -33,7 +33,7 @@ public interface IUserService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest);
+    Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest);
     #endregion
 
     #region Claims
@@ -62,6 +62,13 @@ public interface IUserService
     /// <param name="roleName"></param>
     /// <returns></returns>
     Task<ApiResponse<object>> AddRole(string username, string roleName);
+
+    /// <summary>
+    /// Método responsavel por recuperar roles do usuário.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<ApiResponse<object>> GetUserRoles(Guid userId);
 
     /// <summary>
     /// Método responsavel por remover uma role do usuário.

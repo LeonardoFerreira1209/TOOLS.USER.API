@@ -15,7 +15,6 @@
     <PackageReference Include="Duende.IdentityServer" Version="6.1.4" />
     <PackageReference Include="FluentScheduler" Version="5.5.1" />
     <PackageReference Include="FluentValidation" Version="11.2.0" />
-    <PackageReference Include="HotChocolate.Abstractions" Version="12.12.1" />
     <PackageReference Include="MailKit" Version="3.3.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />

@@ -60,4 +60,5 @@ public class UrlBase
 {
     public string TOOLS_MAIL_API { get; set; }
     public string BASE_URL { get; set; }
+    public string TOOLS_WEB_APP { get; set; }
 }

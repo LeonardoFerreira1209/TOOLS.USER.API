@@ -24,7 +24,7 @@ public class RoleService : IRoleService
         _autoMapper = autoMapper;
     }
 
-    #region Create
+    #region Role
     /// <summary>
     /// Método responsavel por criar uma nova role.
     /// </summary>
@@ -50,13 +50,10 @@ public class RoleService : IRoleService
             {
                 Log.Information($"[LOG INFORMATION] - Adicionando claims na role {roleRequest.Name}\n");
 
-                foreach(var claim in roleRequest.Claims)
+                foreach (var claim in roleRequest.Claims)
                 {
                     await _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value));
                 }
-
-                // foreach and add claims in request
-               // roleRequest.Claims.Select(async claim => await _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value)));
 
                 // Response success.
                 return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Role criado com sucesso.") });
@@ -73,12 +70,12 @@ public class RoleService : IRoleService
             Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             // Error response.
-            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError,null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
     #endregion
 
-    #region Add Claim in role
+    #region Claim
     /// <summary>
     /// Método responsavel por adicionar uma claim na role.
     /// </summary>

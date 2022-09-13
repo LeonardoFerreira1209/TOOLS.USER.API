@@ -58,7 +58,7 @@ try
         .UseRouting()
         .UseAuthorization()
         .UseAuthentication()
-        .UseCors("accessPerson")
+        .UseCors("CorsPolicy")
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
         .UseEndpoints();
