@@ -2,6 +2,8 @@
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
+using APPLICATION.DOMAIN.UTILS.AUTH;
+using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +29,7 @@ namespace TOOLS.admin.API.CONTROLLER.admin.CLAIM
         /// <param name="claimRequest"></param>
         /// <returns></returns>
         
-        [HttpPost("addclaim")][Authorize(Policy = "accessClaim")][EnableCors("CorsPolicy")]
+        [HttpPost("addclaim")][CustomAuthorize(Claims.Claim, "Post")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Adicionar claim no usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -48,18 +50,18 @@ namespace TOOLS.admin.API.CONTROLLER.admin.CLAIM
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        [HttpDelete("removeclaim")][Authorize(Policy = "accessClaim")][EnableCors("CorsPolicy")]
+        [HttpDelete("removeclaim")][CustomAuthorize(Claims.Claim, "Delete")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Remover claim do usuário", Description = "Método responsável por Remover claim do usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> RemoveClaim([Required] string username, string claimName)
+        public async Task<ApiResponse<object>> RemoveClaim([Required] string username, ClaimRequest claimRequest)
         {
             using (LogContext.PushProperty("Controller", "ClaimController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimName)))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequest)))
             using (LogContext.PushProperty("Metodo", "RemoveClaim"))
             {
-                return await Tracker.Time(() => _userService.AddRole(username, claimName), "Adicionar role no usuário.");
+                return await Tracker.Time(() => _userService.RemoveClaim(username, claimRequest), "Remover claim do usuário.");
             }
         }
     }

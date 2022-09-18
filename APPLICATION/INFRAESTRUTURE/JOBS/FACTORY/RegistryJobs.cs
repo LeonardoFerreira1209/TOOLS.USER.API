@@ -10,7 +10,7 @@ namespace APPLICATION.INFRAESTRUTURE.JOBS.FACTORY
         {
             try
             {
-                NonReentrantAsDefault(); Schedule<IProcessDeleteUserWithoutPersonJob>().ToRunEvery(300).Seconds();
+                NonReentrantAsDefault(); Schedule<IProcessDeleteUserWithoutPersonJob>().ToRunEvery(2400).Seconds();
             }
             catch (Exception exception)
             {

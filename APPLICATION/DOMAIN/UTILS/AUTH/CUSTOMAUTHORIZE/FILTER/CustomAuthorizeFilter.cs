@@ -10,8 +10,16 @@ public class CustomAuthorizeFilter : IAuthorizationFilter
 {
     private readonly List<Claim> _claims;
 
+    /// <summary>
+    /// Filtro de autorização customizavel.
+    /// </summary>
+    /// <param name="claims"></param>
     public CustomAuthorizeFilter(List<Claim> claims) => _claims = claims;
 
+    /// <summary>
+    /// Autorização customizavel.
+    /// </summary>
+    /// <param name="context"></param>
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var hasClaim = false;
