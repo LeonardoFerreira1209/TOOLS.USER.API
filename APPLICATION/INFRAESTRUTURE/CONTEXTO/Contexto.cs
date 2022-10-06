@@ -2,11 +2,11 @@
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.DOMAIN.ENTITY.ROLE;
+using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.COMPANY;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.CONTACT;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.PROFESSION;
-using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.USER;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +15,7 @@ namespace APPLICATION.INFRAESTRUTURE.CONTEXTO;
 /// <summary>
 /// Classe de configuração do banco de dados.
 /// </summary>
-public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
+public class Contexto : IdentityDbContext<User, Role, Guid>
 {
     public Contexto(DbContextOptions<Contexto> options) : base(options)
     {
@@ -30,15 +30,6 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
     {
         // Configutrations
         modelBuilder
-            // User
-            .ApplyConfiguration(new UsersTypeConfiguration())
-            .ApplyConfiguration(new UserTokensTypeConfiguration())
-            .ApplyConfiguration(new UserLoginsTypeConfiguration())
-            .ApplyConfiguration(new UserClaimsTypeConfiguration())
-            .ApplyConfiguration(new UserRolesTypeConfiguration())
-            // Roles
-            .ApplyConfiguration(new RolesTypeConfiguration())
-            .ApplyConfiguration(new RoleClaimsTypeConfiguration())
             // Profession
             .ApplyConfiguration(new ProfessionTypesConfiguration())
             // Contact
@@ -55,6 +46,9 @@ public class Contexto : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>
     #region Dbset's
 
     #region C
+    ////public DbSet<User> Users { get; set; }
+    ////public DbSet<Role> Roles{ get; set; }
+
     public DbSet<Company> Companies { get; set; }
 
     public DbSet<Contact> Contacts { get; set; }

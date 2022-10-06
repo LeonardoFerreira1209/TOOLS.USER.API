@@ -1,6 +1,7 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENUM;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using AutoMapper;
@@ -13,11 +14,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER;
 
 public class RoleService : IRoleService
 {
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly RoleManager<Role> _roleManager;
 
     private readonly IMapper _autoMapper;
 
-    public RoleService(RoleManager<IdentityRole<Guid>> roleManager, IMapper autoMapper)
+    public RoleService(RoleManager<Role> roleManager, IMapper autoMapper)
     {
         _roleManager = roleManager;
 

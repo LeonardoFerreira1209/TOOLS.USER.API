@@ -1,5 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PROFESSION;
+using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +69,7 @@ public class PersonResponse
     /// </summary>
     public Guid UserId { get; set; }
 
-    public IdentityUser<Guid> User { get; set; }
+    public User User { get; set; }
     #endregion
 
     #region Profession

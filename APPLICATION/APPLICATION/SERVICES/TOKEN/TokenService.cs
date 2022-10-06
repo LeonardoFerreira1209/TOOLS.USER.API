@@ -1,10 +1,10 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using APPLICATION.DOMAIN.ENTITY.ROLE;
+using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.ENUM;
-using APPLICATION.DOMAIN.UTILS.AUTH;
 using APPLICATION.DOMAIN.UTILS.AUTH.TOKEN;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +16,15 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 {
     public class TokenService : ITokenService
     {
-        private readonly UserManager<IdentityUser<Guid>> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
 
         private readonly IPersonService _personService;
 
         private readonly IOptions<AppSettings> _appsettings;
 
-        public TokenService(UserManager<IdentityUser<Guid>> userManager, RoleManager<IdentityRole<Guid>> roleManager, IPersonService personService, IOptions<AppSettings> appsettings)
+        public TokenService(UserManager<User> userManager, RoleManager<Role> roleManager, IPersonService personService, IOptions<AppSettings> appsettings)
         {
             _userManager = userManager;
 
@@ -100,7 +100,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        private async Task<IdentityUser<Guid>> User(string username) => await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+        private async Task<User> User(string username) => await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
         #endregion
 
         #region Role
@@ -109,7 +109,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task<IList<Claim>> Roles(IdentityUser<Guid> user)
+        private async Task<IList<Claim>> Roles(User user)
         {
             // Return roles.
             var roles = await _userManager.GetRolesAsync(user);
@@ -125,7 +125,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task<List<Claim>> Claims(IdentityUser<Guid> user, IList<Claim> roles)
+        private async Task<List<Claim>> Claims(User user, IList<Claim> roles)
         {
             // Instance Claim list.
             var claims = new List<Claim>();

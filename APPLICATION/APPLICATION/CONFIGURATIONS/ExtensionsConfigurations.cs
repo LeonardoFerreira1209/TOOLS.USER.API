@@ -15,6 +15,8 @@ using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.DOMAIN.ENTITY.ROLE;
+using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.ENUMS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
@@ -133,7 +135,7 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureIdentityServer(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddIdentity<IdentityUser<Guid>, IdentityRole<Guid>>(options =>
+            .AddIdentity<User, Role>(options =>
             {
                 #region Signin
                 options.SignIn.RequireConfirmedEmail = true;
@@ -504,7 +506,7 @@ public static class ExtensionsConfigurations
     /// <returns></returns>
     public static IApplicationBuilder UseHealthChecks(this IApplicationBuilder application)
     {
-        application.UseHealthChecks(ExtensionsConfigurations.HealthCheckEndpoint, new HealthCheckOptions
+        application.UseHealthChecks(HealthCheckEndpoint, new HealthCheckOptions
         {
             ResponseWriter = async (context, report) =>
             {
@@ -581,54 +583,83 @@ public static class ExtensionsConfigurations
 
         using (var scope = application.Services.CreateScope())
         {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
 
             var context = scope.ServiceProvider.GetRequiredService<Contexto>();
 
             // Set data in user.
-            var user = new IdentityUser<Guid>
+            var user = new User
             {
                 Email = "Admin@outlook.com",
                 EmailConfirmed = true,
                 UserName = "Admin",
-                PhoneNumber = "+55(18)99776-2452"
+                PhoneNumber = "+55(18)99776-2452",
+                Created = DateTime.Now,
+                Status = Status.Active,
             };
 
             // Generate a password hash.
-            user.PasswordHash = new PasswordHasher<IdentityUser<Guid>>().HashPassword(user, "Admin@123456789");
+            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "Admin@123456789");
 
             // Create user.
             await userManager.CreateAsync(user);
 
+            // Set user id in user.
+            user.CreatedUserId = user.Id;
+
+            // Update user.
+            await userManager.UpdateAsync(user);
+
             // Add Login in user.
             await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
 
+            // Sets data in Company.
+            var company = new Company
+            {
+                Name = "HYPER.IO",
+                Description = "tecnology & future solutions.",
+                StartDate = DateTime.Now,
+                Status = Status.Active,
+                CreatedUserId = user.Id,
+                Created = DateTime.Now,
+            };
+
+            // Add Company.
+            await context.Companies.AddAsync(company);
+
             // Set data in role.
-            var role = new IdentityRole<Guid> { Name = "administrator" };
+            var role = new Role {
+
+                Name = "administrator",
+                CompanyId = company.Id,
+                CreatedUserId = user.Id,
+                Status = Status.Active,
+                Created = DateTime.Now,
+            };
 
             // Create role.
             await roleManager.CreateAsync(role);
 
             // Add claim in role.
-            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "get"));
-            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "post"));
-            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "put"));
-            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "patch"));
-            await roleManager.AddClaimAsync(role, new Claim("accessPerson", "delete"));
+            await roleManager.AddClaimAsync(role, new Claim("Person", "Get"));
+            await roleManager.AddClaimAsync(role, new Claim("Person", "Post"));
+            await roleManager.AddClaimAsync(role, new Claim("Person", "Put"));
+            await roleManager.AddClaimAsync(role, new Claim("Person", "Patch"));
+            await roleManager.AddClaimAsync(role, new Claim("Person", "Delete"));
 
-            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "get"));
-            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "post"));
-            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "put"));
-            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "patch"));
-            await roleManager.AddClaimAsync(role, new Claim("accessClaim", "delete"));
+            await roleManager.AddClaimAsync(role, new Claim("Claim", "Get"));
+            await roleManager.AddClaimAsync(role, new Claim("Claim", "Post"));
+            await roleManager.AddClaimAsync(role, new Claim("Claim", "Put"));
+            await roleManager.AddClaimAsync(role, new Claim("Claim", "Patch"));
+            await roleManager.AddClaimAsync(role, new Claim("Claim", "Delete"));
 
-            await roleManager.AddClaimAsync(role, new Claim("accessRole", "get"));
-            await roleManager.AddClaimAsync(role, new Claim("accessRole", "post"));
-            await roleManager.AddClaimAsync(role, new Claim("accessRole", "put"));
-            await roleManager.AddClaimAsync(role, new Claim("accessRole", "patch"));
-            await roleManager.AddClaimAsync(role, new Claim("accessRole", "delete"));
+            await roleManager.AddClaimAsync(role, new Claim("Role", "Get"));
+            await roleManager.AddClaimAsync(role, new Claim("Role", "Post"));
+            await roleManager.AddClaimAsync(role, new Claim("Role", "Put"));
+            await roleManager.AddClaimAsync(role, new Claim("Role", "Patch"));
+            await roleManager.AddClaimAsync(role, new Claim("Role", "Delete"));
 
             // Add role to user.
             await userManager.AddToRoleAsync(user, role.Name);
@@ -666,20 +697,6 @@ public static class ExtensionsConfigurations
                     Created = DateTime.Now,
                 }
             };
-
-            // Sets data in Company.
-            var company = new Company
-            {
-                Name = "HYPER.IO",
-                Description = "tecnology & future solutions.",
-                StartDate = DateTime.Now,
-                Status = Status.Active,
-                CreatedUserId = user.Id,
-                Created = DateTime.Now,
-            };
-
-            // Add Company.
-            await context.Companies.AddAsync(company);
 
             //Set data in Professions.
             var professions = new List<Profession>

@@ -1,14 +1,14 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+using APPLICATION.DOMAIN.ENTITY.USER;
 using Microsoft.AspNetCore.Identity;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class UserExtensions
 {
-    public static IdentityUser<Guid> ToIdentityUser(this UserCreateRequest userRequest)
+    public static User ToIdentityUser(this UserCreateRequest userRequest)
     {
-        return new IdentityUser<Guid>
+        return new User
         {
             UserName = userRequest.UserName,
             Email = userRequest.Email,
@@ -17,9 +17,9 @@ public static class UserExtensions
         };
     }
 
-    public static IdentityUser<Guid> ToIdentityUser(this UserUpdateRequest userUpdateRequest)
+    public static User ToIdentityUser(this UserUpdateRequest userUpdateRequest)
     {
-        return new IdentityUser<Guid>
+        return new User
         {
             Id = userUpdateRequest.Id,
             UserName = userUpdateRequest.UserName,

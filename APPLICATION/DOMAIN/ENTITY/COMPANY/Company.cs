@@ -1,5 +1,6 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.BASE;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.DOMAIN.ENTITY.ROLE;
 
 namespace APPLICATION.DOMAIN.ENTITY.COMPANY;
 
@@ -22,7 +23,15 @@ public class Company : BaseEntity
     public DateTime StartDate { get; set; }
     #endregion
 
-    #region Professiond
+    #region Vinculos
+    /// <summary>
+    /// Vinculo com profissões
+    /// </summary>
     public virtual List<Profession> Professions { get; set; }
+
+    /// <summary>
+    /// Vinculo com roles.
+    /// </summary>
+    public virtual List<Role> Roles { get; set; }
     #endregion
 }

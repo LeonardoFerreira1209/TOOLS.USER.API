@@ -1,15 +1,22 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
-using Microsoft.AspNetCore.Identity;
+using APPLICATION.DOMAIN.ENTITY.ROLE;
+using APPLICATION.DOMAIN.ENTITY.USER;
+using APPLICATION.DOMAIN.UTILS.GLOBAL;
+using APPLICATION.ENUMS;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class RoleExtensions
 {
-    public static IdentityRole<Guid> ToIdentityRole(this RoleRequest roleRequest)
+    public static Role ToIdentityRole(this RoleRequest roleRequest)
     {
-        return new IdentityRole<Guid>
+        return new Role
         {
             Name = roleRequest.Name,
+            CompanyId = roleRequest.CompanyId,
+            CreatedUserId = GlobalData<object>.GlobalUser.Id,
+            Created = DateTime.Now,
+            Status = Status.Active
         };
     }
 }

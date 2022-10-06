@@ -9,6 +9,11 @@ public class RoleRequest
     /// Nome da role.
     /// </summary>
     public string Name { get; set; }
+
+    /// <summary>
+    /// Id da compania.
+    /// </summary>
+    public Guid CompanyId { get; set; }
     
     /// <summary>
     /// Claim que faze parte da role.

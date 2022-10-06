@@ -1,6 +1,7 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.BASE;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PROFESSION;
+using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
 
@@ -61,7 +62,7 @@ namespace APPLICATION.DOMAIN.ENTITY.PERSON
         /// <summary>
         /// Dados do usuário;
         /// </summary>
-        public virtual IdentityUser<Guid> User { get; set; }
+        public virtual User User { get; set; }
         #endregion
 
         #region Profession

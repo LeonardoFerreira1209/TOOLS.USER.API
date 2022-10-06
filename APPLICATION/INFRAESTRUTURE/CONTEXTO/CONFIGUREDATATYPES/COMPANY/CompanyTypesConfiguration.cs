@@ -28,5 +28,8 @@ public class CompanyTypesConfiguration : IEntityTypeConfiguration<Company>
         // Vinculo com profissões.
         builder
             .HasMany(company => company.Professions).WithOne(profession => profession.Company).HasForeignKey(profession => profession.CompanyId);
+
+        // Vinculo com Roles.
+        builder.HasMany(company => company.Roles).WithOne(role => role.Company).HasForeignKey(role => role.CompanyId);
     }
 }
