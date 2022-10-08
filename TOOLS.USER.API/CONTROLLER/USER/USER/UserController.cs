@@ -59,7 +59,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(userUpdateRequest)))
             using (LogContext.PushProperty("Metodo", "Create"))
             {
-                return await Tracker.Time(() => _userService.Update(userUpdateRequest), "Criar usuário");
+                return await Tracker.Time(() => _userService.Update(userUpdateRequest), "Atualizar usuário");
             }
         }
 
