@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APPLICATION.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20221006015456_INITIAL_MIGRATION")]
-    partial class INITIAL_MIGRATION
+    [Migration("20221010013950_CREATED_USER_ID_IS_NULLABLE_IN_USERTABLE")]
+    partial class CREATED_USER_ID_IS_NULLABLE_IN_USERTABLE
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

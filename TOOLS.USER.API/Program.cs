@@ -32,10 +32,19 @@ try
         .ConfigureAuthentication(configurations)
         .ConfigureApllicationCookie()
         .ConfigureSwagger(configurations)
-        .ConfigureDependencies(configurations)
-        .ConfigureRefit(configurations)
-        .ConfigureTelemetry(configurations)
-        .ConfigureApplicationInsights(configurations)
+        .ConfigureDependencies(configurations, builder.Environment)
+        .ConfigureRefit(configurations);
+
+    // Se for em produção executa.
+    if (builder.Environment.IsProduction())
+    {
+        builder.Services
+            .ConfigureTelemetry(configurations)
+            .ConfigureApplicationInsights(configurations);
+    }
+    
+    // Continuação do pipeline...
+    builder.Services
         .ConfigureSerilog()
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()

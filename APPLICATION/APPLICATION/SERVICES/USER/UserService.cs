@@ -13,6 +13,7 @@ using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.ENUM;
 using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
+using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using Microsoft.AspNetCore.Identity;
@@ -253,6 +254,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                     return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar celular do usuário.") });
                 }
+
+                // set datetime updated user.
+                user.Updated = DateTime.Now;
+
+                // user responsible to updated id.
+                user.UpdatedUserId = GlobalData<object>.GlobalUser.Id;
+
+                // update user.
+                await _userManager.UpdateAsync(user);
 
                 Log.Information($"[LOG INFORMATION] - Usuário atualizado com sucesso.\n");
 
@@ -562,6 +572,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             // Create User.
             var identityResult = await _userManager.CreateAsync(user, userRequest.Password);
+
+            // Logged user.
+            var responsibleUser = GlobalData<object>.GlobalUser?.Id;
+
+            // responsible user is not null use he, is null use user created Id. 
+            user.CreatedUserId = responsibleUser is not null ? responsibleUser.Value : user.Id;
+
+            // update user with created Id seted.
+            await _userManager.UpdateAsync(user);
 
             // Return result.
             return identityResult;

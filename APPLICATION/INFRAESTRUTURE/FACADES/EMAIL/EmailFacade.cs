@@ -41,9 +41,9 @@ public class EmailFacade
         }
         catch (Exception exception)
         {
-            Log.Error($"[LOG ERRO] - {exception.Message}.\n");
+            Log.Error($"[LOG ERRO] - {exception.Message}.\n", exception);
 
-            throw new Exception(exception.Message);
+            throw new Exception($"Falha ao acessar o serviço de envio de e-mails, {exception.Message}");
         }
     }
 }

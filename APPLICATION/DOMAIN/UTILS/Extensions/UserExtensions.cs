@@ -1,6 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.ENTITY.USER;
-using Microsoft.AspNetCore.Identity;
+using APPLICATION.ENUMS;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
@@ -13,7 +13,9 @@ public static class UserExtensions
             UserName = userRequest.UserName,
             Email = userRequest.Email,
             PhoneNumber = userRequest.PhoneNumber,
-            PasswordHash = userRequest.Password
+            PasswordHash = userRequest.Password,
+            Created = DateTime.Now,
+            Status = Status.Active
         };
     }
 
