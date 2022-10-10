@@ -116,6 +116,9 @@ jobs:
           ApplicationInsights.InstrumentationKey: ${{ secrets.__APPINSIGHTS_INSTRUMENTATION_KEY__ }}
           ApplicationInsights.ConnectionStringApplicationInsightsKey: ${{ secrets.__CONNECTION_STRING_APPLICATION_INSIGHTS_KEY__ }}
           ApplicationInsights.CloudRoleName: ${{ secrets.__CLOUD_ROLE_NAME__ }}
+          UrlBase.TOOLS_MAIL_API: ${{ secrets.__TOOLS_MAIL_API__ }}
+          UrlBase.BASE_URL: ${{ secrets.__BASE_URL__ }}
+          UrlBase.TOOLS_WEB_APP: ${{ secrets.__TOOLS_WEB_APP__ }}
           Auth.ValidIssuer: ${{ secrets.__HYPER_SECURITY_SSUER_BEARER__ }}
           Auth.ValidAudience: ${{ secrets.__HYPER_SECURITY_AUDIENCE_BEARER__ }}
           Auth.SecurityKey: ${{ secrets.__HYPER_SECURITY_KEY__ }}
