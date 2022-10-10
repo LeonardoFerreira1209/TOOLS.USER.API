@@ -69,7 +69,7 @@ public class PersonResponse
     /// </summary>
     public Guid UserId { get; set; }
 
-    public User User { get; set; }
+    public UserEntity User { get; set; }
     #endregion
 
     #region Profession

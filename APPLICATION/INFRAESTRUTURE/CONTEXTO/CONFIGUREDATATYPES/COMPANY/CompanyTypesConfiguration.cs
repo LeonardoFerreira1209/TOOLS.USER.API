@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.COMPANY;
 
-public class CompanyTypesConfiguration : IEntityTypeConfiguration<Company>
+public class CompanyTypesConfiguration : IEntityTypeConfiguration<CompanyEntity>
 {
-    public void Configure(EntityTypeBuilder<Company> builder)
+    public void Configure(EntityTypeBuilder<CompanyEntity> builder)
     {
         // Renomeando nome.
         builder.ToTable("Companies").HasKey(company => company.Id);

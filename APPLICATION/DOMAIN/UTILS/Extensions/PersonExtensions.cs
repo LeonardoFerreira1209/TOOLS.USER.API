@@ -14,9 +14,9 @@ public static class PersonExtensions
     /// <param name="personFastRequest"></param>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public static Person ToEntity(this PersonFastRequest personFastRequest, Guid userId)
+    public static PersonEntity ToEntity(this PersonFastRequest personFastRequest, Guid userId)
     {
-        return new Person
+        return new PersonEntity
         {
             FirstName = personFastRequest.FirstName,
             LastName = personFastRequest.LastName,
@@ -34,9 +34,9 @@ public static class PersonExtensions
     /// </summary>
     /// <param name="personFullRequest"></param>
     /// <returns></returns>
-    public static Person ToEntity(this PersonFullRequest personFullRequest)
+    public static PersonEntity ToEntity(this PersonFullRequest personFullRequest)
     {
-        return new Person
+        return new PersonEntity
         {
             Id = personFullRequest.Id,
             FirstName = personFullRequest.FirstName,
@@ -67,7 +67,7 @@ public static class PersonExtensions
     /// </summary>
     /// <param name="person"></param>
     /// <returns></returns>
-    public static PersonResponse ToResponse(this Person person)
+    public static PersonResponse ToResponse(this PersonEntity person)
     {
         return new PersonResponse
         {

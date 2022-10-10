@@ -4,7 +4,7 @@ using APPLICATION.DOMAIN.ENTITY.PERSON;
 
 namespace APPLICATION.DOMAIN.ENTITY.PROFESSION;
 
-public class Profession: BaseEntity
+public class ProfessionEntity: BaseEntity
 {
     #region Base
     /// <summary>
@@ -52,7 +52,7 @@ public class Profession: BaseEntity
     /// <summary>
     /// Dados da pessoa.
     /// </summary>
-    public virtual Person Person { get; set; }
+    public virtual PersonEntity Person { get; set; }
     #endregion
 
     #region Company
@@ -64,6 +64,6 @@ public class Profession: BaseEntity
     /// <summary>
     /// Dados da empresa.
     /// </summary>
-    public virtual Company Company { get; set; }
+    public virtual CompanyEntity Company { get; set; }
     #endregion
 }

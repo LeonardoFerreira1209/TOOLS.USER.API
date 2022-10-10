@@ -7,9 +7,9 @@ namespace APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.PROFESSION;
 /// <summary>
 /// Classe responsável por ajudar as entidades.
 /// </summary>
-public class ProfessionTypesConfiguration : IEntityTypeConfiguration<Profession>
+public class ProfessionTypesConfiguration : IEntityTypeConfiguration<ProfessionEntity>
 {
-    public void Configure(EntityTypeBuilder<Profession> builder)
+    public void Configure(EntityTypeBuilder<ProfessionEntity> builder)
     {
         // Ajustando nome da tabela e definindo chave primaria
         builder.ToTable("Professions").HasKey(profession => profession.Id);

@@ -15,7 +15,7 @@ namespace APPLICATION.INFRAESTRUTURE.CONTEXTO;
 /// <summary>
 /// Classe de configuração do banco de dados.
 /// </summary>
-public class Contexto : IdentityDbContext<User, Role, Guid>
+public class Contexto : IdentityDbContext<UserEntity, RoleEntity, Guid>
 {
     public Contexto(DbContextOptions<Contexto> options) : base(options)
     {
@@ -25,11 +25,11 @@ public class Contexto : IdentityDbContext<User, Role, Guid>
     /// <summary>
     /// Configrações fos datatypes.
     /// </summary>
-    /// <param name="modelBuilder"></param>
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    /// <param name="builder"></param>
+    protected override void OnModelCreating(ModelBuilder builder)
     {
         // Configutrations
-        modelBuilder
+        builder
             // Profession
             .ApplyConfiguration(new ProfessionTypesConfiguration())
             // Contact
@@ -37,7 +37,7 @@ public class Contexto : IdentityDbContext<User, Role, Guid>
             // Company
             .ApplyConfiguration(new CompanyTypesConfiguration());
 
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
     }
 
     /// <summary>
@@ -49,15 +49,15 @@ public class Contexto : IdentityDbContext<User, Role, Guid>
     ////public DbSet<User> Users { get; set; }
     ////public DbSet<Role> Roles{ get; set; }
 
-    public DbSet<Company> Companies { get; set; }
+    public DbSet<CompanyEntity> Companies { get; set; }
 
-    public DbSet<Contact> Contacts { get; set; }
+    public DbSet<ContactEntity> Contacts { get; set; }
     #endregion
 
     #region P
-    public DbSet<Person> Persons { get; set; }
+    public DbSet<PersonEntity> Persons { get; set; }
 
-    public DbSet<Profession> Professions { get; set; }
+    public DbSet<ProfessionEntity> Professions { get; set; }
     #endregion
 
     #endregion

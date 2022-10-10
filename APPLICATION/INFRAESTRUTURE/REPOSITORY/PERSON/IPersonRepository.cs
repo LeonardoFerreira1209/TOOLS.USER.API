@@ -11,14 +11,14 @@ public interface IPersonRepository
     /// <param name="personFastRequest"></param>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Task<(bool success, Person person)> Create(PersonFastRequest personFastRequest, Guid userId);
+    Task<(bool success, PersonEntity person)> Create(PersonFastRequest personFastRequest, Guid userId);
 
     /// <summary>
     /// Método responsavel por recuperar uma pessoa por Id.
     /// </summary>
     /// <param name="personId"></param>
     /// <returns></returns>
-    Task<(bool success, Person person)> Get(Guid personId, bool withDependencies);
+    Task<(bool success, PersonEntity person)> Get(Guid personId, bool withDependencies);
 
     /// <summary>
     /// Método responsável por recuperar o Id de uma pessoa pelo userId.
@@ -32,14 +32,14 @@ public interface IPersonRepository
     /// </summary>
     /// <param name="withDependencies"></param>
     /// <returns></returns>
-    Task<(bool success, IEnumerable<Person> persons)> GetAll(bool withDependencies);
+    Task<(bool success, IEnumerable<PersonEntity> persons)> GetAll(bool withDependencies);
 
     /// <summary>
     /// Método responsavel por Completar o registro de um usuário.
     /// </summary>
     /// <param name="personFullRequest"></param>
     /// <returns></returns>
-    Task<(bool success, Person person)> CompleteRegister(PersonFullRequest personFullRequest);
+    Task<(bool success, PersonEntity person)> CompleteRegister(PersonFullRequest personFullRequest);
 
     /// <summary>
     /// Métodor responsavel por cadastrar a imagem de perfil do usuário.
@@ -47,5 +47,5 @@ public interface IPersonRepository
     /// <param name="person"></param>
     /// <param name="image"></param>
     /// <returns></returns>
-    Task<(bool success, byte[] image)> ProfileImage(Person person, byte[] image);
+    Task<(bool success, byte[] image)> ProfileImage(PersonEntity person, byte[] image);
 }

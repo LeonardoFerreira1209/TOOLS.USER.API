@@ -6,7 +6,7 @@ using APPLICATION.ENUMS;
 
 namespace APPLICATION.DOMAIN.ENTITY.PERSON
 {
-    public class Person : BaseEntity
+    public class PersonEntity : BaseEntity
     {
         #region Base
         /// <summary>
@@ -61,18 +61,18 @@ namespace APPLICATION.DOMAIN.ENTITY.PERSON
         /// <summary>
         /// Dados do usuário;
         /// </summary>
-        public virtual User User { get; set; }
+        public virtual UserEntity User { get; set; }
         #endregion
 
         #region Profession
         /// <summary>
         /// Profissões vinculadas a pessoa.
         /// </summary>
-        public virtual ICollection<Profession> Professions { get; set; } = new List<Profession>();
+        public virtual ICollection<ProfessionEntity> Professions { get; set; } = new List<ProfessionEntity>();
         #endregion
 
         #region Contact
-        public virtual ICollection<Contact> Contacts { get; set; } = new HashSet<Contact>();
+        public virtual ICollection<ContactEntity> Contacts { get; set; } = new HashSet<ContactEntity>();
         #endregion
     }
 }

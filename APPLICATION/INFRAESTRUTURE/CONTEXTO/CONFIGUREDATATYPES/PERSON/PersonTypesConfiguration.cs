@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.PERSON;
 
-public class PersonTypesConfiguration : IEntityTypeConfiguration<Person>
+public class PersonTypesConfiguration : IEntityTypeConfiguration<PersonEntity>
 {
-    public void Configure(EntityTypeBuilder<Person> builder)
+    public void Configure(EntityTypeBuilder<PersonEntity> builder)
     {
         // Nomeando a tabela
         builder.ToTable("Persons").HasKey(person => person.Id);

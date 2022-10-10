@@ -16,15 +16,15 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 {
     public class TokenService : ITokenService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserEntity> _userManager;
 
-        private readonly RoleManager<Role> _roleManager;
+        private readonly RoleManager<RoleEntity> _roleManager;
 
         private readonly IPersonService _personService;
 
         private readonly IOptions<AppSettings> _appsettings;
 
-        public TokenService(UserManager<User> userManager, RoleManager<Role> roleManager, IPersonService personService, IOptions<AppSettings> appsettings)
+        public TokenService(UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IPersonService personService, IOptions<AppSettings> appsettings)
         {
             _userManager = userManager;
 
@@ -100,7 +100,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        private async Task<User> User(string username) => await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+        private async Task<UserEntity> User(string username) => await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
         #endregion
 
         #region Role
@@ -109,7 +109,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task<IList<Claim>> Roles(User user)
+        private async Task<IList<Claim>> Roles(UserEntity user)
         {
             // Return roles.
             var roles = await _userManager.GetRolesAsync(user);
@@ -125,7 +125,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task<List<Claim>> Claims(User user, IList<Claim> roles)
+        private async Task<List<Claim>> Claims(UserEntity user, IList<Claim> roles)
         {
             // Instance Claim list.
             var claims = new List<Claim>();

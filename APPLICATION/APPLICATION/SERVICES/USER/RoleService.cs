@@ -14,11 +14,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER;
 
 public class RoleService : IRoleService
 {
-    private readonly RoleManager<Role> _roleManager;
+    private readonly RoleManager<RoleEntity> _roleManager;
 
     private readonly IMapper _autoMapper;
 
-    public RoleService(RoleManager<Role> roleManager, IMapper autoMapper)
+    public RoleService(RoleManager<RoleEntity> roleManager, IMapper autoMapper)
     {
         _roleManager = roleManager;
 

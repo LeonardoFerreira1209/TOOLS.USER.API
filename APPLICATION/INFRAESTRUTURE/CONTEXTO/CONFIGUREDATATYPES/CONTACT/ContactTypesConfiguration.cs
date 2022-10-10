@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.CONTACT;
 
-public class ContactTypesConfiguration : IEntityTypeConfiguration<Contact>
+public class ContactTypesConfiguration : IEntityTypeConfiguration<ContactEntity>
 {
-    public void Configure(EntityTypeBuilder<Contact> builder)
+    public void Configure(EntityTypeBuilder<ContactEntity> builder)
     {
         // Nomeando tabela.
         builder.ToTable("Contacts").HasKey(contact => contact.Id);

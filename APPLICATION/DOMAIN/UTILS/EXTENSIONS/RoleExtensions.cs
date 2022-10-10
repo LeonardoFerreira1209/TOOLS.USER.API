@@ -8,9 +8,9 @@ namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class RoleExtensions
 {
-    public static Role ToIdentityRole(this RoleRequest roleRequest)
+    public static RoleEntity ToIdentityRole(this RoleRequest roleRequest)
     {
-        return new Role
+        return new RoleEntity
         {
             Name = roleRequest.Name,
             CompanyId = roleRequest.CompanyId,

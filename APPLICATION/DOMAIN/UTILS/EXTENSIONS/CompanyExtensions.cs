@@ -11,7 +11,7 @@ public static class CompanyExtensions
     /// </summary>
     /// <param name="company"></param>
     /// <returns></returns>
-    public static CompanyResponse ToResponse(this Company company) => new()
+    public static CompanyResponse ToResponse(this CompanyEntity company) => new()
     {
         Id = company.Id,
         Name = company.Name,
@@ -24,7 +24,7 @@ public static class CompanyExtensions
     /// </summary>
     /// <param name="companyRequest"></param>
     /// <returns></returns>
-    public static Company ToIdentity(this CompanyRequest companyRequest) => new()
+    public static CompanyEntity ToIdentity(this CompanyRequest companyRequest) => new()
     {
         Id = companyRequest.Id,
         Description = companyRequest.Description,

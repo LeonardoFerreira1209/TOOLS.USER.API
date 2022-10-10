@@ -170,7 +170,7 @@ public class TokenJwtBuilder
     /// Método que cria e retorna o token.
     /// </summary>
     /// <returns></returns>
-    public ApiResponse<object> Builder(User user)
+    public ApiResponse<object> Builder(UserEntity user)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenJwtBuilder)} - METHOD {nameof(Builder)}\n");
 

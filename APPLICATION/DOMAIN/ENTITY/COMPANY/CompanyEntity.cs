@@ -4,7 +4,7 @@ using APPLICATION.DOMAIN.ENTITY.ROLE;
 
 namespace APPLICATION.DOMAIN.ENTITY.COMPANY;
 
-public class Company : BaseEntity
+public class CompanyEntity : BaseEntity
 {
     #region Base
     /// <summary>
@@ -27,11 +27,11 @@ public class Company : BaseEntity
     /// <summary>
     /// Vinculo com profissões
     /// </summary>
-    public virtual List<Profession> Professions { get; set; }
+    public virtual List<ProfessionEntity> Professions { get; set; }
 
     /// <summary>
     /// Vinculo com roles.
     /// </summary>
-    public virtual List<Role> Roles { get; set; }
+    public virtual List<RoleEntity> Roles { get; set; }
     #endregion
 }

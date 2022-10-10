@@ -6,7 +6,7 @@ namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class ContactExtensions
 {
-    public static ContactResponse ToResponse(this Contact contact)
+    public static ContactResponse ToResponse(this ContactEntity contact)
     {
         return new ContactResponse
         {
@@ -21,9 +21,9 @@ public static class ContactExtensions
         };
     }
 
-    public static Contact ToEntity(this ContactRequest contactRequest)
+    public static ContactEntity ToEntity(this ContactRequest contactRequest)
     {
-        return new Contact
+        return new ContactEntity
         {
             Id = contactRequest.Id,
             PersonId = contactRequest.PersonId,

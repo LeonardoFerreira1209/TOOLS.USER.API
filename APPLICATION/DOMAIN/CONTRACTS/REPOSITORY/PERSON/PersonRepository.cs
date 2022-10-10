@@ -32,7 +32,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     /// <param name="personFastRequest"></param>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<(bool success, Person person)> Create(PersonFastRequest personFastRequest, Guid userId)
+    public async Task<(bool success, PersonEntity person)> Create(PersonFastRequest personFastRequest, Guid userId)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
 
@@ -61,7 +61,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     /// <param name="personId"></param>
     /// <param name="withDependencies"></param>
     /// <returns></returns>
-    public async Task<(bool success, Person person)> Get(Guid personId, bool withDependencies)
+    public async Task<(bool success, PersonEntity person)> Get(Guid personId, bool withDependencies)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Get)}\n");
 
@@ -131,7 +131,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     /// Método responsavel por recuperar todas as pessoas.
     /// </summary>
     /// <returns></returns>
-    public async Task<(bool success, IEnumerable<Person> persons)> GetAll(bool withDependencies)
+    public async Task<(bool success, IEnumerable<PersonEntity> persons)> GetAll(bool withDependencies)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(GetAll)}\n");
 
@@ -175,7 +175,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     /// </summary>
     /// <param name="personFullRequest"></param>
     /// <returns></returns>
-    public async Task<(bool success, Person person)> CompleteRegister(PersonFullRequest personFullRequest)
+    public async Task<(bool success, PersonEntity person)> CompleteRegister(PersonFullRequest personFullRequest)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(CompleteRegister)}\n");
 
@@ -204,7 +204,7 @@ public class PersonRepository : BaseRepository, IPersonRepository
     /// <param name="person"></param>
     /// <param name="image"></param>
     /// <returns></returns>
-    public async Task<(bool success, byte[] image)> ProfileImage(Person person, byte[] image)
+    public async Task<(bool success, byte[] image)> ProfileImage(PersonEntity person, byte[] image)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(ProfileImage)}\n");
 

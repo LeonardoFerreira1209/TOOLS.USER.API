@@ -33,11 +33,11 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
     public class UserService : IUserService
     {
         #region privates
-        private readonly SignInManager<User> _signInManager;
+        private readonly SignInManager<UserEntity> _signInManager;
 
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserEntity> _userManager;
 
-        private readonly RoleManager<Role> _roleManager;
+        private readonly RoleManager<RoleEntity> _roleManager;
 
         private readonly IOptions<AppSettings> _appsettings;
 
@@ -48,7 +48,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         private readonly IPersonService _personService;
         #endregion
 
-        public UserService(SignInManager<User> signInManager, UserManager<User> userManager, RoleManager<Role> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IPersonService personService)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IPersonService personService)
         {
             _signInManager = signInManager;
 
@@ -564,7 +564,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="user"></param>
         /// <param name="userRequest"></param>
         /// <returns></returns>
-        private async Task<IdentityResult> BuildUser(User user, UserCreateRequest userRequest)
+        private async Task<IdentityResult> BuildUser(UserEntity user, UserCreateRequest userRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(BuildUser)}\n");
 
@@ -591,7 +591,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task ConfirmeUserForEmail(User user)
+        private async Task ConfirmeUserForEmail(UserEntity user)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(ConfirmeUserForEmail)}\n");
 

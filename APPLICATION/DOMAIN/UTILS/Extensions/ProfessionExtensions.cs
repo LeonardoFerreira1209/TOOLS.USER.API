@@ -6,7 +6,7 @@ namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class ProfessionExtensions
 {
-    public static ProfessionResponse ToResponse(this Profession profession)
+    public static ProfessionResponse ToResponse(this ProfessionEntity profession)
     {
         return new ProfessionResponse
         {
@@ -26,7 +26,7 @@ public static class ProfessionExtensions
         };
     }
 
-    public static Profession ToIdentity(this ProfessionRequest professionRequest) => new Profession
+    public static ProfessionEntity ToIdentity(this ProfessionRequest professionRequest) => new ProfessionEntity
     {
         PersonId = professionRequest.PersonId,
         CompanyId = professionRequest.CompanyId,

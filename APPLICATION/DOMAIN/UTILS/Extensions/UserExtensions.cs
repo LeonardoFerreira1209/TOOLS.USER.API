@@ -6,9 +6,9 @@ namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
 public static class UserExtensions
 {
-    public static User ToIdentityUser(this UserCreateRequest userRequest)
+    public static UserEntity ToIdentityUser(this UserCreateRequest userRequest)
     {
-        return new User
+        return new UserEntity
         {
             UserName = userRequest.UserName,
             Email = userRequest.Email,
@@ -19,9 +19,9 @@ public static class UserExtensions
         };
     }
 
-    public static User ToIdentityUser(this UserUpdateRequest userUpdateRequest)
+    public static UserEntity ToIdentityUser(this UserUpdateRequest userUpdateRequest)
     {
-        return new User
+        return new UserEntity
         {
             Id = userUpdateRequest.Id,
             UserName = userUpdateRequest.UserName,

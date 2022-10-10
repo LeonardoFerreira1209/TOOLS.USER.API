@@ -137,7 +137,7 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureIdentityServer(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddIdentity<User, Role>(options =>
+            .AddIdentity<UserEntity, RoleEntity>(options =>
             {
                 #region Signin
                 options.SignIn.RequireConfirmedEmail = true;
@@ -588,14 +588,14 @@ public static class ExtensionsConfigurations
 
         using (var scope = application.Services.CreateScope())
         {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
 
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<RoleEntity>>();
 
             var context = scope.ServiceProvider.GetRequiredService<Contexto>();
 
             // Set data in user.
-            var user = new User
+            var user = new UserEntity
             {
                 Email = "Admin@outlook.com",
                 EmailConfirmed = true,
@@ -606,7 +606,7 @@ public static class ExtensionsConfigurations
             };
 
             // Generate a password hash.
-            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "Admin@123456789");
+            user.PasswordHash = new PasswordHasher<UserEntity>().HashPassword(user, "Admin@123456789");
 
             // Create user.
             await userManager.CreateAsync(user);
@@ -621,7 +621,7 @@ public static class ExtensionsConfigurations
             await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
 
             // Sets data in Company.
-            var company = new Company
+            var company = new CompanyEntity
             {
                 Name = "HYPER.IO",
                 Description = "tecnology & future solutions.",
@@ -635,7 +635,7 @@ public static class ExtensionsConfigurations
             await context.Companies.AddAsync(company);
 
             // Set data in role.
-            var role = new Role {
+            var role = new RoleEntity {
 
                 Name = "administrator",
                 CompanyId = company.Id,
@@ -670,7 +670,7 @@ public static class ExtensionsConfigurations
             await userManager.AddToRoleAsync(user, role.Name);
 
             // Set data in Person.
-            var person = new Person
+            var person = new PersonEntity
             {
                 UserId = user.Id,
                 FirstName = "Admin",
@@ -686,9 +686,9 @@ public static class ExtensionsConfigurations
             };
 
             // Set data in Contact.
-            var contacts = new List<Contact>
+            var contacts = new List<ContactEntity>
             {
-                new Contact
+                new ContactEntity
                 {
                     Name = "Principal",
                     Email = "Admin@example.com",
@@ -704,9 +704,9 @@ public static class ExtensionsConfigurations
             };
 
             //Set data in Professions.
-            var professions = new List<Profession>
+            var professions = new List<ProfessionEntity>
              {
-                new Profession
+                new ProfessionEntity
                 {
                     PersonId = person.Id,
                     CompanyId = company.Id,

@@ -3,7 +3,7 @@ using APPLICATION.DOMAIN.ENTITY.PERSON;
 
 namespace APPLICATION.DOMAIN.ENTITY.CONTACT;
 
-public class Contact : BaseEntity
+public class ContactEntity : BaseEntity
 {
     /// <summary>
     /// Name
@@ -52,6 +52,6 @@ public class Contact : BaseEntity
     /// <summary>
     /// Dados da pessoa.
     /// </summary>
-    public virtual Person Person { get; set; }
+    public virtual PersonEntity Person { get; set; }
     #endregion
 }
