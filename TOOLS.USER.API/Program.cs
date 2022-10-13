@@ -63,7 +63,7 @@ try
     // Chamada das connfigurações do WebApplication Build.
     applicationbuilder
         // -- Seeds
-        //.Seeds().Result
+        .Seeds().Result
         // -- Seeds
         .UseHttpsRedirection()
         .UseDefaultFiles()
