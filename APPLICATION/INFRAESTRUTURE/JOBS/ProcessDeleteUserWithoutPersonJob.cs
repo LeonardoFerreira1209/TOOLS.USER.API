@@ -9,7 +9,7 @@ namespace APPLICATION.INFRAESTRUTURE.JOBS;
 
 public class ProcessDeleteUserWithoutPersonJob : IProcessDeleteUserWithoutPersonJob
 {
-    private readonly bool _execute = true;
+    private readonly bool _execute = false;
 
     private readonly IOptions<AppSettings> _configuracoes;
 
