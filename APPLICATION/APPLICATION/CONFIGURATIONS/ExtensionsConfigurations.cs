@@ -584,8 +584,6 @@ public static class ExtensionsConfigurations
     /// <param name="serviceProvider"></param>
     public static async Task<WebApplication> Seeds(this WebApplication application)
     {
-        Log.Debug($"[LOG DEBUG] - Criando Seeds.\n");
-
         using (var scope = application.Services.CreateScope())
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
@@ -594,99 +592,104 @@ public static class ExtensionsConfigurations
 
             var context = scope.ServiceProvider.GetRequiredService<Contexto>();
 
-            // Set data in user.
-            var user = new UserEntity
+            if (await userManager.Users.CountAsync(user => user.UserName.Equals("Admin")) == 0)
             {
-                Email = "Admin@outlook.com",
-                EmailConfirmed = true,
-                UserName = "Admin",
-                PhoneNumber = "+55(18)99776-2452",
-                Created = DateTime.Now,
-                Status = Status.Active,
-            };
+                Log.Debug($"[LOG DEBUG] - Criando Seeds.\n");
 
-            // Generate a password hash.
-            user.PasswordHash = new PasswordHasher<UserEntity>().HashPassword(user, "Admin@123456789");
+                // Set data in user.
+                var user = new UserEntity
+                {
+                    Email = "Admin@outlook.com",
+                    EmailConfirmed = true,
+                    UserName = "Admin",
+                    PhoneNumber = "+55(18)99776-2452",
+                    Created = DateTime.Now,
+                    Status = Status.Active,
+                };
 
-            // Create user.
-            await userManager.CreateAsync(user);
+                // Generate a password hash.
+                user.PasswordHash = new PasswordHasher<UserEntity>().HashPassword(user, "Admin@123456789");
 
-            // Set user id in user.
-            user.CreatedUserId = user.Id;
+                // Create user.
+                await userManager.CreateAsync(user);
 
-            // Update user.
-            await userManager.UpdateAsync(user);
+                // Set user id in user.
+                user.CreatedUserId = user.Id;
 
-            // Add Login in user.
-            await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
+                // Update user.
+                await userManager.UpdateAsync(user);
 
-            // Sets data in Company.
-            var company = new CompanyEntity
-            {
-                Name = "HYPER.IO",
-                Description = "tecnology & future solutions.",
-                StartDate = DateTime.Now,
-                Status = Status.Active,
-                CreatedUserId = user.Id,
-                Created = DateTime.Now,
-            };
+                // Add Login in user.
+                await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
 
-            // Add Company.
-            await context.Companies.AddAsync(company);
+                // Sets data in Company.
+                var company = new CompanyEntity
+                {
+                    Name = "HYPER.IO",
+                    Description = "tecnology & future solutions.",
+                    StartDate = DateTime.Now,
+                    Status = Status.Active,
+                    CreatedUserId = user.Id,
+                    Created = DateTime.Now,
+                };
 
-            // Set data in role.
-            var role = new RoleEntity {
+                // Add Company.
+                await context.Companies.AddAsync(company);
 
-                Name = "administrator",
-                CompanyId = company.Id,
-                CreatedUserId = user.Id,
-                Status = Status.Active,
-                Created = DateTime.Now,
-            };
+                // Set data in role.
+                var role = new RoleEntity
+                {
 
-            // Create role.
-            await roleManager.CreateAsync(role);
+                    Name = "administrator",
+                    CompanyId = company.Id,
+                    CreatedUserId = user.Id,
+                    Status = Status.Active,
+                    Created = DateTime.Now,
+                };
 
-            // Add claim in role.
-            await roleManager.AddClaimAsync(role, new Claim("Person", "Get"));
-            await roleManager.AddClaimAsync(role, new Claim("Person", "Post"));
-            await roleManager.AddClaimAsync(role, new Claim("Person", "Put"));
-            await roleManager.AddClaimAsync(role, new Claim("Person", "Patch"));
-            await roleManager.AddClaimAsync(role, new Claim("Person", "Delete"));
+                // Create role.
+                await roleManager.CreateAsync(role);
 
-            await roleManager.AddClaimAsync(role, new Claim("Claim", "Get"));
-            await roleManager.AddClaimAsync(role, new Claim("Claim", "Post"));
-            await roleManager.AddClaimAsync(role, new Claim("Claim", "Put"));
-            await roleManager.AddClaimAsync(role, new Claim("Claim", "Patch"));
-            await roleManager.AddClaimAsync(role, new Claim("Claim", "Delete"));
+                // Add claim in role.
+                await roleManager.AddClaimAsync(role, new Claim("Person", "Get"));
+                await roleManager.AddClaimAsync(role, new Claim("Person", "Post"));
+                await roleManager.AddClaimAsync(role, new Claim("Person", "Put"));
+                await roleManager.AddClaimAsync(role, new Claim("Person", "Patch"));
+                await roleManager.AddClaimAsync(role, new Claim("Person", "Delete"));
 
-            await roleManager.AddClaimAsync(role, new Claim("Role", "Get"));
-            await roleManager.AddClaimAsync(role, new Claim("Role", "Post"));
-            await roleManager.AddClaimAsync(role, new Claim("Role", "Put"));
-            await roleManager.AddClaimAsync(role, new Claim("Role", "Patch"));
-            await roleManager.AddClaimAsync(role, new Claim("Role", "Delete"));
+                await roleManager.AddClaimAsync(role, new Claim("Claim", "Get"));
+                await roleManager.AddClaimAsync(role, new Claim("Claim", "Post"));
+                await roleManager.AddClaimAsync(role, new Claim("Claim", "Put"));
+                await roleManager.AddClaimAsync(role, new Claim("Claim", "Patch"));
+                await roleManager.AddClaimAsync(role, new Claim("Claim", "Delete"));
 
-            // Add role to user.
-            await userManager.AddToRoleAsync(user, role.Name);
+                await roleManager.AddClaimAsync(role, new Claim("Role", "Get"));
+                await roleManager.AddClaimAsync(role, new Claim("Role", "Post"));
+                await roleManager.AddClaimAsync(role, new Claim("Role", "Put"));
+                await roleManager.AddClaimAsync(role, new Claim("Role", "Patch"));
+                await roleManager.AddClaimAsync(role, new Claim("Role", "Delete"));
 
-            // Set data in Person.
-            var person = new PersonEntity
-            {
-                UserId = user.Id,
-                FirstName = "Admin",
-                LastName = "Admin",
-                Age = 1,
-                BirthDay = "12/09/1999",
-                CPF = "32965808086",
-                RG = "371061775",
-                Gender = Gender.Male,
-                Status = Status.Active,
-                CreatedUserId = user.Id,
-                Created = DateTime.Now,
-            };
+                // Add role to user.
+                await userManager.AddToRoleAsync(user, role.Name);
 
-            // Set data in Contact.
-            var contacts = new List<ContactEntity>
+                // Set data in Person.
+                var person = new PersonEntity
+                {
+                    UserId = user.Id,
+                    FirstName = "Admin",
+                    LastName = "Admin",
+                    Age = 1,
+                    BirthDay = "12/09/1999",
+                    CPF = "32965808086",
+                    RG = "371061775",
+                    Gender = Gender.Male,
+                    Status = Status.Active,
+                    CreatedUserId = user.Id,
+                    Created = DateTime.Now,
+                };
+
+                // Set data in Contact.
+                var contacts = new List<ContactEntity>
             {
                 new ContactEntity
                 {
@@ -703,8 +706,8 @@ public static class ExtensionsConfigurations
                 }
             };
 
-            //Set data in Professions.
-            var professions = new List<ProfessionEntity>
+                //Set data in Professions.
+                var professions = new List<ProfessionEntity>
              {
                 new ProfessionEntity
                 {
@@ -722,14 +725,15 @@ public static class ExtensionsConfigurations
                 }
             };
 
-            // Set contacts & professions in person.
-            person.Contacts = contacts; person.Professions = professions;
+                // Set contacts & professions in person.
+                person.Contacts = contacts; person.Professions = professions;
 
-            // Add Person
-            await context.Persons.AddAsync(person);
+                // Add Person
+                await context.Persons.AddAsync(person);
 
-            // Commit de transaction.
-            await context.SaveChangesAsync();
+                // Commit de transaction.
+                await context.SaveChangesAsync();
+            }
         }
 
         return application;
