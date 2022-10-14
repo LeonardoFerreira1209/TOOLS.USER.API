@@ -67,44 +67,42 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         }
 
         /// <summary>
-        /// Método responsável por adicionar claims na role.
+        /// Método responsável por adicionar uma lista de claims na role.
         /// </summary>
-        /// <param name="roleName"></param>
-        /// <param name="claimRequests"></param>
+        /// <param name="roleRequest"></param>
         /// <returns></returns>
         [HttpPost("addClaimToRole")][CustomAuthorize(Claims.Role, "Post")][EnableCors("CorsPolicy")]
-        [SwaggerOperation(Summary = "Adicionar uma claim na role", Description = "Método responsável por Adicionar uma claim na role")]
+        [SwaggerOperation(Summary = "Adicionar uma lista de claims na role", Description = "Método responsável por adicionar uma lista de claims na role.")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> AddClaimToRole([Required] string roleName, List<ClaimRequest> claimRequests)
+        public async Task<ApiResponse<object>> AddClaimsToRole(RoleRequest roleRequest)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequests)))
-            using (LogContext.PushProperty("Metodo", "AddClaimToRole"))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleRequest)))
+            using (LogContext.PushProperty("Metodo", "AddClaimsToRole"))
             {
-                return await Tracker.Time(() => _roleService.AddClaim(roleName, claimRequests), "Adicionar claim em uma role.");
+                return await Tracker.Time(() => _roleService.AddClaims(roleRequest), "Adicionar claims em uma role.");
             }
         }
 
         /// <summary>
-        /// Método responsável por remover uma claim da role.
+        ///  Método responsável por remover uma lista de claims na role.
         /// </summary>
-        /// <param name="roleName"></param>
-        /// <param name="claimRequests"></param>
+        /// <param name="roleRequest"></param>
         /// <returns></returns>
         [HttpDelete("removeClaimToRole")][CustomAuthorize(Claims.Role, "Delete")][EnableCors("CorsPolicy")]
-        [SwaggerOperation(Summary = "Remover uma claim na role", Description = "Método responsável por Remover uma claim na role")]
+        [SwaggerOperation(Summary = "Remover uma lista de claims na role", Description = "Método responsável por Remover uma lista de claims na role")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> RemoverClaimToRole([Required] string roleName, ClaimRequest claimRequests)
+        public async Task<ApiResponse<object>> RemoverClaimsToRole(RoleRequest roleRequest)
         {
             using (LogContext.PushProperty("Controller", "RoleController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequests)))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleRequest)))
             using (LogContext.PushProperty("Metodo", "RemoverClaimToRole"))
             {
-                return await Tracker.Time(() => _roleService.RemoveClaim(roleName, claimRequests), "Remover claim em uma role.");
+                return await Tracker.Time(() => _roleService.RemoveClaims(roleRequest), "Remover claims em uma role.");
             }
         }
 

@@ -83,23 +83,23 @@ public class RoleService : IRoleService
     /// <param name="roleName"></param>
     /// <param name="claimRequests"></param>
     /// <returns></returns>
-    public async Task<ApiResponse<object>> AddClaim(string roleName, List<ClaimRequest> claimRequests)
+    public async Task<ApiResponse<object>> AddClaims(RoleRequest roleRequest)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(AddClaim)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(AddClaims)}\n");
 
         try
         {
-            Log.Information($"[LOG INFORMATION] - Adicionando uma novas claims na role {roleName}\n");
+            Log.Information($"[LOG INFORMATION] - Adicionando uma novas claims na role {roleRequest.Name}\n");
 
             #region Add claim in exist role.
             // Get the role for Id.
-            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleName.Equals(role.Name));
+            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleRequest.Name.Equals(role.Name) && role.CompanyId.Equals(roleRequest.CompanyId));
 
             // Verify is nor null role.
             if (role is not null)
             {
                 // foreach claims.
-                foreach (var claim in claimRequests)
+                foreach (var claim in roleRequest.Claims)
                 {
                     // Add claims in role.
                     await _roleManager.AddClaimAsync(role, new Claim(claim.Type, claim.Value));
@@ -108,12 +108,12 @@ public class RoleService : IRoleService
                 }
 
                 // Response success.
-                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim adicionada a role {roleName} com sucesso.") });
+                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim adicionada a role {roleRequest.Name} com sucesso.") });
             }
             #endregion
 
             // Response error.
-            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleName} não existe.") });
+            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleRequest.Name} não existe.") });
         }
         catch (Exception exception)
         {
@@ -130,34 +130,35 @@ public class RoleService : IRoleService
     /// <param name="roleName"></param>
     /// <param name="claimRequests"></param>
     /// <returns></returns>
-    public async Task<ApiResponse<object>> RemoveClaim(string roleName, ClaimRequest claimRequests)
+    public async Task<ApiResponse<object>> RemoveClaims(RoleRequest roleRequest)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(RemoveClaim)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(RemoveClaims)}\n");
 
         try
         {
-            Log.Information($"[LOG INFORMATION] - Removendo a claim {claimRequests.Type}/{claimRequests.Value} da Role {roleName}\n");
-
-            #region Add claim in exist role.
+            Log.Information($"[LOG INFORMATION] - Removendo as claims da Role {roleRequest.Name}\n");
+            
             // Get role for Id.
-            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleName.Equals(role.Name));
+            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleRequest.Name.Equals(role.Name) && role.CompanyId.Equals(roleRequest.CompanyId));
 
             // Verify is not null role.
             if (role is not null)
             {
                 // Remove remove claim.
-                await _roleManager.RemoveClaimAsync(role, new Claim(claimRequests.Type, claimRequests.Value));
+                foreach(var claim in roleRequest.Claims)
+                {
+                    await _roleManager.RemoveClaimAsync(role, new Claim(claim.Type, claim.Value));
 
-                Log.Information($"[LOG INFORMATION] - Claim removida com sucesso.");
+                    Log.Information($"[LOG INFORMATION] - Claim {claim.Type} / {claim.Value} removida com sucesso.\n");
+                }
 
                 // Response success.
-                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim removida da role {roleName} com sucesso.") });
+                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim removida da role {roleRequest.Name} com sucesso.") });
             }
-            #endregion
 
             Log.Information($"[LOG INFORMATION] - Role não existe.\n");
 
-            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleName} não existe.") });
+            return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleRequest.Name} não existe.") });
         }
         catch (Exception exception)
         {

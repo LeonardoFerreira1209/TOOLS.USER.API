@@ -246,9 +246,9 @@ public class PersonService : IPersonService
     /// <summary>
     /// Método responsavel por adicionar uma imagem de perfil no usuário.
     /// </summary>
-    /// <param name="imagem"></param>
+    /// <param name="personId"></param>
+    /// <param name="formFile"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     public async Task<ApiResponse<object>> ProfileImage(Guid personId, IFormFile formFile)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonService)} - METHOD {nameof(ProfileImage)}\n");
