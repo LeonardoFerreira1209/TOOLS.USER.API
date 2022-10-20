@@ -42,10 +42,17 @@ public interface IPersonRepository
     Task<(bool success, PersonEntity person)> CompleteRegister(PersonFullRequest personFullRequest);
 
     /// <summary>
-    /// Métodor responsavel por cadastrar a imagem de perfil do usuário.
+    ///  Método responsavel por atualizar os dados do usuário.
+    /// </summary>
+    /// <param name="CompanyId"></param>
+    /// <returns></returns>
+    Task<(bool success, PersonEntity person)> Update(PersonEntity personEntity);
+
+    /// <summary>
+    /// Método responsavel por cadastrar a imagem de perfil do usuário.
     /// </summary>
     /// <param name="person"></param>
-    /// <param name="image"></param>
+    /// <param name="imageUri"></param>
     /// <returns></returns>
-    Task<(bool success, byte[] image)> ProfileImage(PersonEntity person, byte[] image);
+    Task<(bool success, string imageUri)> ProfileImage(PersonEntity person, string imageUri);
 }

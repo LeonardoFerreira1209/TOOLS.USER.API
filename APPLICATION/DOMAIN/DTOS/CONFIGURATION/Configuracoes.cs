@@ -10,6 +10,7 @@ public class AppSettings
     public Configuracoes Configuracoes { get; set; }
     public RetryPolicy RetryPolicy { get; set; }
     public Auth Auth { get; set; }
+    public AzureStorage AzureStorage { get; set; }
     public UrlBase UrlBase { get; set; }
 }
 
@@ -49,6 +50,12 @@ public class Auth
     public string SecurityKey { get; set; }
     public int ExpiresIn { get; set; }
     public Password Password { get; set; }
+}
+
+public class AzureStorage
+{
+    public string ConnectionStringAzureStorageKey { get; set; }
+    public string Container { get; set; }
 }
 
 public class Password

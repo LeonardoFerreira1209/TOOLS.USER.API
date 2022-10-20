@@ -2,7 +2,7 @@
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
-using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
@@ -14,18 +14,25 @@ public static class PersonExtensions
     /// <param name="personFastRequest"></param>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public static PersonEntity ToEntity(this PersonFastRequest personFastRequest, Guid userId)
+    public static PersonEntity ToEntity(this PersonFastRequest personFastRequest, Guid userId, Guid? companyId = null)
     {
         return new PersonEntity
         {
             FirstName = personFastRequest.FirstName,
+
             LastName = personFastRequest.LastName,
 
             Gender = personFastRequest.Gender,
 
             CPF = personFastRequest.CPF,
+            
+            Created = DateTime.Now,
 
-            UserId = userId
+            CreatedUserId = userId,
+
+            UserId = userId,
+
+            CompanyId = companyId
         };
     }
 
@@ -39,20 +46,26 @@ public static class PersonExtensions
         return new PersonEntity
         {
             Id = personFullRequest.Id,
+
             FirstName = personFullRequest.FirstName,
+
             LastName = personFullRequest.LastName,
+
             Age = personFullRequest.Age,
+
             BirthDay = personFullRequest.BirthDay,
 
-            Professions = personFullRequest.Professions?.Select(profession => profession.ToIdentity()).ToList(),
             Contacts = personFullRequest.Contacts?.Select(contact => contact.ToEntity()).ToList(),
 
             Gender = personFullRequest.Gender,
 
             RG = personFullRequest.RG,
+
             CPF = personFullRequest.CPF,
 
-            Image = personFullRequest.Image,
+            ImageUri = personFullRequest.ImageUri,
+
+            CompanyId = personFullRequest.CompanyId,
 
             Status = personFullRequest.Status,
 
@@ -74,22 +87,29 @@ public static class PersonExtensions
             Id = person.Id,
 
             FirstName = person.FirstName,
+
             LastName = person.LastName,
 
             Age = person.Age,
+
             BirthDay = person.BirthDay,
 
             Gender = person.Gender,
 
-            Image = person.Image is not null ? new FileContentResult(person.Image, "image/jpg") : null,
+            ImageUri = person.ImageUri,
+
+            CompanyId = person.CompanyId,
+
+            Company = person.Company.ToResponse(),
 
             Contacts = person.Contacts?.Select(contact => contact.ToResponse()).ToList(),
-            Professions = person.Professions?.Select(profession => profession.ToResponse()).ToList(),
 
             RG = person.RG,
+
             CPF = person.CPF,
 
             UserId = person.UserId,
+
             User = person.User,
 
             Status = person.Status

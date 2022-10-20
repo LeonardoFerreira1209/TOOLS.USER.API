@@ -1,5 +1,4 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.CONTACT;
-using APPLICATION.DOMAIN.DTOS.REQUEST.PROFESSION;
 using APPLICATION.ENUMS;
 using System.Text.Json.Serialization;
 
@@ -7,8 +6,6 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 
 public class PersonFullRequest
 {
-    #region Base
-
     /// <summary>
     /// Identificador
     /// </summary>
@@ -40,9 +37,7 @@ public class PersonFullRequest
     /// 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public Gender Gender { get; set; }
-    #endregion
 
-    #region Docs
     /// <summary>
     /// RG.
     /// </summary>
@@ -56,28 +51,23 @@ public class PersonFullRequest
     /// <summary>
     /// Imagem de perfil.
     /// </summary>
-    public byte[] Image { get; set; }
+    public string ImageUri { get; set; }
 
     /// <summary>
     /// Status.
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public Status Status { get; set; }
-    #endregion
-
-    #region User
+    
     /// <summary>
     /// Id do usuário.
     /// </summary>
     public Guid UserId { get; set; }
-    #endregion
 
-    #region Profession
     /// <summary>
-    /// Profissões vinculadas a pessoa.
+    /// Id da empresa.
     /// </summary>
-    public ICollection<ProfessionRequest> Professions { get; set; }
-    #endregion
+    public Guid? CompanyId { get; set; }
 
     #region Contact
     public ICollection<ContactRequest> Contacts { get; set; }

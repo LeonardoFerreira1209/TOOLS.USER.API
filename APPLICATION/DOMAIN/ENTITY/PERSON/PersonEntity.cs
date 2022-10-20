@@ -1,6 +1,6 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.BASE;
+using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
-using APPLICATION.DOMAIN.ENTITY.PROFESSION;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.ENUMS;
 
@@ -37,10 +37,9 @@ namespace APPLICATION.DOMAIN.ENTITY.PERSON
         /// <summary>
         /// Imagem de perfil.
         /// </summary>
-        public byte[] Image { get; set; }
+        public string ImageUri { get; set; }
         #endregion
 
-        #region Docs
         /// <summary>
         /// RG.
         /// </summary>
@@ -50,29 +49,30 @@ namespace APPLICATION.DOMAIN.ENTITY.PERSON
         /// CPF.
         /// </summary>
         public string CPF { get; set; }
-        #endregion
 
-        #region User
         /// <summary>
         /// Id do usuário.
         /// </summary>
         public Guid UserId { get; set; }
 
         /// <summary>
-        /// Dados do usuário;
+        /// Dados do usuário.
         /// </summary>
         public virtual UserEntity User { get; set; }
-        #endregion
 
-        #region Profession
         /// <summary>
-        /// Profissões vinculadas a pessoa.
+        /// Id da empresa.
         /// </summary>
-        public virtual ICollection<ProfessionEntity> Professions { get; set; } = new List<ProfessionEntity>();
-        #endregion
+        public Guid? CompanyId { get; set; }
 
-        #region Contact
+        /// <summary>
+        /// Empresa em que o usuário é vinculado.
+        /// </summary>
+        public virtual CompanyEntity Company { get; set; }
+
+        /// <summary>
+        /// Coleção de contatos.
+        /// </summary>
         public virtual ICollection<ContactEntity> Contacts { get; set; } = new HashSet<ContactEntity>();
-        #endregion
     }
 }
