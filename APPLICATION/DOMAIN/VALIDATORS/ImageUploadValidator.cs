@@ -8,12 +8,12 @@ namespace APPLICATION.DOMAIN.VALIDATORS;
 /// <summary>
 /// Validator de Upload de imagem.
 /// </summary>
-public class ImageProfileUploadValidator : AbstractValidator<IFormFile>
+public class ImageUploadValidator : AbstractValidator<IFormFile>
 {
     /// <summary>
     /// Validando os dados da imagem.
     /// </summary>
-    public ImageProfileUploadValidator()
+    public ImageUploadValidator()
     {
         RuleFor(a => a.ContentType.FileTypesAllowed()).NotEqual(false).WithErrorCode(ErrorCode.CamposObrigatorios.ToCode()).WithMessage("O tipo do arquivo é inválido.");
 

@@ -1,20 +1,24 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
+using APPLICATION.APPLICATION.SERVICES.COMPANY;
+using APPLICATION.APPLICATION.SERVICES.FILE;
 using APPLICATION.APPLICATION.SERVICES.PERSON;
 using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
 using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
+using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.COMPANY;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.COMPANY;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.CONTACT;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
-using APPLICATION.DOMAIN.ENTITY.PROFESSION;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
@@ -25,6 +29,7 @@ using APPLICATION.INFRAESTRUTURE.JOBS;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
 using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
+using APPLICATION.INFRAESTRUTURE.REPOSITORY.COMPANY;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
@@ -401,7 +406,7 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureDependencies(this IServiceCollection services, IConfiguration configurations, IWebHostEnvironment webHostEnvironment)
     {
         // Se for ambiente de produção executa
-        if(webHostEnvironment.IsProduction())
+        if (webHostEnvironment.IsProduction())
         {
             if (string.IsNullOrEmpty(configurations.GetValue<string>("ApplicationInsights:InstrumentationKey")))
             {
@@ -420,12 +425,14 @@ public static class ExtensionsConfigurations
             .AddTransient<IUserService, UserService>()
             .AddTransient<IRoleService, RoleService>()
             .AddTransient<ITokenService, TokenService>()
+            .AddTransient<IFileService, FileService>()
+            .AddTransient<ICompanyService, CompanyService>()
             // Facades
             .AddSingleton<EmailFacade, EmailFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
-            .AddScoped<IPersonRepository, PersonRepository>();
-
+            .AddScoped<IPersonRepository, PersonRepository>()
+            .AddScoped<ICompanyRepository, CompanyRepository>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -639,9 +646,7 @@ public static class ExtensionsConfigurations
                 // Set data in role.
                 var role = new RoleEntity
                 {
-
                     Name = "administrator",
-                    CompanyId = company.Id,
                     CreatedUserId = user.Id,
                     Status = Status.Active,
                     Created = DateTime.Now,
@@ -686,6 +691,7 @@ public static class ExtensionsConfigurations
                     Status = Status.Active,
                     CreatedUserId = user.Id,
                     Created = DateTime.Now,
+                    CompanyId = company.Id,
                 };
 
                 // Set data in Contact.
@@ -706,27 +712,8 @@ public static class ExtensionsConfigurations
                 }
             };
 
-                //Set data in Professions.
-                var professions = new List<ProfessionEntity>
-             {
-                new ProfessionEntity
-                {
-                    PersonId = person.Id,
-                    CompanyId = company.Id,
-                    Description = "FullStack developer - Pleno",
-                    Office = "Developer",
-                    StartDate = DateTime.Now,
-                    EndDate = DateTime.Now,
-                    Wage = 11000,
-                    Workload = 8.30M,
-                    Status = Status.Active,
-                    CreatedUserId = user.Id,
-                    Created = DateTime.Now,
-                }
-            };
-
-                // Set contacts & professions in person.
-                person.Contacts = contacts; person.Professions = professions;
+                // Set contacts.
+                person.Contacts = contacts;
 
                 // Add Person
                 await context.Persons.AddAsync(person);
@@ -746,10 +733,6 @@ public static class ExtensionsConfigurations
     /// <returns></returns>
     public static WebApplication UseMinimalAPI(this WebApplication application, IConfiguration configurations)
     {
-        #region User's
-
-        #endregion
-
         return application;
     }
 

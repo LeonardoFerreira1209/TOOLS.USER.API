@@ -1,6 +1,7 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.COMPANY;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.COMPANY;
+using APPLICATION.ENUMS;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
@@ -14,8 +15,11 @@ public static class CompanyExtensions
     public static CompanyResponse ToResponse(this CompanyEntity company) => new()
     {
         Id = company.Id,
+
         Name = company.Name,
+
         Description = company.Description,
+
         StartDate = company.StartDate
     };
 
@@ -24,11 +28,20 @@ public static class CompanyExtensions
     /// </summary>
     /// <param name="companyRequest"></param>
     /// <returns></returns>
-    public static CompanyEntity ToIdentity(this CompanyRequest companyRequest) => new()
+    public static CompanyEntity ToEntity(this CompanyRequest companyRequest, Guid userId) => new()
     {
-        Id = companyRequest.Id,
         Description = companyRequest.Description,
+
         Name = companyRequest.Name,
-        StartDate = companyRequest.StartDate
+
+        StartDate = companyRequest.StartDate,
+
+        Created = DateTime.Now,
+
+        CreatedUserId = userId,
+
+        PlanId = companyRequest.PlanId,
+
+        Status = Status.Active,
     };
 }

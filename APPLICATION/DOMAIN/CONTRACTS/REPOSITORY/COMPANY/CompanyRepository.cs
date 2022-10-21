@@ -1,23 +1,26 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.BASE;
+using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+using APPLICATION.DOMAIN.DTOS.REQUEST.COMPANY;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
+using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
-using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
+using APPLICATION.INFRAESTRUTURE.REPOSITORY.COMPANY;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
 
-namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
+namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.COMPANY;
 
-public class PersonRepository : BaseRepository, IPersonRepository
+public class CompanyRepository : BaseRepository, ICompanyRepository
 {
     private readonly Contexto _contexto;
 
     private readonly IOptions<AppSettings> _appSettings;
 
-    public PersonRepository(IOptions<AppSettings> appSettings, Contexto contexto) : base(appSettings)
+    public CompanyRepository(IOptions<AppSettings> appSettings, Contexto contexto) : base(appSettings)
     {
         _contexto = contexto;
 
@@ -26,23 +29,23 @@ public class PersonRepository : BaseRepository, IPersonRepository
 
     #region EF Core
     /// <summary>
-    /// Create a Person
+    /// Create a Company
     /// </summary>
     /// <param name="personFastRequest"></param>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<(bool success, PersonEntity person)> Create(PersonFastRequest personFastRequest, Guid userId)
+    public async Task<(bool success, CompanyEntity company)> Create(CompanyRequest companyRequest, Guid userId)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Create)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(CompanyRepository)} - METHOD {nameof(Create)}\n");
 
         try
         {
-            Log.Information($"[LOG INFORMATION] - Adicionando usuário no banco de dados.\n");
+            Log.Information($"[LOG INFORMATION] - Adicionando empresa no banco de dados.\n");
 
-            // Add user in database.
-            var entityEntry = await _contexto.Persons.AddAsync(personFastRequest.ToEntity(userId)); await _contexto.SaveChangesAsync();
+            // Add company in database.
+            var entityEntry = await _contexto.Companies.AddAsync(companyRequest.ToEntity(userId)); await _contexto.SaveChangesAsync();
 
-            // return true value and person.
+            // return true value and company.
             return (true, entityEntry.Entity);
         }
         catch (Exception exception)
@@ -198,34 +201,6 @@ public class PersonRepository : BaseRepository, IPersonRepository
     }
 
     /// <summary>
-    /// Update Person
-    /// </summary>
-    /// <param name="person"></param>
-    /// <returns></returns>
-    public async Task<(bool success, PersonEntity person)> Update(PersonEntity person)
-    {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(PersonRepository)} - METHOD {nameof(Update)}\n");
-
-        try
-        {
-            Log.Information($"[LOG INFORMATION] - Setando empresa na pessoa.\n");
-
-            // update and save changes.
-            _contexto.Persons.Update(person); await _contexto.SaveChangesAsync();
-
-            // Return true and person value.
-            return (true, person);
-        }
-        catch (Exception exception)
-        {
-            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
-
-            // return false and null value.
-            return (false, null);
-        }
-    }
-
-    /// <summary>
     /// Add image profile in person
     /// </summary>
     /// <param name="person"></param>
@@ -253,9 +228,5 @@ public class PersonRepository : BaseRepository, IPersonRepository
             return (false, null);
         }
     }
-    #endregion
-
-    #region Dapper
-
     #endregion
 }

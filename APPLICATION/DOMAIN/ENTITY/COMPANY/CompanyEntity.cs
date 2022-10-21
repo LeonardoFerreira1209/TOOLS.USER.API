@@ -1,12 +1,11 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.BASE;
-using APPLICATION.DOMAIN.ENTITY.PROFESSION;
-using APPLICATION.DOMAIN.ENTITY.ROLE;
+using APPLICATION.DOMAIN.ENTITY.PERSON;
+using APPLICATION.DOMAIN.ENTITY.PLAN;
 
 namespace APPLICATION.DOMAIN.ENTITY.COMPANY;
 
 public class CompanyEntity : BaseEntity
 {
-    #region Base
     /// <summary>
     /// Nome da empresa.
     /// </summary>
@@ -20,18 +19,20 @@ public class CompanyEntity : BaseEntity
     /// <summary>
     /// Data em que a empresa foi fundada
     /// </summary>
-    public DateTime StartDate { get; set; }
-    #endregion
-
-    #region Vinculos
-    /// <summary>
-    /// Vinculo com profissões
-    /// </summary>
-    public virtual List<ProfessionEntity> Professions { get; set; }
+    public DateTime? StartDate { get; set; }
 
     /// <summary>
-    /// Vinculo com roles.
+    /// Plano vinculado a empresa.
     /// </summary>
-    public virtual List<RoleEntity> Roles { get; set; }
-    #endregion
+    public Guid PlanId { get; set; }
+
+    /// <summary>
+    /// Plano
+    /// </summary>
+    public virtual PlanEntity Plan { get; set; }
+
+    /// <summary>
+    /// Vinculo com pessoas.
+    /// </summary>
+    public virtual List<PersonEntity> Persons { get; set; }
 }

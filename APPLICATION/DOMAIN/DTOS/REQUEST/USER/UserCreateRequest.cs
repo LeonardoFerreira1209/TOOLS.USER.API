@@ -7,7 +7,6 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
     /// </summary>
     public class UserCreateRequest
     {
-        #region Base
         /// <summary>
         /// Nome de usuário
         /// </summary>
@@ -30,6 +29,5 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         /// </summary>
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
-        #endregion
     }
 }

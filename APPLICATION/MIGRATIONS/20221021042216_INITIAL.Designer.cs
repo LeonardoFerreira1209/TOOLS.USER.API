@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APPLICATION.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20221010013950_CREATED_USER_ID_IS_NULLABLE_IN_USERTABLE")]
-    partial class CREATED_USER_ID_IS_NULLABLE_IN_USERTABLE
+    [Migration("20221021042216_INITIAL")]
+    partial class INITIAL
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace APPLICATION.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,7 +44,10 @@ namespace APPLICATION.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
@@ -54,14 +57,17 @@ namespace APPLICATION.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedUserId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PlanId");
+
                     b.ToTable("Companies", (string)null);
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.Contact", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.ContactEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,7 +119,7 @@ namespace APPLICATION.Migrations
                     b.ToTable("Contacts", (string)null);
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.Person", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,6 +134,9 @@ namespace APPLICATION.Migrations
                     b.Property<string>("CPF")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -140,8 +149,8 @@ namespace APPLICATION.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("ImageUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -163,18 +172,17 @@ namespace APPLICATION.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Persons");
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PROFESSION.Profession", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
@@ -183,62 +191,44 @@ namespace APPLICATION.Migrations
                     b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("Current")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<double>("PlanCost")
+                        .HasColumnType("float");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<string>("PlanDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<string>("PlanName")
                         .IsRequired()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Office")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<Guid>("PersonId")
+                    b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMonthsPlan")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedUserId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Wage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Workload")
-                        .HasMaxLength(4)
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("RoleId");
 
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("Professions", (string)null);
+                    b.ToTable("Plans", (string)null);
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.Role", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -270,8 +260,6 @@ namespace APPLICATION.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
-
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex")
@@ -280,7 +268,7 @@ namespace APPLICATION.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.USER.User", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -468,9 +456,20 @@ namespace APPLICATION.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.Contact", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.Person", "Person")
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.ContactEntity", b =>
+                {
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", "Person")
                         .WithMany("Contacts")
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -479,48 +478,37 @@ namespace APPLICATION.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.Person", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.User", "User")
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", "Company")
+                        .WithMany("Persons")
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Company");
+
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PROFESSION.Profession", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", "Company")
-                        .WithMany("Professions")
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.Person", "Person")
-                        .WithMany("Professions")
-                        .HasForeignKey("PersonId")
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", "Role")
+                        .WithMany("Plans")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Company");
-
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.Role", b =>
-                {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", "Company")
-                        .WithMany("Roles")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.ROLE.Role", null)
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -529,7 +517,7 @@ namespace APPLICATION.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.User", null)
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -538,7 +526,7 @@ namespace APPLICATION.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.User", null)
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -547,13 +535,13 @@ namespace APPLICATION.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.ROLE.Role", null)
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.User", null)
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -562,25 +550,26 @@ namespace APPLICATION.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.User", null)
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.Company", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", b =>
                 {
-                    b.Navigation("Professions");
-
-                    b.Navigation("Roles");
+                    b.Navigation("Persons");
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.Person", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", b =>
                 {
                     b.Navigation("Contacts");
+                });
 
-                    b.Navigation("Professions");
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>
+                {
+                    b.Navigation("Plans");
                 });
 #pragma warning restore 612, 618
         }

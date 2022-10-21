@@ -24,7 +24,7 @@ public class PersonTypesConfiguration : IEntityTypeConfiguration<PersonEntity>
         builder.Property(person => person.CPF).IsRequired();
 
         // Bytes
-        builder.Property(person => person.Image);
+        builder.Property(person => person.ImageUri);
 
         // Integer
         builder.Property(person => person.Age).IsRequired();
@@ -42,9 +42,9 @@ public class PersonTypesConfiguration : IEntityTypeConfiguration<PersonEntity>
         builder.
             HasOne(person => person.User);
 
-        // Vinculos com profissões.
+        // Vinculos com empresa.
         builder
-            .HasMany(person => person.Professions).WithOne(profession => profession.Person).HasForeignKey(profession => profession.PersonId);
+            .HasOne(person => person.Company).WithMany(company => company.Persons).HasForeignKey(person => person.CompanyId);
 
         // Vinculos com contatos.
         builder

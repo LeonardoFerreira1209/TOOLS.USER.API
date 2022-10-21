@@ -1,6 +1,11 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.COMPANY;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
+using APPLICATION.DOMAIN.DTOS.REQUEST.COMPANY;
 using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.COMPANY;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.FILE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.VALIDATORS;
@@ -8,7 +13,6 @@ using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.CLIENTS;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
@@ -16,15 +20,23 @@ namespace APPLICATION.APPLICATION.SERVICES.PERSON;
 
 public class PersonService : IPersonService
 {
+    private readonly IFileService _fileService;
+
     private readonly IPersonRepository _personRepository;
+
+    private readonly ICompanyService _companyService;
 
     private readonly IHubContext<HubPerson, IPersonClient> _hubPerson;
 
-    public PersonService(IPersonRepository personRepository, IHubContext<HubPerson, IPersonClient> hubPerson)
+    public PersonService(IFileService fileService, IPersonRepository personRepository, ICompanyService companyService, IHubContext<HubPerson, IPersonClient> hubPerson)
     {
-        _hubPerson = hubPerson;
+        _fileService = fileService;
 
         _personRepository = personRepository;
+
+        _companyService = companyService;
+
+        _hubPerson = hubPerson;
     }
 
     /// <summary>
@@ -47,10 +59,26 @@ public class PersonService : IPersonService
             // Is success...
             if (success is true)
             {
-                Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
+                // Create company.
+                var response = await _companyService.Create(personFastRequest.Company, userId);
 
-                // Response success.
-                return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Pessoa criada com sucesso!") });
+                // Is success...
+                if (response.Sucesso)
+                {
+                    // Parse objet to CompanyResponse
+                    var companyResponse = (CompanyResponse)response.Dados;
+
+                    // Set Company Id in person.
+                    person.CompanyId = companyResponse.Id;
+
+                    // Update Person.
+                    await _personRepository.Update(person);
+
+                    Log.Information($"[LOG INFORMATION] - Pessoa criada com sucesso.\n");
+
+                    // Response success.
+                    return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Pessoa criada com sucesso!") });
+                }
             }
 
             // Response error.
@@ -150,7 +178,7 @@ public class PersonService : IPersonService
             Log.Information($"[LOG INFORMATION] - Id da pessoa recuperada com sucesso.\n");
 
             // Response success
-            return new ApiResponse<string>(success, DOMAIN.ENUM.StatusCodes.SuccessOK, personId.ToString(), new List<DadosNotificacao> { new DadosNotificacao("Id da pessoa recuperada com sucesso!") }) ;
+            return new ApiResponse<string>(success, DOMAIN.ENUM.StatusCodes.SuccessOK, personId.ToString(), new List<DadosNotificacao> { new DadosNotificacao("Id da pessoa recuperada com sucesso!") });
         }
         catch (Exception exception)
         {
@@ -185,7 +213,7 @@ public class PersonService : IPersonService
                     Log.Information($"[LOG INFORMATION] - Pessoas não encontrada.\n");
 
                     // Response error.
-                    return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.ErrorNotFound , persons, new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontrada!") });
+                    return new ApiResponse<object>(success, DOMAIN.ENUM.StatusCodes.ErrorNotFound, persons, new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontrada!") });
                 }
 
                 Log.Information($"[LOG INFORMATION] - Falha ao recuperar pessoas.\n");
@@ -257,23 +285,23 @@ public class PersonService : IPersonService
         {
             Log.Information($"[LOG INFORMATION] - Adicionando imagem na pessoa.\n");
 
-            var validation = await new ImageProfileUploadValidator().ValidateAsync(formFile); if (validation.IsValid is false) return validation.CarregarErrosValidator();
+            // Invite image to azure blob storage.
+            var responseImage = await _fileService.InviteFileToAzureBlobStorageAndReturnUri(formFile);
 
-            if (formFile.ContentType.FileTypesAllowed())
+            // response is success.
+            if (responseImage.Sucesso)
             {
-                // Declare a memory stream.
-                var memoryStream = new MemoryStream();
-
-                // Copy formFile to memoryStream.
-                await formFile.CopyToAsync(memoryStream);
-
                 // Get a person.
                 var (personSuccess, person) = await _personRepository.Get(personId, false);
 
+                // person response is success and person is not null.
                 if (personSuccess && person is not null)
                 {
+                    // Convert object to FileResponse.
+                    var fileResponse = (FileResponse)responseImage.Dados;
+
                     // Add image in person.
-                    var (imageSuccess, image) = await _personRepository.ProfileImage(person, memoryStream.ToArray());
+                    var (imageSuccess, imageUri) = await _personRepository.ProfileImage(person, fileResponse.FileUri);
 
                     // Is false.
                     if (imageSuccess is false)
@@ -287,7 +315,7 @@ public class PersonService : IPersonService
                     Log.Information($"[LOG INFORMATION] - Imagem adicionada com sucesso na pessoa.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(imageSuccess, DOMAIN.ENUM.StatusCodes.SuccessOK, new FileContentResult(image, "image/jpg"), new List<DadosNotificacao> { new DadosNotificacao("Imagem adicionada com sucesso.") });
+                    return new ApiResponse<object>(imageSuccess, DOMAIN.ENUM.StatusCodes.SuccessOK, person.ImageUri, new List<DadosNotificacao> { new DadosNotificacao("Imagem adicionada com sucesso.") });
                 }
 
                 Log.Information($"[LOG INFORMATION] - Pessoa não foi encontrada.\n");
@@ -295,9 +323,13 @@ public class PersonService : IPersonService
                 // Response error.
                 return new ApiResponse<object>(personSuccess, DOMAIN.ENUM.StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontada.") });
             }
+            else
+            {
+                Log.Information($"[LOG INFORMATION] - Erro ao enviar imagem para o blob storage do azure.\n");
 
-            // Response error.
-            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ErrorUnsupportedMediaType, null, new List<DadosNotificacao> { new DadosNotificacao("Tipo de arquivo não é permitido.") });
+                // Response error.
+                return new ApiResponse<object>(responseImage.Sucesso, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Erro ao enviar imagem para o blob storage do azure.") });
+            }
         }
         catch (Exception exception)
         {

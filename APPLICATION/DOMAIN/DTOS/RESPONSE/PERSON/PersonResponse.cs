@@ -1,15 +1,13 @@
-﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.PROFESSION;
+﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.COMPANY;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
+using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.ENUMS;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
 
 public class PersonResponse
 {
-    #region Base
     /// <summary>
     /// Identificador.
     /// </summary>
@@ -43,10 +41,8 @@ public class PersonResponse
     /// <summary>
     /// Imagem da Pessoa.
     /// </summary>
-    public FileContentResult Image { get; set; }
-    #endregion
+    public string ImageUri { get; set; }
 
-    #region Docs
     /// <summary>
     /// RG.
     /// </summary>
@@ -61,25 +57,29 @@ public class PersonResponse
     /// Status.
     /// </summary>
     public Status Status { get; set; }
-    #endregion
 
-    #region User
     /// <summary>
     /// Id do usuário.
     /// </summary>
     public Guid UserId { get; set; }
 
-    public UserEntity User { get; set; }
-    #endregion
-
-    #region Profession
     /// <summary>
-    /// Profissões vinculadas a pessoa.
+    /// Entidade de usuários.
     /// </summary>
-    public ICollection<ProfessionResponse> Professions { get; set; }
-    #endregion
+    public UserEntity User { get; set; }
 
-    #region Contact
+    /// <summary>
+    /// Id da empresa.
+    /// </summary>
+    public Guid? CompanyId { get; set; }
+
+    /// <summary>
+    /// Entidade da empresa.
+    /// </summary>
+    public CompanyResponse Company { get; set; }
+
+    /// <summary>
+    /// Coleção de contatos do usuário.
+    /// </summary>
     public ICollection<ContactResponse> Contacts { get; set; }
-    #endregion
 }

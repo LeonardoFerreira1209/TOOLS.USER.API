@@ -1,20 +1,7 @@
-﻿using APPLICATION.DOMAIN.DTOS.REQUEST.PROFESSION;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace APPLICATION.DOMAIN.DTOS.REQUEST.COMPANY;
+﻿namespace APPLICATION.DOMAIN.DTOS.REQUEST.COMPANY;
 
 public class CompanyRequest
 {
-    #region Base
-    /// <summary>
-    /// Identificador.
-    /// </summary>
-    public Guid Id { get; set; }
-
     /// <summary>
     /// Nome da empresa.
     /// </summary>
@@ -28,6 +15,10 @@ public class CompanyRequest
     /// <summary>
     /// Data em que a empresa foi fundada
     /// </summary>
-    public DateTime StartDate { get; set; }
-    #endregion
+    public DateTime? StartDate { get; set; }
+
+    /// <summary>
+    /// Plano vinculado com a empresa.
+    /// </summary>
+    public Guid PlanId { get; set; }
 }
