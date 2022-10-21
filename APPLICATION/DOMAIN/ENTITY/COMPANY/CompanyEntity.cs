@@ -1,6 +1,6 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.BASE;
 using APPLICATION.DOMAIN.ENTITY.PERSON;
-using APPLICATION.DOMAIN.ENTITY.ROLE;
+using APPLICATION.DOMAIN.ENTITY.PLAN;
 
 namespace APPLICATION.DOMAIN.ENTITY.COMPANY;
 
@@ -27,9 +27,9 @@ public class CompanyEntity : BaseEntity
     public Guid PlanId { get; set; }
 
     /// <summary>
-    /// Vinculo com roles.
+    /// Plano
     /// </summary>
-    public virtual List<RoleEntity> Roles { get; set; }
+    public virtual PlanEntity Plan { get; set; }
 
     /// <summary>
     /// Vinculo com pessoas.

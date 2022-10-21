@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APPLICATION.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20221018121628_FIRST_MIGRATION")]
-    partial class FIRST_MIGRATION
+    [Migration("20221021042216_INITIAL")]
+    partial class INITIAL
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,9 +57,12 @@ namespace APPLICATION.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedUserId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
 
                     b.ToTable("Companies", (string)null);
                 });
@@ -176,13 +179,56 @@ namespace APPLICATION.Migrations
                     b.ToTable("Persons");
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CompanyId")
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("PlanCost")
+                        .HasColumnType("float");
+
+                    b.Property<string>("PlanDescription")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PlanName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMonthsPlan")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedUserId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Plans", (string)null);
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -213,8 +259,6 @@ namespace APPLICATION.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -412,6 +456,17 @@ namespace APPLICATION.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", b =>
+                {
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+                });
+
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.ContactEntity", b =>
                 {
                     b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", "Person")
@@ -440,15 +495,15 @@ namespace APPLICATION.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", b =>
                 {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", "Company")
-                        .WithMany("Roles")
-                        .HasForeignKey("CompanyId")
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", "Role")
+                        .WithMany("Plans")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Company");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -505,13 +560,16 @@ namespace APPLICATION.Migrations
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", b =>
                 {
                     b.Navigation("Persons");
-
-                    b.Navigation("Roles");
                 });
 
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", b =>
                 {
                     b.Navigation("Contacts");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>
+                {
+                    b.Navigation("Plans");
                 });
 #pragma warning restore 612, 618
         }

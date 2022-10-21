@@ -91,9 +91,8 @@ public class RoleService : IRoleService
         {
             Log.Information($"[LOG INFORMATION] - Adicionando uma novas claims na role {roleRequest.Name}\n");
 
-            #region Add claim in exist role.
             // Get the role for Id.
-            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleRequest.Name.Equals(role.Name) && role.CompanyId.Equals(roleRequest.CompanyId));
+            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleRequest.Name.Equals(role.Name));
 
             // Verify is nor null role.
             if (role is not null)
@@ -110,7 +109,6 @@ public class RoleService : IRoleService
                 // Response success.
                 return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim adicionada a role {roleRequest.Name} com sucesso.") });
             }
-            #endregion
 
             // Response error.
             return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao($"Role com o nome {roleRequest.Name} não existe.") });
@@ -139,7 +137,7 @@ public class RoleService : IRoleService
             Log.Information($"[LOG INFORMATION] - Removendo as claims da Role {roleRequest.Name}\n");
             
             // Get role for Id.
-            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleRequest.Name.Equals(role.Name) && role.CompanyId.Equals(roleRequest.CompanyId));
+            var role = await _roleManager.Roles.FirstOrDefaultAsync(role => roleRequest.Name.Equals(role.Name));
 
             // Verify is not null role.
             if (role is not null)

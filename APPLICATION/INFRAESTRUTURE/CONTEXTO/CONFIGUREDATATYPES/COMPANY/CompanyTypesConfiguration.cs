@@ -34,6 +34,6 @@ public class CompanyTypesConfiguration : IEntityTypeConfiguration<CompanyEntity>
             .HasMany(company => company.Persons).WithOne(person => person.Company).HasForeignKey(person => person.CompanyId);
 
         // Vinculo com Roles.
-        builder.HasMany(company => company.Roles).WithOne(role => role.Company).HasForeignKey(role => role.CompanyId);
+        builder.HasOne(company => company.Plan);
     }
 }

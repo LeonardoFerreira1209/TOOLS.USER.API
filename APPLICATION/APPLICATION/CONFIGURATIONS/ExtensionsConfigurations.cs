@@ -647,7 +647,6 @@ public static class ExtensionsConfigurations
                 var role = new RoleEntity
                 {
                     Name = "administrator",
-                    CompanyId = company.Id,
                     CreatedUserId = user.Id,
                     Status = Status.Active,
                     Created = DateTime.Now,

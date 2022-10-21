@@ -1,4 +1,4 @@
-﻿using APPLICATION.DOMAIN.ENTITY.COMPANY;
+﻿using APPLICATION.DOMAIN.ENTITY.PLAN;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
 
@@ -6,11 +6,6 @@ namespace APPLICATION.DOMAIN.ENTITY.ROLE;
 
 public class RoleEntity : IdentityRole<Guid>
 {
-    /// <summary>
-    /// Id da empresa vinculada a essa role.
-    /// </summary>
-    public Guid CompanyId { get; set; }
-
     /// <summary>
     /// Data de criação
     /// </summary>
@@ -36,10 +31,8 @@ public class RoleEntity : IdentityRole<Guid>
     /// </summary>
     public Status Status { get; set; }
 
-    #region Vinculos
     /// <summary>
-    /// Vinculo com empresa.
+    /// Vinculo com plano.
     /// </summary>
-    public virtual CompanyEntity Company { get; set; }
-    #endregion
+    public virtual ICollection<PlanEntity> Plans { get; set; }
 }
