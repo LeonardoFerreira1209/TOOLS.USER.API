@@ -1,10 +1,8 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
-using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
-using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.USER.ROLE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
@@ -32,7 +30,6 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
     /// </summary>
     public class UserService : IUserService
     {
-        #region privates
         private readonly SignInManager<UserEntity> _signInManager;
 
         private readonly UserManager<UserEntity> _userManager;
@@ -45,10 +42,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
         private readonly ITokenService _tokenService;
 
-        private readonly IPersonService _personService;
-        #endregion
-
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IPersonService personService)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService)
         {
             _signInManager = signInManager;
 
@@ -61,15 +55,12 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             _emailFacade = emailFacade;
 
             _tokenService = tokenService;
-
-            _personService = personService;
         }
 
-        #region User
         /// <summary>
         /// Método responsável por fazer a authorização do usuário.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="loginRequest"></param>
         /// <returns></returns>
         public async Task<ApiResponse<object>> Authentication(LoginRequest loginRequest)
         {
@@ -139,9 +130,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <summary>
         /// Método responsavel por criar um novo usuário.
         /// </summary>
-        /// <param name="personFastRequest"></param>
+        /// <param name="userCreateRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest)
+        public async Task<ApiResponse<object>> Create(UserCreateRequest userCreateRequest)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Create)}\n");
 
@@ -150,34 +141,23 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Validando request.\n");
 
                 // Validate person reques.
-                var validation = await new CreatePersonValidator().ValidateAsync(personFastRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
+                var validation = await new CreateUserValidator().ValidateAsync(userCreateRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
 
                 Log.Information($"[LOG INFORMATION] - Request validado com sucesso.\n");
 
-                // Convert request to user.
-                var user = personFastRequest.User.ToIdentityUser();
+                var user = userCreateRequest.ToIdentityUser();
 
                 // Build a user.
-                var response = await BuildUser(user, personFastRequest.User);
+                var response = await BuildUser(user, userCreateRequest.Password);
 
                 // Response succes true.
                 if (response.Succeeded)
                 {
-                    // Create a new person.
-                    var responsePerson = await _personService.Create(personFastRequest, user.Id);
+                    // Confirm user for e-mail.
+                    await ConfirmeUserForEmail(user);
 
-                    // Is success...
-                    if (responsePerson.Sucesso is true)
-                    {
-                        // Confirm user for e-mail.
-                        await ConfirmeUserForEmail(user);
-
-                        // Response success.
-                        return new ApiResponse<object>(responsePerson.Sucesso, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário criado com sucesso.") });
-                    }
-
-                    // Response error.
-                    return new ApiResponse<object>(responsePerson.Sucesso, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Ocorreu uma falha ao criar usuário!") });
+                    // Response success.
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário criado com sucesso.") });
                 }
 
                 // Response error.
@@ -195,7 +175,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <summary>
         /// Método responsável por atualizar um usuário.
         /// </summary>
-        /// <param name="userRequest"></param>
+        /// <param name="userUpdateRequest"></param>
         /// <returns></returns>
         public async Task<ApiResponse<object>> Update(UserUpdateRequest userUpdateRequest)
         {
@@ -212,62 +192,73 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 Log.Information($"[LOG INFORMATION] - Atualizando dados do usuário {JsonConvert.SerializeObject(userUpdateRequest)}.\n");
 
-                // convert to Entity.
-                var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userUpdateRequest.Id);
+                // Get user.
+                var user = await _userManager.Users.FirstOrDefaultAsync(user => user.UserName.Equals(userUpdateRequest.UserName));
 
-                // update username.
-                var setUsernameResponse = await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
-
-                if (setUsernameResponse.Succeeded is false)
+                // User is valid ?.
+                if(user is not null)
                 {
-                    Log.Information($"[LOG INFORMATION] - Erro ao atualizar nome de usuário.\n");
+                    // Complete user.
+                    user = userUpdateRequest.ToCompleteUserUpdateWithRequest(user);
 
-                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar nome de usuário.") });
-                }
+                    // update username.
+                    var setUsernameResponse = await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
 
-                if (!string.IsNullOrEmpty(userUpdateRequest.Password))
-                {
-                    var changePasswordResponse = await _userManager.ChangePasswordAsync(user, userUpdateRequest.CurrentPassword, userUpdateRequest.Password);
-
-                    if (changePasswordResponse.Succeeded is false)
+                    if (setUsernameResponse.Succeeded is false)
                     {
-                        Log.Information($"[LOG INFORMATION] - Erro ao trocar senha.\n");
+                        Log.Information($"[LOG INFORMATION] - Erro ao atualizar nome de usuário.\n");
 
-                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(changePasswordResponse.Errors.FirstOrDefault().Code.CustomExceptionMessage()) });
+                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar nome de usuário.") });
                     }
+
+                    // update password.
+                    if (!string.IsNullOrEmpty(userUpdateRequest.Password))
+                    {
+                        var changePasswordResponse = await _userManager.ChangePasswordAsync(user, userUpdateRequest.CurrentPassword, userUpdateRequest.Password);
+
+                        if (changePasswordResponse.Succeeded is false)
+                        {
+                            Log.Information($"[LOG INFORMATION] - Erro ao trocar senha.\n");
+
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(changePasswordResponse.Errors.FirstOrDefault().Code.CustomExceptionMessage()) });
+                        }
+                    }
+
+                    // update e-mail.
+                    var setEmailResponse = await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
+
+                    if (setEmailResponse.Succeeded is false)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Erro ao atualizar e-mail de usuário.\n");
+
+                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar e-mail do usuário.") });
+                    }
+
+                    // update phoneNumber
+                    var setPhoneNumberResponse = await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
+
+                    if (setPhoneNumberResponse.Succeeded is false)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Erro ao atualizar celular do usuário.\n");
+
+                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar celular do usuário.") });
+                    }
+
+                    // update user.
+                    await _userManager.UpdateAsync(user);
+
+                    Log.Information($"[LOG INFORMATION] - Usuário atualizado com sucesso.\n");
+
+                    // Response success.
+                    return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário atualizado com sucesso.") });
                 }
-
-                var setEmailResponse = await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
-
-                if (setEmailResponse.Succeeded is false)
+                else
                 {
-                    Log.Information($"[LOG INFORMATION] - Erro ao atualizar e-mail de usuário.\n");
+                    Log.Information($"[LOG INFORMATION] - Usuário não encontrado.\n");
 
-                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar e-mail do usuário.") });
+                    // Response success.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, userUpdateRequest, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado..") });
                 }
-
-                var setPhoneNumberResponse = await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
-
-                if (setPhoneNumberResponse.Succeeded is false)
-                {
-                    Log.Information($"[LOG INFORMATION] - Erro ao atualizar celular do usuário.\n");
-
-                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar celular do usuário.") });
-                }
-
-                // set datetime updated user.
-                user.Updated = DateTime.Now;
-
-                // user responsible to updated id.
-                user.UpdatedUserId = GlobalData<object>.GlobalUser.Id;
-
-                // update user.
-                await _userManager.UpdateAsync(user);
-
-                Log.Information($"[LOG INFORMATION] - Usuário atualizado com sucesso.\n");
-
-                // Response success.
-                return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário atualizado com sucesso.") });
             }
             catch (Exception exception)
             {
@@ -320,9 +311,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
-        #endregion
 
-        #region Roles & Claims
         /// <summary>
         /// Método responsavel por criar uma nova claim para o usuário.
         /// </summary>
@@ -461,7 +450,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <summary>
         /// Método responsável por recuperar roles de um usuário.
         /// </summary>
-        /// <param name="roleRequest"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
         public async Task<ApiResponse<object>> GetUserRoles(Guid userId)
         {
@@ -481,7 +470,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var roles = new List<RolesResponse>();
 
                 // for in response
-                foreach(var roleName in response)
+                foreach (var roleName in response)
                 {
                     // get role.
                     var roleEntity = await _roleManager.Roles.FirstOrDefaultAsync(role => role.Name.Equals(roleName));
@@ -490,7 +479,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     var roleClaims = await _roleManager.GetClaimsAsync(roleEntity);
 
                     // add roles.
-                    roles.Add(new RolesResponse {
+                    roles.Add(new RolesResponse
+                    {
 
                         Name = roleName,
                         Claims = roleClaims
@@ -515,7 +505,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// Método responsavel por remover uma role ao usuário.
         /// </summary>
         /// <param name="username"></param>
-        /// <param name="claimRequest"></param>
+        /// <param name="roleName"></param>
         /// <returns></returns>
         public async Task<ApiResponse<object>> RemoveRole(string username, string roleName)
         {
@@ -555,23 +545,21 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Método responsavel por gerar um usuário e vincular roles e claims.
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="userRequest"></param>
+        /// <param name="password"></param>
         /// <returns></returns>
-        private async Task<IdentityResult> BuildUser(UserEntity user, UserCreateRequest userRequest)
+        private async Task<IdentityResult> BuildUser(UserEntity user, string password)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(BuildUser)}\n");
 
             Log.Information("[LOG INFORMATION] - Criando usuário\n");
 
             // Create User.
-            var identityResult = await _userManager.CreateAsync(user, userRequest.Password);
+            var identityResult = await _userManager.CreateAsync(user, password);
 
             // Logged user.
             var responsibleUser = GlobalData<object>.GlobalUser?.Id;
@@ -616,6 +604,5 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 TemplateName = "Activate.Template"
             });
         }
-        #endregion
     }
 }

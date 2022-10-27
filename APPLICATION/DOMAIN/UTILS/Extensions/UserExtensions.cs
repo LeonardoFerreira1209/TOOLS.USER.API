@@ -1,5 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.ENTITY.USER;
+using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.ENUMS;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
@@ -10,6 +11,15 @@ public static class UserExtensions
     {
         return new UserEntity
         {
+            FirstName = userRequest.FirstName,
+            LastName = userRequest.LastName,
+            Age = userRequest.Age,
+            BirthDay = userRequest.BirthDay,
+            CompanyId = userRequest.CompanyId,
+            CPF = userRequest.CPF,
+            RG = userRequest.RG,
+            Gender = userRequest.Gender,
+            ImageUri = userRequest.ImageUri,
             UserName = userRequest.UserName,
             Email = userRequest.Email,
             PhoneNumber = userRequest.PhoneNumber,
@@ -19,22 +29,22 @@ public static class UserExtensions
         };
     }
 
-    public static UserEntity ToIdentityUser(this UserUpdateRequest userUpdateRequest)
+    public static UserEntity ToCompleteUserUpdateWithRequest(this UserUpdateRequest userUpdateRequest, UserEntity user)
     {
-        return new UserEntity
-        {
-            Id = userUpdateRequest.Id,
-            UserName = userUpdateRequest.UserName,
-            Email = userUpdateRequest.Email,
-            EmailConfirmed = userUpdateRequest.EmailConfirmed,
-            PhoneNumber = userUpdateRequest.PhoneNumber,
-            PhoneNumberConfirmed = userUpdateRequest.PhoneNumberConfirmed,
-            SecurityStamp = userUpdateRequest.SecurityStamp,
-            ConcurrencyStamp = userUpdateRequest.ConcurrencyStamp,
-            AccessFailedCount = userUpdateRequest.AccessFailedCount,
-            LockoutEnabled = userUpdateRequest.LockoutEnabled,
-            LockoutEnd = userUpdateRequest.LockoutEnd,
-            TwoFactorEnabled = userUpdateRequest.TwoFactorEnabled
-        };
+        user.UserName = userUpdateRequest.UserName;
+        user.FirstName = userUpdateRequest.FirstName;
+        user.LastName = userUpdateRequest.LastName;
+        user.Age = userUpdateRequest.Age;
+        user.Gender = userUpdateRequest.Gender;
+        user.BirthDay = userUpdateRequest.BirthDay;
+        user.CPF = userUpdateRequest.CPF;
+        user.RG = userUpdateRequest.RG;
+        user.Email = userUpdateRequest.Email;
+        user.PhoneNumber = userUpdateRequest.PhoneNumber;
+        user.Updated = DateTime.Now;
+
+        user.UpdatedUserId = GlobalData<object>.GlobalUser.Id;
+
+        return user;
     }
 }

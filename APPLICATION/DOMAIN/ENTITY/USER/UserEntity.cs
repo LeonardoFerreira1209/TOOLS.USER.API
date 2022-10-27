@@ -1,10 +1,61 @@
-﻿using APPLICATION.ENUMS;
+﻿using APPLICATION.DOMAIN.ENTITY.COMPANY;
+using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
 
 namespace APPLICATION.DOMAIN.ENTITY.USER;
 
 public class UserEntity : IdentityUser<Guid>
 {
+    /// <summary>
+    /// Primeiro nome.
+    /// </summary>
+    public string FirstName { get; set; }
+
+    /// <summary>
+    /// Ultimo nome.
+    /// </summary>
+    public string LastName { get; set; }
+
+    /// <summary>
+    /// Idade.
+    /// </summary>
+    public int Age { get; set; }
+
+    /// <summary>
+    /// Data de aniversário.
+    /// </summary>
+    public string BirthDay { get; set; }
+
+    /// <summary>
+    /// Gênero.
+    /// </summary>
+    public Gender Gender { get; set; }
+
+    /// <summary>
+    /// Imagem de perfil.
+    /// </summary>
+    public string ImageUri { get; set; }
+
+    /// <summary>
+    /// RG.
+    /// </summary>
+    public string RG { get; set; }
+
+    /// <summary>
+    /// CPF.
+    /// </summary>
+    public string CPF { get; set; }
+
+    /// <summary>
+    /// Id da empresa.
+    /// </summary>
+    public Guid? CompanyId { get; set; }
+
+    /// <summary>
+    /// Empresa em que o usuário é vinculado.
+    /// </summary>
+    public virtual CompanyEntity Company { get; set; }
+
     /// <summary>
     /// Data de criação
     /// </summary>

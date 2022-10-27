@@ -14,9 +14,14 @@ public sealed class ApplicationInsightsMetrics : IApplicationInsightsMetrics
     public ApplicationInsightsMetrics(TelemetryClient telemetry, string key)
     {
         this._telemetry = telemetry;
+
         this._telemetry.Context.InstrumentationKey = key;
     }
 
+    /// <summary>
+    /// Adiciona as métricas.
+    /// </summary>
+    /// <param name="metrica"></param>
     public void AddMetric(CustomMetricDto metrica)
     {
 

@@ -9,6 +9,11 @@ namespace APPLICATION.APPLICATION.CONFIGURATIONS;
 /// </summary>
 public static class CustomValidationExtensions
 {
+    /// <summary>
+    /// Tratamentos de erros.
+    /// </summary>
+    /// <param name="validationResult"></param>
+    /// <returns></returns>
     public static ApiResponse<object> CarregarErrosValidator(this ValidationResult validationResult)
     {
         var _notificacoes = new List<DadosNotificacao>();

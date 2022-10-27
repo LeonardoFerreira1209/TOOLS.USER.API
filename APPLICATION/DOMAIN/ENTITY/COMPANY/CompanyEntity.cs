@@ -1,6 +1,6 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.BASE;
-using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PLAN;
+using APPLICATION.DOMAIN.ENTITY.USER;
 
 namespace APPLICATION.DOMAIN.ENTITY.COMPANY;
 
@@ -32,7 +32,7 @@ public class CompanyEntity : BaseEntity
     public virtual PlanEntity Plan { get; set; }
 
     /// <summary>
-    /// Vinculo com pessoas.
+    /// Vinculo com usuários.
     /// </summary>
-    public virtual List<PersonEntity> Persons { get; set; }
+    public virtual List<UserEntity> Users { get; set; }
 }

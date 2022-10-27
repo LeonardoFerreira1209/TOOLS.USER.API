@@ -1,8 +1,7 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
-using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
 using APPLICATION.DOMAIN.UTILS.AUTH;
@@ -24,29 +23,29 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         public UserController(IUserService userService) { _userService = userService; }
 
         /// <summary>
-        /// Método responsável por adicionar uma pessoa & usuario.
+        /// Método responsável por adicionar um usuario.
         /// </summary>
-        /// <param name="personRequest"></param>
+        /// <param name="userCreateRequest"></param>
         /// <returns></returns>
         [HttpPost("create")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Criar uauário.", Description = "Método responsavel por criar usuário")]
-        [ProducesResponseType(typeof(ApiResponse<PersonResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
-        public async Task<ApiResponse<object>> Create(PersonFastRequest personRequest)
+        public async Task<ApiResponse<object>> Create(UserCreateRequest userCreateRequest)
         {
             using (LogContext.PushProperty("Controller", "UserController"))
-            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(personRequest)))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(userCreateRequest)))
             using (LogContext.PushProperty("Metodo", "Create"))
             {
-                return await Tracker.Time(() => _userService.Create(personRequest), "Criar usuário");
+                return await Tracker.Time(() => _userService.Create(userCreateRequest), "Criar usuário");
             }
         }
 
         /// <summary>
         /// Método responsável por atualizar um  usuario.
         /// </summary>
-        /// <param name="userRequest"></param>
+        /// <param name="userUpdateRequest"></param>
         /// <returns></returns>
         [HttpPut("update")][CustomAuthorize(Claims.User, "Put")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Atualizar uauário.", Description = "Método responsavel por atualizar usuário")]

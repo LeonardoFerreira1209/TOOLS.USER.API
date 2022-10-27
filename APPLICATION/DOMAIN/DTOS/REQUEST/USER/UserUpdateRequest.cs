@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using APPLICATION.ENUMS;
+using System.ComponentModel.DataAnnotations;
 
 namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
 {
@@ -7,11 +8,45 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
     /// </summary>
     public class UserUpdateRequest
     {
-        #region Base
         /// <summary>
         /// Id do usúario
         /// </summary>
         public Guid Id{ get; set; }
+
+        /// <summary>
+        /// Primeiro nome.
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// Ultimo nome.
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
+        /// Idade.
+        /// </summary>
+        public int Age { get; set; }
+
+        /// <summary>
+        /// Data de aniversário.
+        /// </summary>
+        public string BirthDay { get; set; }
+
+        /// <summary>
+        /// Gênero.
+        /// </summary>
+        public Gender Gender { get; set; }
+
+        /// <summary>
+        /// RG.
+        /// </summary>
+        public string RG { get; set; }
+
+        /// <summary>
+        /// CPF.
+        /// </summary>
+        public string CPF { get; set; }
 
         /// <summary>
         /// Nome de usuário
@@ -23,11 +58,6 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         /// </summary>
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-
-        /// <summary>
-        /// Email do usuário confirmado.
-        /// </summary>
-        public bool EmailConfirmed { get; set; }
 
         /// <summary>
         /// Senha do usuário atual.
@@ -46,41 +76,10 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         /// </summary>
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
-
-        /// <summary>
-        /// Número do usuário confirmado.
-        /// </summary>
-        public bool PhoneNumberConfirmed { get; set; }
-
-        /// <summary>
-        /// Lockout habilitado.
-        /// </summary>
-        public bool LockoutEnabled { get; set; }
-
-        /// <summary>
-        /// Data final do lockout
-        /// </summary>
-        public DateTime? LockoutEnd { get; set; }
-
-        /// <summary>
-        /// Security stamp
-        /// </summary>
-        public string SecurityStamp { get; set; }
-
-        /// <summary>
-        /// Concurrency Stamp
-        /// </summary>
-        public string ConcurrencyStamp { get; set; }
         
         /// <summary>
         /// Validação de dois fatores habilitada.
         /// </summary>
         public bool TwoFactorEnabled { get; set; }
-
-        /// <summary>
-        /// Quantidade de falhas de acesso.
-        /// </summary>
-        public int AccessFailedCount { get;set; }
-        #endregion
     }
 }

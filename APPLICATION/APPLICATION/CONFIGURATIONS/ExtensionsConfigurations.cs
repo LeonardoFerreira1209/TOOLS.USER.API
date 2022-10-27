@@ -2,23 +2,19 @@
 using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
 using APPLICATION.APPLICATION.SERVICES.COMPANY;
 using APPLICATION.APPLICATION.SERVICES.FILE;
-using APPLICATION.APPLICATION.SERVICES.PERSON;
 using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
 using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.COMPANY;
-using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.COMPANY;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
-using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.ENTITY.COMPANY;
-using APPLICATION.DOMAIN.ENTITY.CONTACT;
-using APPLICATION.DOMAIN.ENTITY.PERSON;
+using APPLICATION.DOMAIN.ENTITY.PLAN;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
@@ -30,7 +26,6 @@ using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
 using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.COMPANY;
-using APPLICATION.INFRAESTRUTURE.REPOSITORY.PERSON;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Microsoft.ApplicationInsights;
@@ -421,7 +416,6 @@ public static class ExtensionsConfigurations
         services
             .AddTransient(x => configurations)
             // Services
-            .AddTransient<IPersonService, PersonService>()
             .AddTransient<IUserService, UserService>()
             .AddTransient<IRoleService, RoleService>()
             .AddTransient<ITokenService, TokenService>()
@@ -431,7 +425,6 @@ public static class ExtensionsConfigurations
             .AddSingleton<EmailFacade, EmailFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
-            .AddScoped<IPersonRepository, PersonRepository>()
             .AddScoped<ICompanyRepository, CompanyRepository>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -629,38 +622,24 @@ public static class ExtensionsConfigurations
                 // Add Login in user.
                 await userManager.AddLoginAsync(user, new UserLoginInfo("TOOLS.USER.API", "TOOLS.USER", "TOOLS.USER.PROVIDER.KEY"));
 
-                // Sets data in Company.
-                var company = new CompanyEntity
-                {
-                    Name = "HYPER.IO",
-                    Description = "tecnology & future solutions.",
-                    StartDate = DateTime.Now,
-                    Status = Status.Active,
-                    CreatedUserId = user.Id,
-                    Created = DateTime.Now,
-                };
-
-                // Add Company.
-                await context.Companies.AddAsync(company);
-
                 // Set data in role.
                 var role = new RoleEntity
                 {
                     Name = "administrator",
                     CreatedUserId = user.Id,
                     Status = Status.Active,
-                    Created = DateTime.Now,
+                    Created = DateTime.Now
                 };
 
                 // Create role.
                 await roleManager.CreateAsync(role);
 
                 // Add claim in role.
-                await roleManager.AddClaimAsync(role, new Claim("Person", "Get"));
-                await roleManager.AddClaimAsync(role, new Claim("Person", "Post"));
-                await roleManager.AddClaimAsync(role, new Claim("Person", "Put"));
-                await roleManager.AddClaimAsync(role, new Claim("Person", "Patch"));
-                await roleManager.AddClaimAsync(role, new Claim("Person", "Delete"));
+                await roleManager.AddClaimAsync(role, new Claim("User", "Get"));
+                await roleManager.AddClaimAsync(role, new Claim("User", "Post"));
+                await roleManager.AddClaimAsync(role, new Claim("User", "Put"));
+                await roleManager.AddClaimAsync(role, new Claim("User", "Patch"));
+                await roleManager.AddClaimAsync(role, new Claim("User", "Delete"));
 
                 await roleManager.AddClaimAsync(role, new Claim("Claim", "Get"));
                 await roleManager.AddClaimAsync(role, new Claim("Claim", "Post"));
@@ -677,46 +656,43 @@ public static class ExtensionsConfigurations
                 // Add role to user.
                 await userManager.AddToRoleAsync(user, role.Name);
 
-                // Set data in Person.
-                var person = new PersonEntity
+                // Set plan.
+                var plan = new PlanEntity
                 {
-                    UserId = user.Id,
-                    FirstName = "Admin",
-                    LastName = "Admin",
-                    Age = 1,
-                    BirthDay = "12/09/1999",
-                    CPF = "32965808086",
-                    RG = "371061775",
-                    Gender = Gender.Male,
+                    PlanName = "Básico",
+                    PlanCost = 10.00,
+                    PlanDescription = "Plano padrão para uso pessoal.",
+                    RoleId = role.Id,
                     Status = Status.Active,
-                    CreatedUserId = user.Id,
                     Created = DateTime.Now,
-                    CompanyId = company.Id,
+                    CreatedUserId = user.Id,
+                    TotalMonthsPlan = 12
                 };
 
-                // Set data in Contact.
-                var contacts = new List<ContactEntity>
-            {
-                new ContactEntity
+                // Add plan.
+                await context.Plans.AddAsync(plan);
+
+                // Sets data in Company.
+                var company = new CompanyEntity
                 {
-                    Name = "Principal",
-                    Email = "Admin@example.com",
-                    CEP = "19050590",
-                    Complement = "House",
-                    Number = 545,
-                    PhoneNumber = "+55(18)99776-8856",
-                    PersonId = person.Id,
+                    Name = "HYPER.IO",
+                    Description = "tecnology & future solutions.",
+                    StartDate = DateTime.Now,
                     Status = Status.Active,
                     CreatedUserId = user.Id,
                     Created = DateTime.Now,
-                }
-            };
+                    PlanId = plan.Id
+                };
 
-                // Set contacts.
-                person.Contacts = contacts;
 
-                // Add Person
-                await context.Persons.AddAsync(person);
+                // Add Company.
+                await context.Companies.AddAsync(company);
+
+                // Set company in user.
+                user.CompanyId = company.Id;
+
+                // Update user.
+                await userManager.UpdateAsync(user);
 
                 // Commit de transaction.
                 await context.SaveChangesAsync();

@@ -15,7 +15,7 @@ public class PlanTypesConfiguration : IEntityTypeConfiguration<PlanEntity>
         builder.Property(company => company.Id).IsRequired();
         builder.Property(company => company.RoleId).IsRequired();
         builder.Property(company => company.CreatedUserId).IsRequired();
-        builder.Property(company => company.UpdatedUserId).IsRequired();
+        builder.Property(company => company.UpdatedUserId);
 
         // String
         builder.Property(company => company.PlanName).IsRequired();

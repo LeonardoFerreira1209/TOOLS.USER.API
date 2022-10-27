@@ -55,7 +55,6 @@ namespace APPLICATION.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedUserId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -63,118 +62,6 @@ namespace APPLICATION.Migrations
                     b.HasIndex("PlanId");
 
                     b.ToTable("Companies", (string)null);
-                });
-
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.ContactEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CEP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Complement")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UpdatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("Contacts", (string)null);
-                });
-
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BirthDay")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CPF")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUri")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RG")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UpdatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", b =>
@@ -213,7 +100,6 @@ namespace APPLICATION.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedUserId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -275,6 +161,18 @@ namespace APPLICATION.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BirthDay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CPF")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -291,6 +189,18 @@ namespace APPLICATION.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -315,6 +225,9 @@ namespace APPLICATION.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RG")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -335,6 +248,8 @@ namespace APPLICATION.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -465,34 +380,6 @@ namespace APPLICATION.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.CONTACT.ContactEntity", b =>
-                {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", "Person")
-                        .WithMany("Contacts")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", b =>
-                {
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", "Company")
-                        .WithMany("Persons")
-                        .HasForeignKey("CompanyId");
-
-                    b.HasOne("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", b =>
                 {
                     b.HasOne("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", "Role")
@@ -502,6 +389,15 @@ namespace APPLICATION.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", b =>
+                {
+                    b.HasOne("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -557,12 +453,7 @@ namespace APPLICATION.Migrations
 
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.COMPANY.CompanyEntity", b =>
                 {
-                    b.Navigation("Persons");
-                });
-
-            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PERSON.PersonEntity", b =>
-                {
-                    b.Navigation("Contacts");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>

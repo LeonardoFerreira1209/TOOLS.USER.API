@@ -1,11 +1,8 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.COMPANY;
-using APPLICATION.DOMAIN.ENTITY.CONTACT;
-using APPLICATION.DOMAIN.ENTITY.PERSON;
 using APPLICATION.DOMAIN.ENTITY.PLAN;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.COMPANY;
-using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.CONTACT;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.PLAN;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -30,8 +27,6 @@ public class Contexto : IdentityDbContext<UserEntity, RoleEntity, Guid>
     {
         // Configutrations
         builder
-            // Contact
-            .ApplyConfiguration(new ContactTypesConfiguration())
             // Company
             .ApplyConfiguration(new CompanyTypesConfiguration())
             // Plan
@@ -45,13 +40,9 @@ public class Contexto : IdentityDbContext<UserEntity, RoleEntity, Guid>
     /// </summary>
     #region C
     public DbSet<CompanyEntity> Companies { get; set; }
-
-    public DbSet<ContactEntity> Contacts { get; set; }
     #endregion
 
     #region P
     public DbSet<PlanEntity> Plans { get; set; }
-
-    public DbSet<PersonEntity> Persons { get; set; }
     #endregion
 }

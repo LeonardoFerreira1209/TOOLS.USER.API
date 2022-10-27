@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using APPLICATION.ENUMS;
+using System.ComponentModel.DataAnnotations;
 
 namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
 {
@@ -7,6 +8,51 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
     /// </summary>
     public class UserCreateRequest
     {
+        /// <summary>
+        /// Primeiro nome.
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// Ultimo nome.
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
+        /// Idade.
+        /// </summary>
+        public int Age { get; set; }
+
+        /// <summary>
+        /// Data de aniversário.
+        /// </summary>
+        public string BirthDay { get; set; }
+
+        /// <summary>
+        /// Gênero.
+        /// </summary>
+        public Gender Gender { get; set; }
+
+        /// <summary>
+        /// Imagem de perfil.
+        /// </summary>
+        public string ImageUri { get; set; }
+
+        /// <summary>
+        /// RG.
+        /// </summary>
+        public string RG { get; set; }
+
+        /// <summary>
+        /// CPF.
+        /// </summary>
+        public string CPF { get; set; }
+
+        /// <summary>
+        /// Id da empresa.
+        /// </summary>
+        public Guid CompanyId { get; set; }
+
         /// <summary>
         /// Nome de usuário
         /// </summary>
@@ -29,5 +75,6 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         /// </summary>
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
+
     }
 }

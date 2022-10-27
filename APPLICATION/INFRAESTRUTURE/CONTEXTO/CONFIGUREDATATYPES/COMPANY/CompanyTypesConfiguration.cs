@@ -15,7 +15,7 @@ public class CompanyTypesConfiguration : IEntityTypeConfiguration<CompanyEntity>
         builder.Property(company => company.Id).IsRequired();
         builder.Property(company => company.PlanId).IsRequired();
         builder.Property(company => company.CreatedUserId).IsRequired();
-        builder.Property(company => company.UpdatedUserId).IsRequired();
+        builder.Property(company => company.UpdatedUserId);
 
         // String
         builder.Property(company => company.Name).IsRequired();
@@ -29,9 +29,9 @@ public class CompanyTypesConfiguration : IEntityTypeConfiguration<CompanyEntity>
         builder.Property(company => company.Created);
         builder.Property(company => company.Updated);
 
-        // Vinculo com pessoas.
+        // Vinculo com usuários.
         builder
-            .HasMany(company => company.Persons).WithOne(person => person.Company).HasForeignKey(person => person.CompanyId);
+            .HasMany(company => company.Users).WithOne(user => user.Company).HasForeignKey(user => user.CompanyId);
 
         // Vinculo com Roles.
         builder.HasOne(company => company.Plan);

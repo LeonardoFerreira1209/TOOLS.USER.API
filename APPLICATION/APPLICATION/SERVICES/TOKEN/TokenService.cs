@@ -1,5 +1,4 @@
-﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PERSON;
-using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
+﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
@@ -20,22 +19,18 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
         private readonly RoleManager<RoleEntity> _roleManager;
 
-        private readonly IPersonService _personService;
-
         private readonly IOptions<AppSettings> _appsettings;
 
-        public TokenService(UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IPersonService personService, IOptions<AppSettings> appsettings)
+        public TokenService(UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IOptions<AppSettings> appsettings)
         {
             _userManager = userManager;
 
             _roleManager = roleManager;
 
-            _personService = personService;
 
             _appsettings = appsettings;
         }
 
-        #region Buider
         /// <summary>
         /// Cria o JWT TOKEN
         /// </summary>
@@ -50,28 +45,20 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando dados do token do usuário\n");
 
-                #region Configurations user
                 // Return de user.
                 var user = await User(username);
-                #endregion
 
-                #region Configurations user
                 // Return user roles.
                 var roles = await Roles(user);
 
                 // Return user claims.
                 var claims = await Claims(user, roles);
 
-                // Return personId
-                var personId = await PersonId(user.Id);
-                #endregion
-
                 Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
 
                 // Create de token and return.
                 var response = await Task.FromResult(new TokenJwtBuilder()
                    .AddUsername(username)
-                   .AddPersonId(personId)
                    .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
                    .AddSubject("HYPER.IO PROJECTS L.T.D.A")
                    .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
@@ -90,20 +77,14 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                 return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
             }
         }
-        #endregion
 
-        #region Private methods
-
-        #region User
         /// <summary>
         /// Return de User.
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
         private async Task<UserEntity> User(string username) => await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
-        #endregion
 
-        #region Role
         /// <summary>
         /// Return de Roles.
         /// </summary>
@@ -117,9 +98,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
             // Return IList of Claims role type.
             return roles.Select(roles => new Claim("role", roles)).ToList();
         }
-        #endregion
 
-        #region Claims
         /// <summary>
         /// Return de Claims.
         /// </summary>
@@ -149,12 +128,5 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
             // Return claims.
             return claims;
         }
-        #endregion
-
-        #region Person
-        private async Task<Guid> PersonId(Guid userId) => await Task.FromResult(Guid.Parse(_personService.GetIdWithUserId(userId).Result.Dados));
-        #endregion
-
-        #endregion
     }
 }

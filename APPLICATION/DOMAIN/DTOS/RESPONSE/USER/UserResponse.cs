@@ -1,18 +1,10 @@
 ﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.COMPANY;
-using APPLICATION.DOMAIN.DTOS.RESPONSE.CONTACT;
-using APPLICATION.DOMAIN.ENTITY.COMPANY;
-using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.ENUMS;
 
-namespace APPLICATION.DOMAIN.DTOS.RESPONSE.PERSON;
+namespace APPLICATION.DOMAIN.DTOS.RESPONSE.USER;
 
-public class PersonResponse
+public class UserResponse
 {
-    /// <summary>
-    /// Identificador.
-    /// </summary>
-    public Guid Id { get; set; }
-
     /// <summary>
     /// Primeiro nome.
     /// </summary>
@@ -39,7 +31,7 @@ public class PersonResponse
     public Gender Gender { get; set; }
 
     /// <summary>
-    /// Imagem da Pessoa.
+    /// Imagem de perfil.
     /// </summary>
     public string ImageUri { get; set; }
 
@@ -52,21 +44,6 @@ public class PersonResponse
     /// CPF.
     /// </summary>
     public string CPF { get; set; }
-    
-    /// <summary>
-    /// Status.
-    /// </summary>
-    public Status Status { get; set; }
-
-    /// <summary>
-    /// Id do usuário.
-    /// </summary>
-    public Guid UserId { get; set; }
-
-    /// <summary>
-    /// Entidade de usuários.
-    /// </summary>
-    public UserEntity User { get; set; }
 
     /// <summary>
     /// Id da empresa.
@@ -74,12 +51,32 @@ public class PersonResponse
     public Guid? CompanyId { get; set; }
 
     /// <summary>
-    /// Entidade da empresa.
+    /// Empresa em que o usuário é vinculado.
     /// </summary>
-    public CompanyResponse Company { get; set; }
+    public virtual CompanyResponse Company { get; set; }
 
     /// <summary>
-    /// Coleção de contatos do usuário.
+    /// Data de criação
     /// </summary>
-    public ICollection<ContactResponse> Contacts { get; set; }
+    public DateTime Created { get; set; }
+
+    /// <summary>
+    /// Data de atualização
+    /// </summary>
+    public DateTime? Updated { get; set; }
+
+    /// <summary>
+    /// Usuário de cadastro.
+    /// </summary>
+    public Guid CreatedUserId { get; set; }
+
+    /// <summary>
+    /// Usuário que atualizou.
+    /// </summary>
+    public Guid? UpdatedUserId { get; set; }
+
+    /// <summary>
+    /// Status
+    /// </summary>
+    public Status Status { get; set; }
 }

@@ -1,12 +1,10 @@
-﻿using APPLICATION.DOMAIN.DTOS.REQUEST.PERSON;
-using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 
 public interface IUserService
 {
-    #region User
     /// <summary>
     /// Método responsável por fazer a autenticação do usuário
     /// </summary>
@@ -17,9 +15,9 @@ public interface IUserService
     /// <summary>
     /// Método responsável por criar um novo usuário.
     /// </summary>
-    /// <param name="personFastRequest"></param>
+    /// <param name="userCreateRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Create(PersonFastRequest personFastRequest);
+    Task<ApiResponse<object>> Create(UserCreateRequest userCreateRequest);
 
     /// <summary>
     /// Método responsável por atualizar um usuário.
@@ -31,12 +29,10 @@ public interface IUserService
     /// <summary>
     /// Método responsavel por ativar um usuário.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="activateUserRequest"></param>
     /// <returns></returns>
     Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest);
-    #endregion
 
-    #region Claims
     /// <summary>
     /// Método responsavel por adicionar uma claim ao usuário.
     /// </summary>
@@ -52,9 +48,7 @@ public interface IUserService
     /// <param name="claimRequest"></param>
     /// <returns></returns>
     Task<ApiResponse<object>> RemoveClaim(string username, ClaimRequest claimRequest);
-    #endregion
 
-    #region Roles
     /// <summary>
     /// Método responsavel por adicionar uma role ao usuário.
     /// </summary>
@@ -77,5 +71,4 @@ public interface IUserService
     /// <param name="roleName"></param>
     /// <returns></returns>
     Task<ApiResponse<object>> RemoveRole(string username, string roleName);
-    #endregion
 }
