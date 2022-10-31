@@ -15,11 +15,15 @@ public static class CompanyExtensions
     public static CompanyResponse ToResponse(this CompanyEntity company) => new()
     {
         Id = company.Id,
-
         Name = company.Name,
-
         Description = company.Description,
-
+        PlanId = company.PlanId,
+        Plan = company.Plan.ToResponse(),
+        Status = company.Status,
+        Created = company.Created,
+        CreatedUserId = company.CreatedUserId,
+        Updated = company.Updated,
+        UpdatedUserId = company.UpdatedUserId,
         StartDate = company.StartDate
     };
 
@@ -31,17 +35,11 @@ public static class CompanyExtensions
     public static CompanyEntity ToEntity(this CompanyRequest companyRequest, Guid userId) => new()
     {
         Description = companyRequest.Description,
-
         Name = companyRequest.Name,
-
         StartDate = companyRequest.StartDate,
-
         Created = DateTime.Now,
-
         CreatedUserId = userId,
-
         PlanId = companyRequest.PlanId,
-
         Status = Status.Active,
     };
 }

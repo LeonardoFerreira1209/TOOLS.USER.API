@@ -1,6 +1,7 @@
 using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Serilog;
 
 try
@@ -55,7 +56,7 @@ try
 
             options.Filters.Add(new ProducesAttribute("application/json"));
 
-        });
+        }).AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
     // Preparando WebApplication Build.
     var applicationbuilder = builder.Build();

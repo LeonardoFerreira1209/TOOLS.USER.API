@@ -1,4 +1,5 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.USER;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.ENUMS;
@@ -46,5 +47,27 @@ public static class UserExtensions
         user.UpdatedUserId = GlobalData<object>.GlobalUser.Id;
 
         return user;
+    }
+
+    public static UserResponse ToResponse(this UserEntity user)
+    {
+        return new UserResponse
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Age = user.Age,
+            BirthDay = user.BirthDay,
+            CompanyId = user.CompanyId,
+            Company = user.Company.ToResponse(),
+            CPF = user.CPF,
+            RG = user.RG,
+            Created = user.Created,
+            Updated = user.Updated,
+            UpdatedUserId = user.UpdatedUserId,
+            CreatedUserId = user.CreatedUserId,
+            Gender = user.Gender,
+            ImageUri = user.ImageUri,
+            Status = user.Status
+        };
     }
 }

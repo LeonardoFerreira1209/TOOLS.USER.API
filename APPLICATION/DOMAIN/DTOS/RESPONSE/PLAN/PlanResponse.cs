@@ -1,39 +1,39 @@
-﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.PLAN;
+﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.USER.ROLE;
 using APPLICATION.ENUMS;
 
-namespace APPLICATION.DOMAIN.DTOS.RESPONSE.COMPANY;
+namespace APPLICATION.DOMAIN.DTOS.RESPONSE.PLAN;
 
-public class CompanyResponse
+public class PlanResponse
 {
     /// <summary>
-    /// Identificador.
+    /// Nome do plano
     /// </summary>
-    public Guid Id { get; set; }
+    public string PlanName { get; set; }
 
     /// <summary>
-    /// Nome da empresa.
+    /// Descrição do plano
     /// </summary>
-    public string Name { get; set; }
+    public string PlanDescription { get; set; }
 
     /// <summary>
-    /// Sobre a empresa.
+    /// Valor do plano
     /// </summary>
-    public string Description { get; set; }
+    public double PlanCost { get; set; }
 
     /// <summary>
-    /// Data em que a empresa foi fundada.
+    /// Permissões do plano
     /// </summary>
-    public DateTime? StartDate { get; set; }
+    public Guid RoleId { get; set; }
 
     /// <summary>
-    /// Identificador do plano.
+    /// Role
     /// </summary>
-    public Guid PlanId { get; set; }
+    public virtual RolesResponse Role { get; set; }
 
     /// <summary>
-    /// Dados plano.
+    /// Total de meses do plano
     /// </summary>
-    public PlanResponse Plan { get; set; }
+    public int TotalMonthsPlan { get; set; }
 
     /// <summary>
     /// Data de criação

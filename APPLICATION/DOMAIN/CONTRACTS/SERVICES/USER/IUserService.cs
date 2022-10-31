@@ -13,6 +13,13 @@ public interface IUserService
     Task<ApiResponse<object>> Authentication(LoginRequest loginRequest);
 
     /// <summary>
+    /// Recuperar usuário através do Id.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task<ApiResponse<object>> Get(Guid userId);
+
+    /// <summary>
     /// Método responsável por criar um novo usuário.
     /// </summary>
     /// <param name="userCreateRequest"></param>

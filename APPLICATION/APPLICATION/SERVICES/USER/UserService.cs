@@ -128,6 +128,58 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         }
 
         /// <summary>
+        /// Método responsável por recuperar um usuário.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<object>> Get(Guid userId)
+        {
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Get)}\n");
+
+            try
+            {
+                Log.Information($"[LOG INFORMATION] - Recuperando usuário com Id {userId}.\n");
+
+                // get user by id.
+                var user = await _userManager.Users
+                    // Include company.
+                    .Include(user => user.Company)
+                    // Include Plan in company.
+                    .ThenInclude(company => company.Plan)
+                    // Include Role in plan.
+                    .ThenInclude(plan => plan.Role)
+                    // Split includes and select the first user by Id.s
+                    .AsSplitQuery().FirstOrDefaultAsync(user => user.Id.Equals(userId));
+
+                // is not null.
+                if(user is not null)
+                {
+                    // Convert to response.
+                    var userResponse = user.ToResponse();
+
+                    Log.Information($"[LOG INFORMATION] - Usuário recuperado com sucesso {JsonConvert.SerializeObject(userResponse)}.\n");
+
+                    // return success.
+                    return new ApiResponse<object>(true, StatusCodes.SuccessOK, userResponse, new List<DadosNotificacao> { new DadosNotificacao("Usuario recuperado com sucesso.") });
+                }
+                else
+                {
+                    Log.Information($"[LOG INFORMATION] - Usuário não encontrado.\n");
+
+                    // return error.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuario não encontrado.") });
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
+
+                // Response error
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            }
+        }
+
+        /// <summary>
         /// Método responsavel por criar um novo usuário.
         /// </summary>
         /// <param name="userCreateRequest"></param>
@@ -196,7 +248,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var user = await _userManager.Users.FirstOrDefaultAsync(user => user.UserName.Equals(userUpdateRequest.UserName));
 
                 // User is valid ?.
-                if(user is not null)
+                if (user is not null)
                 {
                     // Complete user.
                     user = userUpdateRequest.ToCompleteUserUpdateWithRequest(user);

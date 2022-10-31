@@ -122,7 +122,6 @@ public static class ExtensionsConfigurations
             {
                 options.UseLazyLoadingProxies().UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados"));
 
-                // Removendo trackeamento.
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 

@@ -63,7 +63,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         }
 
         /// <summary>
-        /// Método responsável por Ativar usuário
+        /// Método responsável por Ativar usuário.
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
@@ -86,7 +86,29 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         }
 
         /// <summary>
-        /// Método responsável por Ativar usuário
+        /// Recuperar um usuário.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("Get")]
+        [CustomAuthorize(Claims.User, "Get")]
+        [EnableCors("CorsPolicy")]
+        [SwaggerOperation(Summary = "Recuperar um usuário", Description = "Método responsável por Recuperar um usuário")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ApiResponse<object>> Get(Guid userId)
+        {
+            using (LogContext.PushProperty("Controller", "UserController"))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(userId)))
+            using (LogContext.PushProperty("Metodo", "Get"))
+            {
+                return await Tracker.Time(() => _userService.Get(userId), "Recuperar um usuário");
+            }
+        }
+
+        /// <summary>
+        /// Método responsável por Ativar usuário.
         /// </summary>
         /// <param name="code"></param>
         /// <param name="userId"></param>
