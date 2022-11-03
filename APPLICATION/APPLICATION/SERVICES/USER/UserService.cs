@@ -1,9 +1,11 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.FILE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.USER.ROLE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
@@ -14,6 +16,7 @@ using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -22,6 +25,7 @@ using Serilog;
 using System.Data;
 using System.Security.Claims;
 using System.Web;
+using StatusCodes = APPLICATION.DOMAIN.ENUM.StatusCodes;
 
 namespace APPLICATION.APPLICATION.SERVICES.USER
 {
@@ -42,7 +46,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
         private readonly ITokenService _tokenService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService)
+        private readonly IFileService _fileService;
+
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IFileService fileService)
         {
             _signInManager = signInManager;
 
@@ -55,6 +61,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             _emailFacade = emailFacade;
 
             _tokenService = tokenService;
+
+            _fileService = fileService;
         }
 
         /// <summary>
@@ -310,6 +318,69 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                     // Response success.
                     return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, userUpdateRequest, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado..") });
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error($"[LOG ERROR] - {exception.Message}\n");
+
+                // Response error
+                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            }
+        }
+
+        /// <summary>
+        /// Método responsável por atualizar a imagem de um usuário.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="formFile"></param>
+        /// <returns></returns>
+        public async Task<ApiResponse<object>> UpdateUserIamge(Guid id, IFormFile formFile)
+        {
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(UpdateUserIamge)}\n");
+
+            try
+            {
+                // Get user.
+                var user = await _userManager.Users.FirstOrDefaultAsync(user => user.Id.Equals(id));
+
+                // User is valid ?.
+                if (user is not null)
+                {
+                    // Response of Azure blob.
+                    var response = await _fileService.InviteFileToAzureBlobStorageAndReturnUri(formFile);
+
+                    // Is success.
+                    if (response.Sucesso)
+                    {
+                        // convert to file response.
+                        var fileResponse = (FileResponse)response.Dados;
+
+                        // set image uri in entity.
+                        user.ImageUri = fileResponse.FileUri;
+
+                        // update user.
+                        await _userManager.UpdateAsync(user);
+
+                        Log.Information($"[LOG INFORMATION] - Imagem do usuário atualizado com sucesso.\n");
+
+                        // Response success.
+                        return new ApiResponse<object>(true, StatusCodes.SuccessOK, new FileResponse { FileUri = user.ImageUri }, new List<DadosNotificacao> { new DadosNotificacao("Imagem do usuário atualizado com sucesso.") });
+                    }
+                    else
+                    {
+                        Log.Information($"[LOG INFORMATION] - Erro ao armazenar imagem no blob do azur..\n");
+
+                        // Response success.
+                        return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Erro ao armazenar imagem no blob do azure.") });
+                    }
+                }
+                else
+                {
+                    Log.Information($"[LOG INFORMATION] - Usuário não encontrado.\n");
+
+                    // Response success.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
                 }
             }
             catch (Exception exception)

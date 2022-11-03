@@ -8,6 +8,7 @@ using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Serilog;
+using StatusCodes = APPLICATION.DOMAIN.ENUM.StatusCodes;
 
 namespace APPLICATION.APPLICATION.SERVICES.FILE;
 
@@ -48,14 +49,14 @@ public class FileService : IFileService
             Log.Information($"[LOG INFORMATION] - Imagem adicionada ao blob com sucesso, Url: {blobClient.Uri.AbsoluteUri}.\n");
 
             // Response error.
-            return new ApiResponse<object>(true, DOMAIN.ENUM.StatusCodes.ErrorNotFound, new FileResponse { FileUri = blobClient.Uri.AbsoluteUri } , new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontada.") });
+            return new ApiResponse<object>(true, StatusCodes.SuccessOK, new FileResponse { FileUri = blobClient.Uri.AbsoluteUri } , new List<DadosNotificacao> { new DadosNotificacao("Pessoa não encontada.") });
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
             // Error response.
-            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 }

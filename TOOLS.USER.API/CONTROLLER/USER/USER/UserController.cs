@@ -63,6 +63,26 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         }
 
         /// <summary>
+        /// Método responsável por atualizar a imagem de um usuario.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPatch("updateUserImage/{id}")][CustomAuthorize(Claims.User, "Patch")][EnableCors("CorsPolicy")]
+        [SwaggerOperation(Summary = "Atualizar imagem do uauário.", Description = "Método responsavel por atualizar a imagem do usuário")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ApiResponse<object>> UpdateUserImage(Guid id)
+        {
+            using (LogContext.PushProperty("Controller", "UserController"))
+            using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(id)))
+            using (LogContext.PushProperty("Metodo", "Create"))
+            {
+                return await Tracker.Time(() => _userService.UpdateUserIamge(id, Request.Form.Files[0]), "Atualizar imagem do uauário");
+            }
+        }
+
+        /// <summary>
         /// Método responsável por Ativar usuário.
         /// </summary>
         /// <param name="username"></param>
@@ -90,9 +110,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("Get")]
-        [CustomAuthorize(Claims.User, "Get")]
-        [EnableCors("CorsPolicy")]
+        [HttpGet("get/{userId}")][CustomAuthorize(Claims.User, "Get")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Recuperar um usuário", Description = "Método responsável por Recuperar um usuário")]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]

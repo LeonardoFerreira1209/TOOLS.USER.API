@@ -1,5 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
+using Microsoft.AspNetCore.Http;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 
@@ -32,6 +33,14 @@ public interface IUserService
     /// <param name="userRequest"></param>
     /// <returns></returns>
     Task<ApiResponse<object>> Update(UserUpdateRequest userRequest);
+
+    /// <summary>
+    /// Método responsável por atualizar a imagem de um usuario.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="formFile"></param>
+    /// <returns></returns>
+    Task<ApiResponse<object>> UpdateUserIamge(Guid id, IFormFile formFile);
 
     /// <summary>
     /// Método responsavel por ativar um usuário.

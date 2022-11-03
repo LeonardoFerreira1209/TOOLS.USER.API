@@ -6,6 +6,11 @@ namespace APPLICATION.DOMAIN.DTOS.RESPONSE.USER;
 public class UserResponse
 {
     /// <summary>
+    /// Id do usuário.
+    /// </summary>
+    public Guid Id { get; set; }
+
+    /// <summary>
     /// Primeiro nome.
     /// </summary>
     public string FirstName { get; set; }

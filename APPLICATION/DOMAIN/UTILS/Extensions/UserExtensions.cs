@@ -53,6 +53,7 @@ public static class UserExtensions
     {
         return new UserResponse
         {
+            Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Age = user.Age,
