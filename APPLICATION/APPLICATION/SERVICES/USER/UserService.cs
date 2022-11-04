@@ -10,7 +10,6 @@ using APPLICATION.DOMAIN.DTOS.RESPONSE.USER.ROLE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
-using APPLICATION.DOMAIN.ENUM;
 using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
@@ -160,7 +159,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     .AsSplitQuery().FirstOrDefaultAsync(user => user.Id.Equals(userId));
 
                 // is not null.
-                if(user is not null)
+                if (user is not null)
                 {
                     // Convert to response.
                     var userResponse = user.ToResponse();
@@ -253,22 +252,22 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Atualizando dados do usuário {JsonConvert.SerializeObject(userUpdateRequest)}.\n");
 
                 // Get user.
-                var user = await _userManager.Users.FirstOrDefaultAsync(user => user.UserName.Equals(userUpdateRequest.UserName));
+                var user = await _userManager.Users.FirstOrDefaultAsync(user => user.Id.Equals(userUpdateRequest.Id));
 
                 // User is valid ?.
                 if (user is not null)
                 {
-                    // Complete user.
-                    user = userUpdateRequest.ToCompleteUserUpdateWithRequest(user);
-
                     // update username.
-                    var setUsernameResponse = await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
-
-                    if (setUsernameResponse.Succeeded is false)
+                    if (!userUpdateRequest.UserName.Equals(user.UserName))
                     {
-                        Log.Information($"[LOG INFORMATION] - Erro ao atualizar nome de usuário.\n");
+                        var setUsernameResponse = await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
 
-                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar nome de usuário.") });
+                        if (setUsernameResponse.Succeeded is false)
+                        {
+                            Log.Information($"[LOG INFORMATION] - Erro ao atualizar nome de usuário.\n");
+
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar nome de usuário.") });
+                        }
                     }
 
                     // update password.
@@ -285,24 +284,33 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     }
 
                     // update e-mail.
-                    var setEmailResponse = await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
-
-                    if (setEmailResponse.Succeeded is false)
+                    if (!userUpdateRequest.Email.Equals(user.Email))
                     {
-                        Log.Information($"[LOG INFORMATION] - Erro ao atualizar e-mail de usuário.\n");
+                        var setEmailResponse = await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
 
-                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar e-mail do usuário.") });
+                        if (setEmailResponse.Succeeded is false)
+                        {
+                            Log.Information($"[LOG INFORMATION] - Erro ao atualizar e-mail de usuário.\n");
+
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar e-mail do usuário.") });
+                        }
                     }
 
                     // update phoneNumber
-                    var setPhoneNumberResponse = await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
-
-                    if (setPhoneNumberResponse.Succeeded is false)
+                    if (!userUpdateRequest.PhoneNumber.Equals(user.PhoneNumber))
                     {
-                        Log.Information($"[LOG INFORMATION] - Erro ao atualizar celular do usuário.\n");
+                        var setPhoneNumberResponse = await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
 
-                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar celular do usuário.") });
+                        if (setPhoneNumberResponse.Succeeded is false)
+                        {
+                            Log.Information($"[LOG INFORMATION] - Erro ao atualizar celular do usuário.\n");
+
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar celular do usuário.") });
+                        }
                     }
+
+                    // Complete user.
+                    user = userUpdateRequest.ToCompleteUserUpdateWithRequest(user);
 
                     // update user.
                     await _userManager.UpdateAsync(user);

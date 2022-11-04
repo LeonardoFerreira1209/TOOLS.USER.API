@@ -21,6 +21,16 @@ public class UserResponse
     public string LastName { get; set; }
 
     /// <summary>
+    /// Email.
+    /// </summary>
+    public string Email { get; set; }
+
+    /// <summary>
+    /// Numero de telefone.
+    /// </summary>
+    public string PhoneNumber { get; set; }
+
+    /// <summary>
     /// Idade.
     /// </summary>
     public int Age { get; set; }

@@ -11,7 +11,7 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         /// <summary>
         /// Id do usúario
         /// </summary>
-        public Guid Id{ get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Primeiro nome.

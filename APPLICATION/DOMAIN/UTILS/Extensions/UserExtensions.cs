@@ -14,7 +14,7 @@ public static class UserExtensions
         {
             FirstName = userRequest.FirstName,
             LastName = userRequest.LastName,
-            Age = userRequest.Age,
+            Age = DateTime.Today.Year - DateTime.Parse(userRequest.BirthDay).Year,
             BirthDay = userRequest.BirthDay,
             CompanyId = userRequest.CompanyId,
             CPF = userRequest.CPF,
@@ -32,16 +32,13 @@ public static class UserExtensions
 
     public static UserEntity ToCompleteUserUpdateWithRequest(this UserUpdateRequest userUpdateRequest, UserEntity user)
     {
-        user.UserName = userUpdateRequest.UserName;
         user.FirstName = userUpdateRequest.FirstName;
         user.LastName = userUpdateRequest.LastName;
-        user.Age = userUpdateRequest.Age;
+        user.Age = DateTime.Today.Year - DateTime.Parse(userUpdateRequest.BirthDay).Year;
         user.Gender = userUpdateRequest.Gender;
         user.BirthDay = userUpdateRequest.BirthDay;
         user.CPF = userUpdateRequest.CPF;
         user.RG = userUpdateRequest.RG;
-        user.Email = userUpdateRequest.Email;
-        user.PhoneNumber = userUpdateRequest.PhoneNumber;
         user.Updated = DateTime.Now;
 
         user.UpdatedUserId = GlobalData<object>.GlobalUser.Id;
@@ -56,6 +53,8 @@ public static class UserExtensions
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
             Age = user.Age,
             BirthDay = user.BirthDay,
             CompanyId = user.CompanyId,
