@@ -14,12 +14,12 @@ public static class CustomValidationExtensions
     /// </summary>
     /// <param name="validationResult"></param>
     /// <returns></returns>
-    public static ApiResponse<object> CarregarErrosValidator(this ValidationResult validationResult)
+    public static ApiResponse<object> CarregarErrosValidator(this ValidationResult validationResult, object dados = null)
     {
         var _notificacoes = new List<DadosNotificacao>();
 
         foreach (var erro in validationResult.Errors) _notificacoes.Add(new DadosNotificacao(erro.ErrorMessage));
 
-        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, _notificacoes);
+        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, dados, _notificacoes);
     }
 }

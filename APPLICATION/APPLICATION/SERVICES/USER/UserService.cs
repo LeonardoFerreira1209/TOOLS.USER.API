@@ -245,7 +245,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Validando request.\n");
 
                 // Validate de userRequest.
-                var validation = await new UpdateUserValidator().ValidateAsync(userUpdateRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
+                var validation = await new UpdateUserValidator().ValidateAsync(userUpdateRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator(userUpdateRequest);
 
                 Log.Information($"[LOG INFORMATION] - Request validado com sucesso.\n");
 
@@ -318,7 +318,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Usuário atualizado com sucesso.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(true, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário atualizado com sucesso.") });
+                    return new ApiResponse<object>(true, StatusCodes.SuccessOK, user, new List<DadosNotificacao> { new DadosNotificacao("Usuário atualizado com sucesso.") });
                 }
                 else
                 {

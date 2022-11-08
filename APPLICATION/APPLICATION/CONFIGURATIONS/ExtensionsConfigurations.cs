@@ -598,6 +598,8 @@ public static class ExtensionsConfigurations
                 // Set data in user.
                 var user = new UserEntity
                 {
+                    FirstName = "Admin",
+                    LastName = "Admin",
                     Email = "Admin@outlook.com",
                     EmailConfirmed = true,
                     UserName = "Admin",
