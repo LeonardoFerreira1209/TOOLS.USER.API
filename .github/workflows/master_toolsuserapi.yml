@@ -1,71 +1,25 @@
-name: Build and deploy ASP.Net Core app to an Azure Web App
-env:
-  AZURE_WEBAPP_NAME: TOOLSUSERAPI    # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '7.0.x'                 # set this to the .NET Core version to use
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - TOOLSUSERAPI
+
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "master" ]
-  schedule:
-    - cron: '38 14 * * 1'
-permissions:
-  contents: read
+    branches:
+      - master
+  workflow_dispatch:
+
 jobs:
-  ANALYZE:
-    name: ANALYZE
+  build:
     runs-on: windows-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'csharp' ]
-        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
-        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
-        # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
-        # queries: security-extended,security-and-quality
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
-    #   If the Autobuild fails above, remove it and uncomment the following three lines. 
-    #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
-    # - run: |
-    #   echo "Run, Build Application using script"
-    #   ./location_of_script_within_repo/buildscript.sh
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
-      
-  BUILD:
-    runs-on: windows-latest
-    needs: ANALYZE
-    steps:
-       
       - uses: actions/checkout@v2
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '7.x'
           include-prerelease: true
 
       - name: Build with dotnet
@@ -79,67 +33,25 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
-          
-  AZURE-QA:
-  
-    permissions:
-      contents: none
+
+  deploy:
     runs-on: windows-latest
-    needs: BUILD
+    needs: build
     environment:
-      name: 'AZURE-QA'
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-      
+
     steps:
-      
-      - uses: actions/checkout@v2
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '7.0.x'
-          include-prerelease: true
-    
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
-        #substitute production appsettings entries to appsettings json file
-      - name: App Settings Variable Substitution
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: '${{env.DOTNET_ROOT}}/myapp/appsettings.json'
-        env:
-          ConnectionStrings.BaseDados: ${{ secrets.__CONNECTION_STRING_DATABASE__ }}
-          ApplicationInsights.InstrumentationKey: ${{ secrets.__APPINSIGHTS_INSTRUMENTATION_KEY__ }}
-          ApplicationInsights.ConnectionStringApplicationInsightsKey: ${{ secrets.__CONNECTION_STRING_APPLICATION_INSIGHTS_KEY__ }}
-          ApplicationInsights.CloudRoleName: ${{ secrets.__CLOUD_ROLE_NAME__ }}
-          UrlBase.TOOLS_MAIL_API: ${{ secrets.__TOOLS_MAIL_API__ }}
-          UrlBase.BASE_URL: ${{ secrets.__BASE_URL__ }}
-          UrlBase.TOOLS_WEB_APP: ${{ secrets.__TOOLS_WEB_APP__ }}
-          Auth.ValidIssuer: ${{ secrets.__HYPER_SECURITY_SSUER_BEARER__ }}
-          Auth.ValidAudience: ${{ secrets.__HYPER_SECURITY_AUDIENCE_BEARER__ }}
-          Auth.SecurityKey: ${{ secrets.__HYPER_SECURITY_KEY__ }}
-          Auth.ExpiresIn: ${{ secrets.__SECURITY_TOKEN_EXPIRES_IN__ }}
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: .net-app-qa
-          path: ${{env.DOTNET_ROOT}}/myapp
-      
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
-          name: .net-app-qa
-      
+          name: .net-app
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.__AZURE_TOOLS_USER_API_PUBLISH_PROFILE__ }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        
+          app-name: 'TOOLSUSERAPI'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_20F15A378F054F31A5ECB8FD0F0009B4 }}
+          package: .
