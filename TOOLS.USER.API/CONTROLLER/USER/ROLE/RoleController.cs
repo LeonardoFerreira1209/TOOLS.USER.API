@@ -29,7 +29,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         /// <summary>
         /// Método responsável por recuperar roles do usuário.
         /// </summary>
-        /// <param name="roleRequest"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("getUserRoles/{userId}")][CustomAuthorize(Claims.Role, "Get")][EnableCors("CorsPolicy")]
         [SwaggerOperation(Summary = "Recuperar roles do usuário", Description = "Método responsável por recuperar roles do usuário")]

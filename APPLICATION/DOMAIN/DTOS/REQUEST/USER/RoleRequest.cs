@@ -11,11 +11,6 @@ public class RoleRequest
     public string Name { get; set; }
 
     /// <summary>
-    /// Id da compania.
-    /// </summary>
-    public Guid CompanyId { get; set; }
-    
-    /// <summary>
     /// Claim que faze parte da role.
     /// </summary>
     public List<ClaimRequest> Claims { get; set; }

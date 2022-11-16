@@ -37,7 +37,6 @@ public class RoleService : IRoleService
 
         try
         {
-            #region User create & set roles & claims
             // Mapper to entity.
             var role = roleRequest.ToIdentityRole();
 
@@ -59,7 +58,6 @@ public class RoleService : IRoleService
                 // Response success.
                 return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Role criado com sucesso.") });
             }
-            #endregion
 
             Log.Information($"[LOG INFORMATION] - Falha ao criar role.\n");
 

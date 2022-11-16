@@ -189,7 +189,7 @@ public class TokenJwtBuilder
                 new Claim("phoneNumber", user.PhoneNumber),
                 new Claim(JwtRegisteredClaimNames.Website, "https://toolsuserapi.azurewebsites.net/")
 
-            }.Union(roles).Union(claims);
+            }.Union(roles.AsParallel()).Union(claims.AsParallel());
 
             // Gera o token com os dados passados.
             var token = new JwtSecurityToken(

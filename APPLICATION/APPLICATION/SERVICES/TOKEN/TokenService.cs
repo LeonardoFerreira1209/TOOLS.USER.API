@@ -96,7 +96,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
             var roles = await _userManager.GetRolesAsync(user);
 
             // Return IList of Claims role type.
-            return roles.Select(roles => new Claim("role", roles)).ToList();
+            return roles.AsParallel().Select(roles => new Claim("role", roles)).ToList();
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
             claims.AddRange(await _userManager.GetClaimsAsync(user));
 
             // Set a list of role names.
-            var rolesName = roles.Select(role => role.Value).ToList();
+            var rolesName = roles.AsParallel().Select(role => role.Value).ToList();
 
             // Roles not null and have any value.
             if (roles is not null && roles.Any())
@@ -122,7 +122,7 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
                 var identityRoles = await _roleManager.Roles.Where(role => rolesName.Contains(role.Name)).ToListAsync();
 
                 // Get role claims and add in claim array.
-                identityRoles.ForEach(identityRole => claims.AddRange(_roleManager.GetClaimsAsync(identityRole).Result));
+                identityRoles.AsParallel().ForAll(identityRole => claims.AddRange(_roleManager.GetClaimsAsync(identityRole).Result));
             }
 
             // Return claims.

@@ -69,10 +69,12 @@ try
         .UseHttpsRedirection()
         .UseDefaultFiles()
         .UseStaticFiles()
+        .UseCookiePolicy()
         .UseRouting()
+        .UseCors("CorsPolicy")
+        .UseResponseCaching()
         .UseAuthorization()
         .UseAuthentication()
-        .UseCors("CorsPolicy")
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
         .UseEndpoints();
