@@ -20,5 +20,5 @@ public class ImageUploadValidator : AbstractValidator<IFormFile>
         RuleFor(a => a.Length).Must(ValidateLenght).WithErrorCode(ErrorCode.CamposObrigatorios.ToCode()).WithMessage("O tamanho do arquivo deve ser menor que 1MB");
     }
 
-    private static bool ValidateLenght(long lenght) => (lenght / 1000) <= 1024;
+    private static bool ValidateLenght(long lenght) => (lenght / 100000) <= 1024;
 }

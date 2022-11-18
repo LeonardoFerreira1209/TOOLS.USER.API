@@ -248,15 +248,11 @@ public static class ExtensionsConfigurations
         services
             .AddAuthorization(options =>
             {
-                #region Person controller
                 options.AddPolicy("accessPerson", policy => policy.RequireClaim("accessPerson", "get", "post", "put", "patch", "delete"));
-                #endregion
 
-                #region Claim & Roles controller
                 options.AddPolicy("accessClaim", policy => policy.RequireClaim("accessClaim", "get", "post", "put", "patch", "delete"));
 
                 options.AddPolicy("accessRole", policy => policy.RequireClaim("accessRole", "get", "post", "put", "patch", "delete"));
-                #endregion
             });
 
         return services;
@@ -591,7 +587,7 @@ public static class ExtensionsConfigurations
 
             var context = scope.ServiceProvider.GetRequiredService<Contexto>();
 
-            if (await userManager.Users.CountAsync(user => user.UserName.Equals("Admin")) == 0)
+            if (await userManager.Users.CountAsync() == 0)
             {
                 Log.Debug($"[LOG DEBUG] - Criando Seeds.\n");
 
@@ -684,7 +680,6 @@ public static class ExtensionsConfigurations
                     Created = DateTime.Now,
                     PlanId = plan.Id
                 };
-
 
                 // Add Company.
                 await context.Companies.AddAsync(company);
