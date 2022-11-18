@@ -1,0 +1,2932 @@
+{
+	"info": {
+		"_postman_id": "8633aaff-6b66-4886-abc9-47e5ba643876",
+		"name": "Api de controle de usuários para o projeto (TOOLS.API). - tools.user.api.v1",
+		"description": "Api de controle de usuários para o projeto (TOOLS.API).\n\nContact Support:\n Name: HYPER.IO DESENVOLVIMENTOS LTDA\n Email: HYPER.IO@OUTLOOK.COM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "8902020-8633aaff-6b66-4886-abc9-47e5ba643876"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "Claim",
+					"item": [
+						{
+							"name": "Remover claim do usuário",
+							"id": "88fb3296-e48a-41e3-867c-89bc8d59ddbf",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Claim/addclaim?username=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Claim",
+										"addclaim"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "<string>",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Método responsável por Adicionar claim no usuário"
+							},
+							"response": [
+								{
+									"id": "59407819-ca3c-4bec-a177-604c98c45511",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Claim/addclaim?username=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Claim",
+												"addclaim"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Adicionar claim no usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "f0687fda-460f-45b6-a32a-13f1cbe41cab",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Claim/addclaim?username=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Claim",
+												"addclaim"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Adicionar claim no usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "3b1db671-4437-4f04-a033-9ee7c8fe97b5",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Claim/addclaim?username=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Claim",
+												"addclaim"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Adicionar claim no usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Remover claim do usuário",
+							"id": "6031edd5-ba59-4823-8510-092dd5eca055",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Claim/removeclaim?username=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Claim",
+										"removeclaim"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "<string>",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Método responsável por Remover claim do usuário"
+							},
+							"response": [
+								{
+									"id": "37a7982f-be87-4e8f-a599-a0049f5762f6",
+									"name": "Success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Claim/removeclaim?username=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Claim",
+												"removeclaim"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Remover claim do usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "40c9d909-e07f-4d34-b8c8-e45bb58ad40f",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Claim/removeclaim?username=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Claim",
+												"removeclaim"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Remover claim do usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "b5444247-b5ff-4cb2-94a8-56dc92aeb852",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"type\": \"<string>\",\n  \"value\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Claim/removeclaim?username=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Claim",
+												"removeclaim"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Remover claim do usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						}
+					],
+					"id": "3d95717e-a997-4292-972b-07e423985d52"
+				},
+				{
+					"name": "Role",
+					"item": [
+						{
+							"name": "Recuperar roles do usuário",
+							"id": "04123b13-89dd-4c2d-b592-626a286eab02",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Role/getUserRoles/:userId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Role",
+										"getUserRoles",
+										":userId"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "<uuid>",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Método responsável por recuperar roles do usuário"
+							},
+							"response": [
+								{
+									"id": "c128e843-f441-4d5d-96ac-115b001c8c8f",
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/getUserRoles/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"getUserRoles",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por recuperar roles do usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "c4d71cf7-78b4-401c-9489-1e998cf43546",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/getUserRoles/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"getUserRoles",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por recuperar roles do usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "a89d1fef-b4d1-46c9-8328-afd04a7e85bc",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/getUserRoles/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"getUserRoles",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por recuperar roles do usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Adicionar role",
+							"id": "6a2bd2b3-27ba-4a65-b920-be73a1702c08",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Role/addRole",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Role",
+										"addRole"
+									]
+								},
+								"description": "Método responsável por Adicionar uma role"
+							},
+							"response": [
+								{
+									"id": "d62568ee-0c48-4168-90fe-50e64cdf745f",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addRole"
+											]
+										},
+										"description": "Método responsável por Adicionar uma role"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "15b6b820-7d86-4c61-bfa9-d76d86c50446",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addRole"
+											]
+										},
+										"description": "Método responsável por Adicionar uma role"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "3dea9bde-80ef-426f-9bfd-f73b961f9360",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addRole"
+											]
+										},
+										"description": "Método responsável por Adicionar uma role"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Adicionar uma lista de claims na role",
+							"id": "7c801453-b66c-410c-9dfa-574807b387b2",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Role/addClaimToRole",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Role",
+										"addClaimToRole"
+									]
+								},
+								"description": "Método responsável por adicionar uma lista de claims na role."
+							},
+							"response": [
+								{
+									"id": "3ef96e61-1a2b-4f75-8c78-295cf16dd62b",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addClaimToRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addClaimToRole"
+											]
+										},
+										"description": "Método responsável por adicionar uma lista de claims na role."
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "f1f02a76-042c-46bd-ad35-a527c13c7e82",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addClaimToRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addClaimToRole"
+											]
+										},
+										"description": "Método responsável por adicionar uma lista de claims na role."
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "c0c90a23-eba5-4b93-b309-6829107bb3c2",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addClaimToRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addClaimToRole"
+											]
+										},
+										"description": "Método responsável por adicionar uma lista de claims na role."
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Remover uma lista de claims na role",
+							"id": "b072cc24-4b91-4755-a269-947021e2454d",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/Role/removeClaimToRole",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Role",
+										"removeClaimToRole"
+									]
+								},
+								"description": "Método responsável por Remover uma lista de claims na role"
+							},
+							"response": [
+								{
+									"id": "41320051-efba-4fee-b7f6-7c722e20da84",
+									"name": "Success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/removeClaimToRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"removeClaimToRole"
+											]
+										},
+										"description": "Método responsável por Remover uma lista de claims na role"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "e5ad9366-9041-40eb-bafb-93835cb8cce2",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/removeClaimToRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"removeClaimToRole"
+											]
+										},
+										"description": "Método responsável por Remover uma lista de claims na role"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "8a6c0c05-ae19-45fc-8f89-73ffde7c8dca",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"<string>\",\n  \"claims\": [\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    },\n    {\n      \"type\": \"<string>\",\n      \"value\": \"<string>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/removeClaimToRole",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"removeClaimToRole"
+											]
+										},
+										"description": "Método responsável por Remover uma lista de claims na role"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Adicionar role no usuário",
+							"id": "d29ae8e0-30da-43a8-95bd-00714628eeea",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Role/addRoleToUser?username=<string>&roleName=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Role",
+										"addRoleToUser"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "<string>",
+											"description": "(Required) "
+										},
+										{
+											"key": "roleName",
+											"value": "<string>"
+										}
+									]
+								},
+								"description": "Método responsável por Adicionar uma role no usuário"
+							},
+							"response": [
+								{
+									"id": "deaf2c08-9c8d-401c-8893-73621dc95d12",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addRoleToUser?username=<string>&roleName=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addRoleToUser"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "roleName",
+													"value": "<string>"
+												}
+											]
+										},
+										"description": "Método responsável por Adicionar uma role no usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "88e2ce04-a2cf-4e5f-8e52-5ed05b172103",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addRoleToUser?username=<string>&roleName=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addRoleToUser"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "roleName",
+													"value": "<string>"
+												}
+											]
+										},
+										"description": "Método responsável por Adicionar uma role no usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "7a13ee65-84c0-41ad-9f2b-95cefc6dc60b",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/addRoleToUser?username=<string>&roleName=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"addRoleToUser"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "roleName",
+													"value": "<string>"
+												}
+											]
+										},
+										"description": "Método responsável por Adicionar uma role no usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Remover role do usuário",
+							"id": "9434c5ba-3551-49d8-b20f-49dd5b79df46",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Role/removeRoleToUser?username=<string>&roleName=<string>",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Role",
+										"removeRoleToUser"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "<string>",
+											"description": "(Required) "
+										},
+										{
+											"key": "roleName",
+											"value": "<string>"
+										}
+									]
+								},
+								"description": "Método responsável por Remover uma role do usuário"
+							},
+							"response": [
+								{
+									"id": "d262683b-618b-4101-a013-b1d0bacce883",
+									"name": "Success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/removeRoleToUser?username=<string>&roleName=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"removeRoleToUser"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "roleName",
+													"value": "<string>"
+												}
+											]
+										},
+										"description": "Método responsável por Remover uma role do usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "6d0d66d1-a602-4287-94dc-5705b9747e0e",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/removeRoleToUser?username=<string>&roleName=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"removeRoleToUser"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "roleName",
+													"value": "<string>"
+												}
+											]
+										},
+										"description": "Método responsável por Remover uma role do usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "f71a2cb3-9235-4fba-93a7-2d98bf84876c",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/Role/removeRoleToUser?username=<string>&roleName=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"Role",
+												"removeRoleToUser"
+											],
+											"query": [
+												{
+													"key": "username",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "roleName",
+													"value": "<string>"
+												}
+											]
+										},
+										"description": "Método responsável por Remover uma role do usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						}
+					],
+					"id": "fd85b2ed-9bdf-4a94-8c9b-bd209b131ac8"
+				},
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Criar uauário.",
+							"id": "7ac04192-3619-428a-85ed-cdca11699ce7",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"imageUri\": \"<string>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"companyId\": \"<uuid>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/User/create",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"User",
+										"create"
+									]
+								},
+								"description": "Método responsavel por criar usuário"
+							},
+							"response": [
+								{
+									"id": "c508b70c-c410-4a7a-9ea5-8ef7f806fac4",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"imageUri\": \"<string>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"companyId\": \"<uuid>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/User/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"create"
+											]
+										},
+										"description": "Método responsavel por criar usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {\n    \"id\": \"<uuid>\",\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"email\": \"<string>\",\n    \"phoneNumber\": \"<string>\",\n    \"age\": \"<integer>\",\n    \"birthDay\": \"<string>\",\n    \"gender\": \"<integer>\",\n    \"imageUri\": \"<string>\",\n    \"rg\": \"<string>\",\n    \"cpf\": \"<string>\",\n    \"companyId\": \"<uuid>\",\n    \"company\": {\n      \"id\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"startDate\": \"<dateTime>\",\n      \"planId\": \"<uuid>\",\n      \"plan\": {\n        \"planName\": \"<string>\",\n        \"planDescription\": \"<string>\",\n        \"planCost\": \"<double>\",\n        \"roleId\": \"<uuid>\",\n        \"role\": {\n          \"name\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"claims\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"created\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"updated\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"createdUserId\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"updatedUserId\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"status\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          }\n        },\n        \"totalMonthsPlan\": \"<integer>\",\n        \"created\": \"<dateTime>\",\n        \"updated\": \"<dateTime>\",\n        \"createdUserId\": \"<uuid>\",\n        \"updatedUserId\": \"<uuid>\",\n        \"status\": \"<integer>\"\n      },\n      \"created\": \"<dateTime>\",\n      \"updated\": \"<dateTime>\",\n      \"createdUserId\": \"<uuid>\",\n      \"updatedUserId\": \"<uuid>\",\n      \"status\": \"<integer>\"\n    },\n    \"created\": \"<dateTime>\",\n    \"updated\": \"<dateTime>\",\n    \"createdUserId\": \"<uuid>\",\n    \"updatedUserId\": \"<uuid>\",\n    \"status\": \"<integer>\"\n  },\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "59527113-a5fd-4b86-a5ff-63ae985b4952",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"imageUri\": \"<string>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"companyId\": \"<uuid>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/User/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"create"
+											]
+										},
+										"description": "Método responsavel por criar usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "3a82f1fd-f240-49ae-9b2d-c2f732db575c",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"imageUri\": \"<string>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"companyId\": \"<uuid>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/User/create",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"create"
+											]
+										},
+										"description": "Método responsavel por criar usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Atualizar uauário.",
+							"id": "98ba3ef6-7585-4d41-bf44-16b0f5933585",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"<uuid>\",\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"currentPassword\": \"<password>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\",\n  \"twoFactorEnabled\": \"<boolean>\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/User/update",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"User",
+										"update"
+									]
+								},
+								"description": "Método responsavel por atualizar usuário"
+							},
+							"response": [
+								{
+									"id": "1e322097-3638-4615-abad-6025d650e678",
+									"name": "Success",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": \"<uuid>\",\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"currentPassword\": \"<password>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\",\n  \"twoFactorEnabled\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/User/update",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"update"
+											]
+										},
+										"description": "Método responsavel por atualizar usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "98f6f879-5191-4b7c-99b5-72c8a264520f",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": \"<uuid>\",\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"currentPassword\": \"<password>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\",\n  \"twoFactorEnabled\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/User/update",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"update"
+											]
+										},
+										"description": "Método responsavel por atualizar usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "751b4986-19fb-4a84-b943-dca59d2048b2",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": \"<uuid>\",\n  \"firstName\": \"<string>\",\n  \"lastName\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"birthDay\": \"<string>\",\n  \"gender\": \"<integer>\",\n  \"rg\": \"<string>\",\n  \"cpf\": \"<string>\",\n  \"userName\": \"<string>\",\n  \"email\": \"<email>\",\n  \"currentPassword\": \"<password>\",\n  \"password\": \"<password>\",\n  \"phoneNumber\": \"<tel>\",\n  \"twoFactorEnabled\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/User/update",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"update"
+											]
+										},
+										"description": "Método responsavel por atualizar usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Atualizar imagem do uauário.",
+							"id": "3055fee4-917b-4904-b22d-cf71fb929711",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/User/updateUserImage/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"User",
+										"updateUserImage",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "<uuid>",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Método responsavel por atualizar a imagem do usuário"
+							},
+							"response": [
+								{
+									"id": "95568613-3853-4c3e-af1d-3d2b6f37f9b9",
+									"name": "Success",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/updateUserImage/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"updateUserImage",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsavel por atualizar a imagem do usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "6657fd62-6a18-483e-8561-466496758f76",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/updateUserImage/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"updateUserImage",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsavel por atualizar a imagem do usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "bed8c51e-f713-4a28-a4fa-e08075f31324",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/updateUserImage/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"updateUserImage",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsavel por atualizar a imagem do usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Autenticação do usuário",
+							"id": "b30c0e67-22f7-47a5-b967-d2313de0f1eb",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "(Required) ",
+										"key": "username",
+										"value": "<string>"
+									},
+									{
+										"description": "(Required) ",
+										"key": "password",
+										"value": "<string>"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/User/authetication",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"User",
+										"authetication"
+									]
+								},
+								"description": "Método responsável por Autenticar usuário"
+							},
+							"response": [
+								{
+									"id": "721e3b9b-01c8-4ee0-b17d-0d43e9d835cc",
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) ",
+												"key": "username",
+												"value": "<string>"
+											},
+											{
+												"description": "(Required) ",
+												"key": "password",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/authetication",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"authetication"
+											]
+										},
+										"description": "Método responsável por Autenticar usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {\n    \"validTo\": \"<dateTime>\",\n    \"value\": \"<string>\"\n  },\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "99fea0ea-6e8d-42b2-8cba-57604c89038b",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) ",
+												"key": "username",
+												"value": "<string>"
+											},
+											{
+												"description": "(Required) ",
+												"key": "password",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/authetication",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"authetication"
+											]
+										},
+										"description": "Método responsável por Autenticar usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "bca8677f-8327-4cc0-b5d7-14d05c6107b1",
+									"name": "Unauthorized",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) ",
+												"key": "username",
+												"value": "<string>"
+											},
+											{
+												"description": "(Required) ",
+												"key": "password",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/authetication",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"authetication"
+											]
+										},
+										"description": "Método responsável por Autenticar usuário"
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "60791e64-90db-4e8d-b22a-beef39072109",
+									"name": "Client Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) ",
+												"key": "username",
+												"value": "<string>"
+											},
+											{
+												"description": "(Required) ",
+												"key": "password",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/authetication",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"authetication"
+											]
+										},
+										"description": "Método responsável por Autenticar usuário"
+									},
+									"status": "Locked (WebDAV) (RFC 4918)",
+									"code": 423,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "f44000b0-bec9-4be8-a0b3-027eabf62704",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) ",
+												"key": "username",
+												"value": "<string>"
+											},
+											{
+												"description": "(Required) ",
+												"key": "password",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/authetication",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"authetication"
+											]
+										},
+										"description": "Método responsável por Autenticar usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Recuperar um usuário",
+							"id": "8e041fe3-112b-4e45-8c12-154d24ede3be",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/User/get/:userId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"User",
+										"get",
+										":userId"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "<uuid>",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Método responsável por Recuperar um usuário"
+							},
+							"response": [
+								{
+									"id": "22460fe8-a91b-4df8-a5d5-406609365c8c",
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/get/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"get",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Recuperar um usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "80b8e5d9-4ad3-4880-ac0e-60fea220efb7",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/get/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"get",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Recuperar um usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "a3841533-2195-480a-8374-af74eecd049a",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/get/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"get",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Recuperar um usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Ativar usuário",
+							"id": "50ef8b32-9882-47b4-a83c-656f6948c440",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/User/activate/:code/:userId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"User",
+										"activate",
+										":code",
+										":userId"
+									],
+									"variable": [
+										{
+											"key": "code",
+											"value": "<string>",
+											"description": "(Required) "
+										},
+										{
+											"key": "userId",
+											"value": "<uuid>",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Método responsável por Ativar usuário"
+							},
+							"response": [
+								{
+									"id": "7607275f-f6e8-4501-8f0e-9e46bcd85aee",
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/activate/:code/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"activate",
+												":code",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "code",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Ativar usuário"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "34e11e53-bfe7-4629-ace1-4305d644805c",
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/activate/:code/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"activate",
+												":code",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "code",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Ativar usuário"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								},
+								{
+									"id": "477075d1-3be1-466b-9fdb-de0c7e718023",
+									"name": "Server Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/User/activate/:code/:userId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"User",
+												"activate",
+												":code",
+												":userId"
+											],
+											"variable": [
+												{
+													"key": "code",
+													"value": "<string>",
+													"description": "(Required) "
+												},
+												{
+													"key": "userId",
+													"value": "<uuid>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Método responsável por Ativar usuário"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+								}
+							]
+						}
+					],
+					"id": "04aaa33d-6caa-413d-9315-0dac2a9b9f59"
+				},
+				{
+					"name": "/api/Config/options",
+					"id": "914ceb15-042d-4d02-96ea-af639431ebc6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Config/options",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Config",
+								"options"
+							]
+						}
+					},
+					"response": [
+						{
+							"id": "e55449ac-a22f-4ecd-8b08-94341e00cee0",
+							"name": "Success",
+							"originalRequest": {
+								"method": "OPTIONS",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/Config/options",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"Config",
+										"options"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"statusCode\": \"<integer>\",\n  \"sucesso\": \"<boolean>\",\n  \"dados\": {},\n  \"notificacoes\": [\n    {\n      \"mensagem\": \"<string>\"\n    },\n    {\n      \"mensagem\": \"<string>\"\n    }\n  ]\n}"
+						}
+					]
+				}
+			],
+			"id": "db85cbba-8e63-4ba0-9326-8fc475978239"
+		},
+		{
+			"name": "Heath Check",
+			"id": "47bb92bf-90a6-4a80-bfa9-d8b0c03cfa60",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/application/healthcheck",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"application",
+						"healthcheck"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "5ff49836-bdbf-4f47-89f1-48f56b7fa7df",
+					"name": "Healthy",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/application/healthcheck",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"application",
+								"healthcheck"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"id": "94a3bab2-c61b-42df-8cdc-21eb97456105",
+					"name": "Unhealthy",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/application/healthcheck",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"application",
+								"healthcheck"
+							]
+						}
+					},
+					"status": "Service Unavailable",
+					"code": 503,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "<API Key>",
+				"type": "string"
+			},
+			{
+				"key": "in",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"id": "f1a1cfe5-d69f-407b-9836-e8d75d14fb0b",
+			"key": "baseUrl",
+			"value": "/",
+			"type": "string"
+		}
+	]
+}
