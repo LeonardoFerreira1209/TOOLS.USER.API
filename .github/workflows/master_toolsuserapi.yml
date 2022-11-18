@@ -51,9 +51,9 @@ jobs:
           SONAR_TOKEN: 6530b3f91bb271bc4064442d8717f37dbbf90428
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"LeonardoFerreira1209_TOOLS.USER.API" /o:"leonardoferreira1209" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"LeonardoFerreira1209_TOOLS.USER.API" /o:"leonardoferreira1209" /d:sonar.login="6530b3f91bb271bc4064442d8717f37dbbf90428" /d:sonar.host.url="https://sonarcloud.io"
           <insert_your_build_command>
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="6530b3f91bb271bc4064442d8717f37dbbf90428"
       
   BUILD:
     runs-on: windows-latest
