@@ -43,8 +43,11 @@ public class FileService : IFileService
             // Create a azure blob client.
             var blobClient = new BlobClient(_appsettings.Value.AzureStorage.ConnectionStringAzureStorageKey, _appsettings.Value.AzureStorage.Container, formFile.FileName);
 
-            // Upload file in azure blob storage.
-            await blobClient.UploadAsync(formFile.OpenReadStream());
+            if (!await blobClient.ExistsAsync())
+            {
+                // Upload file in azure blob storage.
+                await blobClient.UploadAsync(formFile.OpenReadStream());
+            }
 
             Log.Information($"[LOG INFORMATION] - Imagem adicionada ao blob com sucesso, Url: {blobClient.Uri.AbsoluteUri}.\n");
 
