@@ -24,6 +24,7 @@ using Serilog;
 using System.Data;
 using System.Security.Claims;
 using System.Web;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using StatusCodes = APPLICATION.DOMAIN.ENUM.StatusCodes;
 
 namespace APPLICATION.APPLICATION.SERVICES.USER
@@ -266,7 +267,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao atualizar nome de usuário.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar nome de usuário.") });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setUsernameResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
                         }
                     }
 
@@ -279,7 +280,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao trocar senha.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(changePasswordResponse.Errors.FirstOrDefault().Code.CustomExceptionMessage()) });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(changePasswordResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
                         }
                     }
 
@@ -292,7 +293,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao atualizar e-mail de usuário.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar e-mail do usuário.") });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setEmailResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
                         }
                     }
 
@@ -305,7 +306,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao atualizar celular do usuário.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao atualizar celular do usuário.") });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setPhoneNumberResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
                         }
                     }
 

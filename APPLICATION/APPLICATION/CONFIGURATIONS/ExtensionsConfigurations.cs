@@ -226,7 +226,7 @@ public static class ExtensionsConfigurations
 
                     GlobalData<object>.GlobalUser = new DOMAIN.DTOS.USER.UserData
                     {
-                        Id = Guid.Parse(context.Principal.Claims.FirstOrDefault().Value)
+                        Id = Guid.Parse(context.Principal.Claims?.FirstOrDefault().Value)
                     };
 
                     return Task.CompletedTask;
@@ -587,7 +587,7 @@ public static class ExtensionsConfigurations
 
             var context = scope.ServiceProvider.GetRequiredService<Contexto>();
 
-            if (await userManager.Users.CountAsync() == 0)
+            if (await userManager.Users.AnyAsync() is false)
             {
                 Log.Debug($"[LOG DEBUG] - Criando Seeds.\n");
 

@@ -4,7 +4,6 @@ using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENUM;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
-using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -16,13 +15,9 @@ public class RoleService : IRoleService
 {
     private readonly RoleManager<RoleEntity> _roleManager;
 
-    private readonly IMapper _autoMapper;
-
-    public RoleService(RoleManager<RoleEntity> roleManager, IMapper autoMapper)
+    public RoleService(RoleManager<RoleEntity> roleManager)
     {
         _roleManager = roleManager;
-
-        _autoMapper = autoMapper;
     }
 
     #region Role

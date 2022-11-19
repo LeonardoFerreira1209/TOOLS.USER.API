@@ -101,7 +101,7 @@ public sealed class LogWithMetric : ILogWithMetric
         _appInsightsMetrics.AddMetric(AddCustomMetric(metricName, metricEnum));
     }
 
-    private CustomMetricDto AddCustomMetric(string metricName, Metric metricEnum)
+    private static CustomMetricDto AddCustomMetric(string metricName, Metric metricEnum)
     {
 
         CustomMetricDto customMetric = metricEnum switch
@@ -164,7 +164,7 @@ public sealed class LogWithMetric : ILogWithMetric
 
     private void ConfigMetric(string eventName) => _metrics = CustomMetricDto.MetricFactory($"QtdInicio{_eventFullName}", $"QtdSucesso{_eventName}", $"QtdErro{_eventName}, {eventName}");
 
-    private string RemoveAccents(string text)
+    private static string RemoveAccents(string text)
     {
         text = text.Replace(" ", "").Trim();
 

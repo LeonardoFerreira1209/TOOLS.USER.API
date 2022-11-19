@@ -22,12 +22,7 @@ public class CustomAuthorizeFilter : IAuthorizationFilter
     /// <param name="context"></param>
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var hasClaim = false;
-
-        foreach (var userClaim in context.HttpContext.User.Claims)
-        {
-            if (_claims.Where(claim => userClaim.Type.Equals(claim.Type) && userClaim.Value.Equals(claim.Value)).Any()) { hasClaim = true; break; }
-        }
+        var hasClaim = context.HttpContext.User.Claims.Any(userClaim => _claims.Any(claim => userClaim.Type.Equals(claim.Type) && userClaim.Value.Equals(claim.Value)));
 
         if (hasClaim is false)
         {
