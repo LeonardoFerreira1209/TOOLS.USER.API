@@ -417,7 +417,7 @@ public static class ExtensionsConfigurations
             .AddTransient<IFileService, FileService>()
             .AddTransient<ICompanyService, CompanyService>()
             // Facades
-            .AddSingleton<EmailFacade, EmailFacade>()
+            .AddSingleton<EmailFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<ICompanyRepository, CompanyRepository>();
