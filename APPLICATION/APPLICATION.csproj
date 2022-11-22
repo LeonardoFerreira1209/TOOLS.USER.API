@@ -35,6 +35,7 @@
     </PackageReference>
     <PackageReference Include="MimeKit" Version="3.4.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="ReadMe.Metrics" Version="2.1.0" />
     <PackageReference Include="Refit" Version="6.3.2" />
     <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />

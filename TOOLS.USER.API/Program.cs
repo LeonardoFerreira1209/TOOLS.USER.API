@@ -77,7 +77,19 @@ try
         .UseAuthentication()
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
-        .UseEndpoints();
+        .UseEndpoints()
+        .Use(async (context, next) =>
+        {
+            HttpRequest req = context.Request;
+            // User's API Key
+            context.Items["apiKey"] = "owlbert-api-key";
+            // Username to show in the dashboard
+            context.Items["label"] = "Owlbert";
+            // User's email address
+            context.Items["email"] = "owlbert@example.com";
+
+            await next();
+        });
 
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);
