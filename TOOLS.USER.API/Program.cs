@@ -82,11 +82,11 @@ try
         {
             HttpRequest req = context.Request;
             // User's API Key
-            context.Items["apiKey"] = "owlbert-api-key";
+            context.Items["apiKey"] = "rdme_xn8s9h5333c43d452091f882f520bf28551a150e43fd820a2600b6e67c301538038a1a";
             // Username to show in the dashboard
-            context.Items["label"] = "Owlbert";
+            context.Items["label"] = "Leonardo Almeida";
             // User's email address
-            context.Items["email"] = "owlbert@example.com";
+            context.Items["email"] = "Leo.Ferreira30@outlook.com";
 
             await next();
         });
