@@ -89,7 +89,8 @@ try
             context.Items["email"] = "Leo.Ferreira30@outlook.com";
 
             await next();
-        });
+
+        }).UseMiddleware<ReadMe.Metrics>();
 
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);
