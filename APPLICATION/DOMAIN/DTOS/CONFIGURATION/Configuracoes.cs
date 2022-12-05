@@ -14,6 +14,9 @@ public class AppSettings
     public UrlBase UrlBase { get; set; }
 }
 
+/// <summary>
+/// Classe responsável por receber dados de retry policy.
+/// </summary>
 public class RetryPolicy
 {
     public string RetryOn { get; set; }
@@ -21,11 +24,18 @@ public class RetryPolicy
     public int RetryEachSecond { get; set; }
 }
 
+/// <summary>
+/// Classe de conexões.
+/// </summary>
 public class ConnectionStrings
 {
     public string BaseDados { get; set; }
+    public string ServiceBus { get; set; }
 }
 
+/// <summary>
+/// Classe de config do swagger.
+/// </summary>
 public class SwaggerInfo
 {
     public string ApiDescription { get; set; }
@@ -33,6 +43,9 @@ public class SwaggerInfo
     public string UriMyGit { get; set; }
 }
 
+/// <summary>
+/// Classe de config diversas.
+/// </summary>
 public class Configuracoes
 {
     public int TimeOutDefault { get; set; }
@@ -43,6 +56,9 @@ public class Configuracoes
     public int QuantidadeMaximaDeRetentativas { get; set; }
 }
 
+/// <summary>
+/// Classe de config de autenticação.
+/// </summary>
 public class Auth
 {
     public string ValidIssuer { get; set; }
@@ -52,17 +68,26 @@ public class Auth
     public Password Password { get; set; }
 }
 
+/// <summary>
+/// Classe de config do blob storage.
+/// </summary>
 public class AzureStorage
 {
     public string ConnectionStringAzureStorageKey { get; set; }
     public string Container { get; set; }
 }
 
+/// <summary>
+/// Classe de config de senha.
+/// </summary>
 public class Password
 {
     public int RequiredLength { get; set; }
 }
 
+/// <summary>
+/// Classe de url externas.
+/// </summary>
 public class UrlBase
 {
     public string TOOLS_MAIL_API { get; set; }

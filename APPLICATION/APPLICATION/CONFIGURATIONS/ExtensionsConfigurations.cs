@@ -28,6 +28,8 @@ using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.COMPANY;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -45,6 +47,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using RedeAceitacao.Archetype.Application.Infra.ServiceBus;
+using RedeAceitacao.Archetype.Application.Infra.ServiceBus.Provider.Lote;
 using Refit;
 using Serilog;
 using Serilog.Events;
@@ -420,7 +424,10 @@ public static class ExtensionsConfigurations
             .AddSingleton<EmailFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
-            .AddScoped<ICompanyRepository, CompanyRepository>();
+            .AddScoped<ICompanyRepository, CompanyRepository>()
+            // Infra
+            .AddSingleton<ILoteServiceBusSenderProvider, LoteServiceBusSenderProvider>()
+            .AddSingleton<ILoteServiceBusReceiverProvider, LoteServiceBusReceiverProvider>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -486,6 +493,26 @@ public static class ExtensionsConfigurations
         return services;
     }
 
+    // Configure Hangfire
+    public static IServiceCollection ConfigureHangFire(this IServiceCollection services)
+    {
+        var inMemory = GlobalConfiguration.Configuration.UseMemoryStorage();
+
+        services.AddHangfire(configuration => configuration
+                       .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                       .UseSimpleAssemblyNameTypeSerializer()
+                       .UseRecommendedSerializerSettings()
+                       .UseStorage(inMemory.Entry)
+                       );
+
+        // Add the processing server as IHostedService
+        services.AddHangfireServer();
+
+        services.GetProvider().GetService<IRegistryJobs>();
+
+        return services;
+    }
+
     /// <summary>
     /// Iniciar Jobs.
     /// </summary>
@@ -495,6 +522,16 @@ public static class ExtensionsConfigurations
     {
         // Iniciar os Jobs.
         new ScheduledTasksManager(services.GetProvider()).StartJobs();
+
+        return services;
+    }
+
+    // Configura os subscribers.
+    public static IServiceCollection ConfigureSubscribers(this IServiceCollection services)
+    {
+        services
+            //Subscribers
+            .AddTransient<LoteSubscriber>();
 
         return services;
     }

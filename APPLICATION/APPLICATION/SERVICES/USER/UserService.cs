@@ -295,6 +295,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                             return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setEmailResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
                         }
+
+                        // Confirm user for e-mail.
+                        await ConfirmeUserForEmail(user);
                     }
 
                     // update phoneNumber

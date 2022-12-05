@@ -1,5 +1,6 @@
 using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
@@ -47,8 +48,10 @@ try
     // Continuação do pipeline...
     builder.Services
         .ConfigureSerilog()
+        .ConfigureSubscribers()
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()
+        .ConfigureHangFire()
         .ConfigureRegisterJobs()
         .AddControllers(options =>
         {
@@ -78,6 +81,7 @@ try
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
         .UseEndpoints()
+        .UseHangfireDashboard()
         .Use(async (context, next) =>
         {
             HttpRequest req = context.Request;

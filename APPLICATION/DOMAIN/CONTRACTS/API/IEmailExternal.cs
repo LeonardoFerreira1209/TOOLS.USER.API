@@ -13,6 +13,6 @@ public interface IEmailExternal
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    [Post("/api/mail/invite")]
+    [Post("/api/Email/invite")]
     Task<HttpResponseMessage> Invite(MailRequest request);
 }

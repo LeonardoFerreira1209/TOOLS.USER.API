@@ -17,6 +17,7 @@ public static class CompanyExtensions
         Id = company.Id,
         Name = company.Name,
         Description = company.Description,
+        Cpnj = company.Cpnj,
         PlanId = company.PlanId,
         Plan = company.Plan.ToResponse(),
         Status = company.Status,
@@ -34,8 +35,9 @@ public static class CompanyExtensions
     /// <returns></returns>
     public static CompanyEntity ToEntity(this CompanyRequest companyRequest, Guid userId) => new()
     {
-        Description = companyRequest.Description,
         Name = companyRequest.Name,
+        Description = companyRequest.Description,
+        Cpnj = companyRequest.Cpnj,
         StartDate = companyRequest.StartDate,
         Created = DateTime.Now,
         CreatedUserId = userId,

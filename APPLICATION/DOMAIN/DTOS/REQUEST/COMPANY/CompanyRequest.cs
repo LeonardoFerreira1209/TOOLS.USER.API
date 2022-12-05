@@ -13,6 +13,11 @@ public class CompanyRequest
     public string Description { get; set; }
 
     /// <summary>
+    /// Cnpj da empresa.
+    /// </summary>
+    public string Cpnj { get; set; }
+
+    /// <summary>
     /// Data em que a empresa foi fundada
     /// </summary>
     public DateTime? StartDate { get; set; }
