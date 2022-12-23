@@ -60,17 +60,6 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"LeonardoFerreira1209_TOOLS.USER.API" /o:"leonardoferreira1209" /d:sonar.login="6530b3f91bb271bc4064442d8717f37dbbf90428" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build --configuration Release
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="6530b3f91bb271bc4064442d8717f37dbbf90428"
-      - name: Check SonarCloud quality gate
-        shell: powershell
-        run: |
-          # Call SonarCloud API to check quality gate status
-          QUALITY_GATE_STATUS=$(curl -s -u 6530b3f91bb271bc4064442d8717f37dbbf90428: https://sonarcloud.io/api/qualitygates/project_status?projectKey=LeonardoFerreira1209_TOOLS.USER.API)
-
-          # Check if quality gate is failed
-          if [ "$QUALITY_GATE_STATUS" == *"\"status\":\"ERROR\""* ]; then
-            echo "SonarCloud quality gate failed"
-            exit 1
-          fi
           
   AZURE-QA:
   
