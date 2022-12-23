@@ -19,7 +19,7 @@ public static class CompanyExtensions
         Description = company.Description,
         Cpnj = company.Cpnj,
         PlanId = company.PlanId,
-        Plan = company.Plan.ToResponse(),
+        Plan = company.Plan?.ToResponse(),
         Status = company.Status,
         Created = company.Created,
         CreatedUserId = company.CreatedUserId,

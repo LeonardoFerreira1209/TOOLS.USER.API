@@ -1,8 +1,10 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
 
+[ExcludeFromCodeCoverage]
 public class HealthCheckSwagger : IDocumentFilter
 {
     /// <summary>

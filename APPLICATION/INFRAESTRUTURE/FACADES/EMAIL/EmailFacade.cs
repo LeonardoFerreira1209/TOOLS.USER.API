@@ -1,24 +1,21 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.API;
-using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
-using Microsoft.Extensions.Options;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 
 /// <summary>
 /// Classe responsável por envio de e-mails.
 /// </summary>
-public class EmailFacade
+[ExcludeFromCodeCoverage]
+public class EmailFacade : IEmailFacade
 {
-    private readonly IOptions<AppSettings> _appsettings;
-
     private readonly IEmailExternal _emailExternal;
 
-    public EmailFacade(IOptions<AppSettings> appsettings, IEmailExternal emailExternal)
+    public EmailFacade(IEmailExternal emailExternal)
     {
-        _appsettings = appsettings;
-
         _emailExternal = emailExternal;
     }
 
@@ -33,9 +30,7 @@ public class EmailFacade
 
         try
         {
-            var response = await _emailExternal.Invite(request);
-
-            if (response.IsSuccessStatusCode is not true) throw new Exception("Erro ao enviar e-mail de confirmação para o usuário. Entre em contato com o suporte e abra um ticket.");
+            await _emailExternal.Invite(request);
 
             Log.Information($"[LOG INFORMATION] - E-mail enviado com sucesso.\n");
         }
@@ -43,7 +38,7 @@ public class EmailFacade
         {
             Log.Error($"[LOG ERRO] - {exception.Message}.\n", exception);
 
-            throw new Exception($"Falha ao acessar o serviço de envio de e-mails, {exception.Message}");
+            throw;
         }
     }
 }

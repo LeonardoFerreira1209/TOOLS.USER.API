@@ -23,7 +23,6 @@ public class CompanyRepository : BaseRepository, ICompanyRepository
         _appSettings = appSettings;
     }
 
-    #region EF Core
     /// <summary>
     /// Create a Company
     /// </summary>
@@ -52,5 +51,4 @@ public class CompanyRepository : BaseRepository, ICompanyRepository
             return (false, null);
         }
     }
-    #endregion
 }

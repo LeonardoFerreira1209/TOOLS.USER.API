@@ -42,7 +42,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(userId)))
             using (LogContext.PushProperty("Metodo", "GetUserRoles"))
             {
-                return await Tracker.Time(() => _userService.GetUserRoles(userId), "Recuperar roles do usuário.");
+                return await Tracker.Time(() => _userService.GetUserRolesAsync(userId), "Recuperar roles do usuário.");
             }
         }
 
@@ -62,7 +62,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleRequest)))
             using (LogContext.PushProperty("Metodo", "AddRole"))
             {
-                return await Tracker.Time(() => _roleService.Create(roleRequest), "Adicionar role.");
+                return await Tracker.Time(() => _roleService.CreateAsync(roleRequest), "Adicionar role.");
             }
         }
 
@@ -82,7 +82,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleRequest)))
             using (LogContext.PushProperty("Metodo", "AddClaimsToRole"))
             {
-                return await Tracker.Time(() => _roleService.AddClaims(roleRequest), "Adicionar claims em uma role.");
+                return await Tracker.Time(() => _roleService.AddClaimsAsync(roleRequest), "Adicionar claims em uma role.");
             }
         }
 
@@ -102,7 +102,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleRequest)))
             using (LogContext.PushProperty("Metodo", "RemoverClaimToRole"))
             {
-                return await Tracker.Time(() => _roleService.RemoveClaims(roleRequest), "Remover claims em uma role.");
+                return await Tracker.Time(() => _roleService.RemoveClaimsAsync(roleRequest), "Remover claims em uma role.");
             }
         }
 
@@ -123,7 +123,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))
             using (LogContext.PushProperty("Metodo", "AddRoleToUser"))
             {
-                return await Tracker.Time(() => _userService.AddRole(username, roleName), "Adicionar role no usuário.");
+                return await Tracker.Time(() => _userService.AddRoleAsync(username, roleName), "Adicionar role no usuário.");
             }
         }
 
@@ -144,7 +144,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(roleName)))
             using (LogContext.PushProperty("Metodo", "RemoveRoleToUser"))
             {
-                return await Tracker.Time(() => _userService.RemoveRole(username, roleName), "Remover role do usuário.");
+                return await Tracker.Time(() => _userService.RemoveRoleAsync(username, roleName), "Remover role do usuário.");
             }
         }
     }

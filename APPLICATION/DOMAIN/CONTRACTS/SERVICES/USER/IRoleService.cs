@@ -8,22 +8,21 @@ public interface IRoleService
     /// <summary>
     /// Método responsável por criar uma nova role.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="roleRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Create(RoleRequest roleRequest);
+    Task<ApiResponse<object>> CreateAsync(RoleRequest roleRequest);
 
     /// <summary>
     /// Método responsável por adicionar uma nova lista de claims na role.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="roleRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> AddClaims(RoleRequest roleRequest);
+    Task<ApiResponse<object>> AddClaimsAsync(RoleRequest roleRequest);
 
     /// <summary>
     /// Método responsavel por remover uma lista de claims na role.
     /// </summary>
-    /// <param name="roleName"></param>
-    /// <param name="claimRequests"></param>
+    /// <param name="roleRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> RemoveClaims(RoleRequest roleRequest);
+    Task<ApiResponse<object>> RemoveClaimsAsync(RoleRequest roleRequest);
 }

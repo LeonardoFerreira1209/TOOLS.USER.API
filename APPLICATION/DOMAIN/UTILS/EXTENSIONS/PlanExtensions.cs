@@ -19,7 +19,7 @@ public static class PlanExtensions
             PlanDescription = plan.PlanDescription,
             PlanName = plan.PlanName,
             RoleId = plan.RoleId,
-            Role = plan.Role.ToResponse(),
+            Role = plan.Role?.ToResponse(),
             Created = plan.Created,
             Status = plan.Status,
             TotalMonthsPlan = plan.TotalMonthsPlan,

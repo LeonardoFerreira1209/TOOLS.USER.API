@@ -1,5 +1,4 @@
-﻿using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
-using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -34,7 +33,7 @@ public class ProcessDeleteUserWithoutPersonJob : IProcessDeleteUserWithoutPerson
                 {
                     Log.Information($"[LOG INFORMATION] - Processando Job de Delete de usuários sem pessaos vinculadas.\n");
 
-                    await new UserRepository(_configuracoes).DeleteUserWithoutPerson();
+                    //await new UserRepository(_configuracoes).DeleteUserWithoutPerson();
 
                     Log.Information("[LOG INFORMATION] - Finalizando Job de Delete de usuários sem pessaos vinculadas\n");
                 }

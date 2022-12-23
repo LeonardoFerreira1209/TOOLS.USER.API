@@ -39,7 +39,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequest)))
             using (LogContext.PushProperty("Metodo", "AddClaim"))
             {
-                return await Tracker.Time(() => _userService.AddClaim(username, claimRequest), "Adicionar claim no usuário.");
+                return await Tracker.Time(() => _userService.AddClaimAsync(username, claimRequest), "Adicionar claim no usuário.");
             }
         }
 
@@ -60,7 +60,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.CLAIM
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(claimRequest)))
             using (LogContext.PushProperty("Metodo", "RemoveClaim"))
             {
-                return await Tracker.Time(() => _userService.RemoveClaim(username, claimRequest), "Remover claim do usuário.");
+                return await Tracker.Time(() => _userService.RemoveClaimAsync(username, claimRequest), "Remover claim do usuário.");
             }
         }
     }

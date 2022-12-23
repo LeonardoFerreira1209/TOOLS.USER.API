@@ -20,15 +20,14 @@ public class RoleService : IRoleService
         _roleManager = roleManager;
     }
 
-    #region Role
     /// <summary>
     /// Método responsavel por criar uma nova role.
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="roleRequest"></param>
     /// <returns></returns>
-    public async Task<ApiResponse<object>> Create(RoleRequest roleRequest)
+    public async Task<ApiResponse<object>> CreateAsync(RoleRequest roleRequest)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(Create)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(CreateAsync)}\n");
 
         try
         {
@@ -67,18 +66,15 @@ public class RoleService : IRoleService
             return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
-    #endregion
 
-    #region Claim
     /// <summary>
     /// Método responsavel por adicionar uma claim na role.
     /// </summary>
-    /// <param name="roleName"></param>
-    /// <param name="claimRequests"></param>
+    /// <param name="roleRequest"></param>
     /// <returns></returns>
-    public async Task<ApiResponse<object>> AddClaims(RoleRequest roleRequest)
+    public async Task<ApiResponse<object>> AddClaimsAsync(RoleRequest roleRequest)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(AddClaims)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(AddClaimsAsync)}\n");
 
         try
         {
@@ -118,12 +114,11 @@ public class RoleService : IRoleService
     /// <summary>
     /// Método responsável por remover uma claim na role.
     /// </summary>
-    /// <param name="roleName"></param>
-    /// <param name="claimRequests"></param>
+    /// <param name="roleRequest"></param>
     /// <returns></returns>
-    public async Task<ApiResponse<object>> RemoveClaims(RoleRequest roleRequest)
+    public async Task<ApiResponse<object>> RemoveClaimsAsync(RoleRequest roleRequest)
     {
-        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(RemoveClaims)}\n");
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(RemoveClaimsAsync)}\n");
 
         try
         {
@@ -159,5 +154,4 @@ public class RoleService : IRoleService
             return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
-    #endregion
 }

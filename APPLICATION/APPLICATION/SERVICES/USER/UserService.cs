@@ -1,4 +1,5 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
@@ -8,16 +9,15 @@ using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.FILE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.USER.ROLE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
-using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
+using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Serilog;
@@ -33,27 +33,20 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
     /// </summary>
     public class UserService : IUserService
     {
-        private readonly SignInManager<UserEntity> _signInManager;
 
-        private readonly UserManager<UserEntity> _userManager;
-
-        private readonly RoleManager<RoleEntity> _roleManager;
+        private readonly IUserRepository _userRepository;
 
         private readonly IOptions<AppSettings> _appsettings;
 
-        private readonly EmailFacade _emailFacade;
+        private readonly IEmailFacade _emailFacade;
 
         private readonly ITokenService _tokenService;
 
         private readonly IFileService _fileService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, RoleManager<RoleEntity> roleManager, IOptions<AppSettings> appsettings, EmailFacade emailFacade, ITokenService tokenService, IFileService fileService)
+        public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, IEmailFacade emailFacade, ITokenService tokenService, IFileService fileService)
         {
-            _signInManager = signInManager;
-
-            _userManager = userManager;
-
-            _roleManager = roleManager;
+            _userRepository = userRepository;
 
             _appsettings = appsettings;
 
@@ -69,9 +62,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="loginRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Authentication(LoginRequest loginRequest)
+        public async Task<ApiResponse<object>> AuthenticationAsync(LoginRequest loginRequest)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Authentication)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AuthenticationAsync)}\n");
 
             try
             {
@@ -85,7 +78,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Recuperando usuário {JsonConvert.SerializeObject(loginRequest)}.\n");
 
                 // sigin user wirh username & password.
-                var signInResult = await _signInManager.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, isPersistent: true, lockoutOnFailure: true);
+                var signInResult = await _userRepository.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, true, true);
 
                 // return error response.
                 if (signInResult.Succeeded is false)
@@ -139,30 +132,22 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Get(Guid userId)
+        public async Task<ApiResponse<object>> GetAsync(Guid userId)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Get)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(GetAsync)}\n");
 
             try
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando usuário com Id {userId}.\n");
 
                 // get user by id.
-                var user = await _userManager.Users
-                    // Include company.
-                    .Include(user => user.Company)
-                    // Include Plan in company.
-                    .ThenInclude(company => company.Plan)
-                    // Include Role in plan.
-                    .ThenInclude(plan => plan.Role)
-                    // Split includes and select the first user by Id.s
-                    .AsSplitQuery().FirstOrDefaultAsync(user => user.Id.Equals(userId));
+                var userEntity = await _userRepository.GetAsync(userId);
 
                 // is not null.
-                if (user is not null)
+                if (userEntity is not null)
                 {
                     // Convert to response.
-                    var userResponse = user.ToResponse();
+                    var userResponse = userEntity.ToResponse();
 
                     Log.Information($"[LOG INFORMATION] - Usuário recuperado com sucesso {JsonConvert.SerializeObject(userResponse)}.\n");
 
@@ -191,9 +176,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="userCreateRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Create(UserCreateRequest userCreateRequest)
+        public async Task<ApiResponse<object>> CreateAsync(UserCreateRequest userCreateRequest)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Create)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(CreateAsync)}\n");
 
             try
             {
@@ -207,13 +192,13 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 var user = userCreateRequest.ToIdentityUser();
 
                 // Build a user.
-                var response = await BuildUser(user, userCreateRequest.Password);
+                var response = await BuildUserAsync(user, userCreateRequest.Password);
 
                 // Response succes true.
                 if (response.Succeeded)
                 {
                     // Confirm user for e-mail.
-                    await ConfirmeUserForEmail(user);
+                    await ConfirmeUserForEmailAsync(user);
 
                     // Response success.
                     return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário criado com sucesso.") });
@@ -236,9 +221,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="userUpdateRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Update(UserUpdateRequest userUpdateRequest)
+        public async Task<ApiResponse<object>> UpdateAsync(UserUpdateRequest userUpdateRequest)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Update)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(UpdateAsync)}\n");
 
             try
             {
@@ -252,15 +237,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Atualizando dados do usuário {JsonConvert.SerializeObject(userUpdateRequest)}.\n");
 
                 // Get user.
-                var user = await _userManager.Users.FirstOrDefaultAsync(user => user.Id.Equals(userUpdateRequest.Id));
+                var userEntity = await _userRepository.GetAsync(userUpdateRequest.Id);
 
                 // User is valid ?.
-                if (user is not null)
+                if (userEntity is not null)
                 {
                     // update username.
-                    if (!userUpdateRequest.UserName.Equals(user.UserName))
+                    if (!userUpdateRequest.UserName.Equals(userEntity.UserName))
                     {
-                        var setUsernameResponse = await _userManager.SetUserNameAsync(user, userUpdateRequest.UserName);
+                        var setUsernameResponse = await _userRepository.SetUserNameAsync(userEntity, userUpdateRequest.UserName);
 
                         if (setUsernameResponse.Succeeded is false)
                         {
@@ -273,7 +258,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     // update password.
                     if (!string.IsNullOrEmpty(userUpdateRequest.Password))
                     {
-                        var changePasswordResponse = await _userManager.ChangePasswordAsync(user, userUpdateRequest.CurrentPassword, userUpdateRequest.Password);
+                        var changePasswordResponse = await _userRepository.ChangePasswordAsync(userEntity, userUpdateRequest.CurrentPassword, userUpdateRequest.Password);
 
                         if (changePasswordResponse.Succeeded is false)
                         {
@@ -284,9 +269,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     }
 
                     // update e-mail.
-                    if (!userUpdateRequest.Email.Equals(user.Email))
+                    if (!userUpdateRequest.Email.Equals(userEntity.Email))
                     {
-                        var setEmailResponse = await _userManager.SetEmailAsync(user, userUpdateRequest.Email);
+                        var setEmailResponse = await _userRepository.SetEmailAsync(userEntity, userUpdateRequest.Email);
 
                         if (setEmailResponse.Succeeded is false)
                         {
@@ -296,13 +281,13 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         }
 
                         // Confirm user for e-mail.
-                        await ConfirmeUserForEmail(user);
+                        await ConfirmeUserForEmailAsync(userEntity);
                     }
 
                     // update phoneNumber
-                    if (!userUpdateRequest.PhoneNumber.Equals(user.PhoneNumber))
+                    if (!userUpdateRequest.PhoneNumber.Equals(userEntity.PhoneNumber))
                     {
-                        var setPhoneNumberResponse = await _userManager.SetPhoneNumberAsync(user, userUpdateRequest.PhoneNumber);
+                        var setPhoneNumberResponse = await _userRepository.SetPhoneNumberAsync(userEntity, userUpdateRequest.PhoneNumber);
 
                         if (setPhoneNumberResponse.Succeeded is false)
                         {
@@ -313,15 +298,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     }
 
                     // Complete user.
-                    user = userUpdateRequest.ToCompleteUserUpdateWithRequest(user);
+                    userEntity = userUpdateRequest.ToCompleteUserUpdateWithRequest(userEntity);
 
                     // update user.
-                    await _userManager.UpdateAsync(user);
+                    await _userRepository.UpdateUserAsync(userEntity);
 
                     Log.Information($"[LOG INFORMATION] - Usuário atualizado com sucesso.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(true, StatusCodes.SuccessOK, user, new List<DadosNotificacao> { new DadosNotificacao("Usuário atualizado com sucesso.") });
+                    return new ApiResponse<object>(true, StatusCodes.SuccessOK, userEntity, new List<DadosNotificacao> { new DadosNotificacao("Usuário atualizado com sucesso.") });
                 }
                 else
                 {
@@ -346,17 +331,17 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="id"></param>
         /// <param name="formFile"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> UpdateUserIamge(Guid id, IFormFile formFile)
+        public async Task<ApiResponse<object>> UpdateUserIamgeAsync(Guid id, IFormFile formFile)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(UpdateUserIamge)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(UpdateUserIamgeAsync)}\n");
 
             try
             {
                 // Get user.
-                var user = await _userManager.Users.FirstOrDefaultAsync(user => user.Id.Equals(id));
+                var userEntity = await _userRepository.GetAsync(id);
 
                 // User is valid ?.
-                if (user is not null)
+                if (userEntity is not null)
                 {
                     // Response of Azure blob.
                     var response = await _fileService.InviteFileToAzureBlobStorageAndReturnUri(formFile);
@@ -368,15 +353,15 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         var fileResponse = (FileResponse)response.Dados;
 
                         // set image uri in entity.
-                        user.ImageUri = fileResponse.FileUri;
+                        userEntity.ImageUri = fileResponse.FileUri;
 
                         // update user.
-                        await _userManager.UpdateAsync(user);
+                        await _userRepository.UpdateUserAsync(userEntity);
 
                         Log.Information($"[LOG INFORMATION] - Imagem do usuário atualizado com sucesso.\n");
 
                         // Response success.
-                        return new ApiResponse<object>(true, StatusCodes.SuccessOK, new FileResponse { FileUri = user.ImageUri }, new List<DadosNotificacao> { new DadosNotificacao("Imagem do usuário atualizado com sucesso.") });
+                        return new ApiResponse<object>(true, StatusCodes.SuccessOK, new FileResponse { FileUri = userEntity.ImageUri }, new List<DadosNotificacao> { new DadosNotificacao("Imagem do usuário atualizado com sucesso.") });
                     }
                     else
                     {
@@ -408,21 +393,21 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="activateUserRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest)
+        public async Task<ApiResponse<object>> ActivateAsync(ActivateUserRequest activateUserRequest)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(Activate)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(ActivateAsync)}\n");
 
             try
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando usuário.\n");
 
                 // Get user form Id.
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == activateUserRequest.UserId);
+                var userEntity = await _userRepository.GetAsync(activateUserRequest.UserId);
 
-                Log.Information($"[LOG INFORMATION] - Confirmando e-mail do usuário {user.UserName}.\n");
+                Log.Information($"[LOG INFORMATION] - Confirmando e-mail do usuário {userEntity.UserName}.\n");
 
                 // Confirm e-mail user.
-                var response = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(activateUserRequest.Code.Replace(";", "%")));
+                var response = await _userRepository.ConfirmEmailAsync(userEntity, HttpUtility.UrlDecode(activateUserRequest.Code.Replace(";", "%")));
 
                 // Response success true
                 if (response.Succeeded)
@@ -452,35 +437,35 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> AddClaim(string username, ClaimRequest claimRequest)
+        public async Task<ApiResponse<object>> AddClaimAsync(string username, ClaimRequest claimRequest)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddClaim)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddClaimAsync)}\n");
 
             try
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando usuario {username}.\n");
 
-                // Get user for Id.
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+                // Get user for username.
+                var userEntity = await _userRepository.GetWithUsernameAsync(username);
 
                 Log.Information($"[LOG INFORMATION] - Adicionando a claim ({claimRequest.Type}/{claimRequest.Value}) no usuário.\n");
 
                 // Add claim in user.
-                var response = await _userManager.AddClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
+                var identityResult = await _userRepository.AddClaimUserAsync(userEntity, new Claim(claimRequest.Type, claimRequest.Value));
 
                 // Response success true.
-                if (response.Succeeded)
+                if (identityResult.Succeeded)
                 {
                     Log.Information($"[LOG INFORMATION] - Claim adicionada com sucesso.\n");
 
                     // Success response.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                    return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
                 }
 
                 Log.Information($"[LOG ERROR] - Falha ao adicionar claim.\n");
 
                 // Response error.
-                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar claim!") });
+                return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar claim!") });
             }
             catch (Exception exception)
             {
@@ -497,35 +482,35 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="claimRequest"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> RemoveClaim(string username, ClaimRequest claimRequest)
+        public async Task<ApiResponse<object>> RemoveClaimAsync(string username, ClaimRequest claimRequest)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveClaim)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveClaimAsync)}\n");
 
             try
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando usuário {username}.\n");
 
-                // Get user for Id.
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+                // Get user for username.
+                var userIdentity = await _userRepository.GetWithUsernameAsync(username);
 
                 Log.Information($"[LOG INFORMATION] - Removendo a claim ({claimRequest.Type}/{claimRequest.Value}) do usuário.\n");
 
                 // Remove claim.
-                var response = await _userManager.RemoveClaimAsync(user, new Claim(claimRequest.Type, claimRequest.Value));
+                var identityResult = await _userRepository.RemoveClaimUserAsync(userIdentity, new Claim(claimRequest.Type, claimRequest.Value));
 
                 // Response success true.
-                if (response.Succeeded)
+                if (identityResult.Succeeded)
                 {
                     Log.Information($"[LOG INFORMATION] - Claim remvida com sucesso.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                    return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
                 }
 
                 Log.Information($"[LOG ERROR] - Falha ao remover claim.\n");
 
                 // Response error.
-                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover claim!") });
+                return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover claim!") });
             }
             catch (Exception exception)
             {
@@ -542,21 +527,21 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> AddRole(string username, string roleName)
+        public async Task<ApiResponse<object>> AddRoleAsync(string username, string roleName)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddRole)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(AddRoleAsync)}\n");
 
             try
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando dados do usuário {username}.\n");
 
-                // Get user for Id.
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+                // Get user for username.
+                var user = await _userRepository.GetWithUsernameAsync(username);
 
                 Log.Information($"[LOG INFORMATION] - Adicionando a role ({roleName}) ao usuário.\n");
 
                 // Add Role.
-                var response = await _userManager.AddToRoleAsync(user, roleName);
+                var response = await _userRepository.AddToUserRoleAsync(user, roleName);
 
                 // Response success true.
                 if (response.Succeeded)
@@ -586,39 +571,34 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> GetUserRoles(Guid userId)
+        public async Task<ApiResponse<object>> GetUserRolesAsync(Guid userId)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(GetUserRoles)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(GetUserRolesAsync)}\n");
 
             try
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando todas as roles do usuário.\n");
 
                 // Get user for Id.
-                var user = _userManager.Users.FirstAsync(user => user.Id.Equals(userId)).Result;
+                var userEntity = await _userRepository.GetAsync(userId);
 
                 // Get roles.
-                var response = await _userManager.GetRolesAsync(user);
+                var userRoles = await _userRepository.GetUserRolesAsync(userEntity);
 
                 // Instance of role response
                 var roles = new List<RolesResponse>();
 
                 // for in response
-                foreach (var roleName in response)
+                foreach (var roleName in userRoles)
                 {
                     // get role.
-                    var roleEntity = await _roleManager.Roles.FirstOrDefaultAsync(role => role.Name.Equals(roleName));
+                    var roleEntity = await _userRepository.GetRoleAsync(roleName);
 
                     // get role claims
-                    var roleClaims = await _roleManager.GetClaimsAsync(roleEntity);
+                    var roleClaims = await _userRepository.GetRoleClaimsAsync(roleEntity);
 
                     // add roles.
-                    roles.Add(new RolesResponse
-                    {
-
-                        Name = roleName,
-                        Claims = roleClaims
-                    });
+                    roles.Add(new RolesResponse { Name = roleName, Claims = roleClaims });
                 }
 
                 Log.Information($"[LOG INFORMATION] - Roles recuperadas.\n");
@@ -641,21 +621,21 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="username"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> RemoveRole(string username, string roleName)
+        public async Task<ApiResponse<object>> RemoveRoleAsync(string username, string roleName)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveRole)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(RemoveRoleAsync)}\n");
 
             try
             {
                 Log.Information($"[LOG INFORMATION] - Recuperando dados do usuário {username}.\n");
 
-                // Get user for Id.
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName.Equals(username));
+                // Get user for username.
+                var userEntity = await _userRepository.GetWithUsernameAsync(username);
 
                 Log.Information($"[LOG INFORMATION] - Removendo role ({roleName}) do usuário.\n");
 
                 // Remove role.
-                var response = await _userManager.RemoveFromRoleAsync(user, roleName);
+                var response = await _userRepository.RemoveToUserRoleAsync(userEntity, roleName);
 
                 // Response success true.
                 if (response.Succeeded)
@@ -686,14 +666,14 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// <param name="user"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        private async Task<IdentityResult> BuildUser(UserEntity user, string password)
+        private async Task<IdentityResult> BuildUserAsync(UserEntity user, string password)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(BuildUser)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(BuildUserAsync)}\n");
 
             Log.Information("[LOG INFORMATION] - Criando usuário\n");
 
             // Create User.
-            var identityResult = await _userManager.CreateAsync(user, password);
+            var identityResult = await _userRepository.CreateUserAsync(user, password);
 
             // Logged user.
             var responsibleUser = GlobalData<object>.GlobalUser?.Id;
@@ -702,7 +682,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             user.CreatedUserId = responsibleUser is not null ? responsibleUser.Value : user.Id;
 
             // update user with created Id seted.
-            await _userManager.UpdateAsync(user);
+            await _userRepository.UpdateUserAsync(user);
 
             // Return result.
             return identityResult;
@@ -713,17 +693,17 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        private async Task ConfirmeUserForEmail(UserEntity user)
+        private async Task ConfirmeUserForEmailAsync(UserEntity user)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(ConfirmeUserForEmail)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(ConfirmeUserForEmailAsync)}\n");
 
             Log.Information($"[LOG INFORMATION] - Gerando codigo de confirmação de e-mail.\n");
 
             // Generate email code.
-            var emailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationCode = await _userRepository.GenerateEmailConfirmationTokenAsync(user);
 
             // Codify email code.
-            var codifyEmailCode = HttpUtility.UrlEncode(emailCode).Replace("%", ";");
+            var codifyEmailCode = HttpUtility.UrlEncode(confirmationCode).Replace("%", ";");
 
             Log.Information($"[LOG INFORMATION] - Código gerado - {codifyEmailCode}.\n");
 

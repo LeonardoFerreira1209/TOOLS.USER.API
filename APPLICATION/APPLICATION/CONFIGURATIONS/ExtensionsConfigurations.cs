@@ -53,6 +53,7 @@ using RedeAceitacao.Archetype.Application.Infra.ServiceBus.Provider.Lote;
 using Refit;
 using Serilog;
 using Serilog.Events;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Mime;
 using System.Security.Claims;
@@ -60,6 +61,7 @@ using System.Text;
 
 namespace APPLICATION.APPLICATION.CONFIGURATIONS;
 
+[ExcludeFromCodeCoverage]
 public static class ExtensionsConfigurations
 {
     public static readonly string HealthCheckEndpoint = "/application/healthcheck";
