@@ -15,7 +15,7 @@ using Moq;
 using TOOLS.USER.API.TEST.MOCKS.USER;
 using Xunit;
 
-namespace TOOLS.USER.API.TEST.USER;
+namespace TOOLS.USER.API.TEST.SERVICES.USER;
 
 public class UserTest
 {
@@ -158,7 +158,7 @@ public class UserTest
         // Configure o mock do repositório de usuários para retornar sucesso na recuperação
         _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
 
-        // Execute o método de autenticação
+        // Execute o método de recuperação
         var result = await _userService.GetAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um true
@@ -172,7 +172,7 @@ public class UserTest
         // Configure o mock do repositório de usuários para retornar erro na recuperação
         _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<UserEntity>());
 
-        // Execute o método de autenticação
+        // Execute o método de recuperação
         var result = await _userService.GetAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um falso
@@ -186,7 +186,7 @@ public class UserTest
         // Configure o mock do repositório de usuários para retornar erro na recuperaçãp
         _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ThrowsAsync(new Exception());
 
-        // Execute o método de autenticação
+        // Execute o método de recuperação
         var result = await _userService.GetAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um falso
@@ -220,7 +220,7 @@ public class UserTest
         // Configure o mock do serviço de email externo para retornar um código de status OK na chamada do método de invite
         _mockEmailExternal.Setup(emailExter => emailExter.Invite(It.IsAny<MailRequest>())).ReturnsAsync(new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK });
 
-        // Execute o método de autenticação
+        // Execute o método de criação
         var result = await _userService.CreateAsync(UserMocks.UserCreateRequestMock());
 
         // Verifique se o resultado é um sucesso
@@ -254,10 +254,10 @@ public class UserTest
         // Configure o mock do serviço de email externo para retornar um código de status OK na chamada do método de invite
         _mockEmailExternal.Setup(emailExter => emailExter.Invite(It.IsAny<MailRequest>())).ReturnsAsync(new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK });
 
-        // Execute o método de autenticação
+        // Execute o método de criação
         var result = await _userService.CreateAsync(UserMocks.UserCreateRequestMock());
 
-        // Verifique se o resultado é um erro
+        // Verifique se o resultado é um false
         Assert.False(result.Sucesso);
         Assert.Equal(StatusCodes.ErrorBadRequest, result.StatusCode);
     }
@@ -291,7 +291,47 @@ public class UserTest
         // Execute o método de autenticação
         var result = await _userService.CreateAsync(UserMocks.UserCreateRequestMock());
 
-        // Verifique se o resultado é um erro
+        // Verifique se o resultado é um false
+        Assert.False(result.Sucesso);
+        Assert.Equal(StatusCodes.ServerErrorInternalServerError, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task TestUpdateAsyncSuccessOK()
+    {
+        _mockSettings.Setup(set => set.Value).Returns(new AppSettings
+        {
+            UrlBase = new UrlBase
+            {
+                TOOLS_MAIL_API = Faker.Internet.Url()
+            }
+        });
+
+        // Configure o mock do repositório de usuários para retornar sucesso na atualização
+        _mockUserRepository.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na recuperação
+        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do username
+        _mockUserRepository.Setup(repo => repo.SetUserNameAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração da senha
+        _mockUserRepository.Setup(repo => repo.ChangePasswordAsync(It.IsAny<UserEntity>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do e-mail
+        _mockUserRepository.Setup(repo => repo.SetEmailAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar um token de confirmação de email gerado de forma aleatória ao chamar o método de geração de token
+        _mockUserRepository.Setup(repo => repo.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>())).ReturnsAsync(Faker.Currency.ThreeLetterCode);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do celular
+        _mockUserRepository.Setup(repo => repo.SetPhoneNumberAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Execute o método de autenticação
+        var result = await _userService.UpdateAsync(UserMocks.UserUpdateRequestMock());
+
+        // Verifique se o resultado é um sucesso
         Assert.False(result.Sucesso);
         Assert.Equal(StatusCodes.ServerErrorInternalServerError, result.StatusCode);
     }

@@ -1,7 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 
+[ExcludeFromCodeCoverage]
 public class TokenJWT
 {
     private readonly JwtSecurityToken token;

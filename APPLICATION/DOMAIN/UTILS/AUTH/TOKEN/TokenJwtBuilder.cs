@@ -4,6 +4,7 @@ using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.ENUM;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -12,6 +13,7 @@ namespace APPLICATION.DOMAIN.UTILS.AUTH.TOKEN;
 /// <summary>
 /// Classe responsável por fazer as operações com o token.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class TokenJwtBuilder
 {
     private SecurityKey securityKey = null;

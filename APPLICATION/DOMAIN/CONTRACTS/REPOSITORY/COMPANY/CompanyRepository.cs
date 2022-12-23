@@ -7,9 +7,11 @@ using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.COMPANY;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.COMPANY;
 
+[ExcludeFromCodeCoverage]
 public class CompanyRepository : BaseRepository, ICompanyRepository
 {
     private readonly Contexto _contexto;

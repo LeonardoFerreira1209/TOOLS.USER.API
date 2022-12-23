@@ -2,10 +2,12 @@
 using APPLICATION.DOMAIN.ENUM;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace APPLICATION.DOMAIN.UTILS.AUTH.CUSTOMAUTHORIZE.FILTER;
 
+[ExcludeFromCodeCoverage]
 public class CustomAuthorizeFilter : IAuthorizationFilter
 {
     private readonly List<Claim> _claims;
