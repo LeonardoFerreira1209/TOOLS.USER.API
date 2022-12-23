@@ -1,7 +1,7 @@
-﻿using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
+﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.SERVICEBUS.MESSAGE;
+using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
-using RedeAceitacao.Archetype.Application.Domain.Dtos.Message;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 

@@ -24,7 +24,6 @@ using Serilog;
 using System.Data;
 using System.Security.Claims;
 using System.Web;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using StatusCodes = APPLICATION.DOMAIN.ENUM.StatusCodes;
 
 namespace APPLICATION.APPLICATION.SERVICES.USER
