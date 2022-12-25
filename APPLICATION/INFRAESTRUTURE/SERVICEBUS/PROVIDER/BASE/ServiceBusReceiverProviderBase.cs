@@ -2,223 +2,220 @@
 using Azure.Messaging.ServiceBus.Administration;
 using Newtonsoft.Json;
 using RedeAceitacao.Archetype.Application.Domain.Dtos.Entity;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace RedeAceitacao.Archetype.Application.Infra.ServiceBus.Provider
+namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.BASE;
+
+public abstract class ServiceBusReceiverProviderBase
 {
-    [ExcludeFromCodeCoverage]
-    public abstract class ServiceBusReceiverProviderBase
+    private readonly ServiceBusReceiver _serviceBusReceiver;
+
+    private readonly ServiceBusReceiveMode _receiveMode;
+
+    private readonly ServiceBusClient _serviceBusClient;
+
+    private readonly ServiceBusAdministrationClient _serviceBusAdministrationClient;
+
+    private readonly string _topicPath;
+
+    private readonly string _subscriber;
+
+    private readonly TimeSpan _LOCK_AWAIT_ = TimeSpan.FromMinutes(5);
+
+    public ServiceBusReceiverProviderBase(string servicebusconexao, string topicoName, string subscriptionName, ServiceBusReceiveMode receiveMode = ServiceBusReceiveMode.PeekLock)
     {
-        private readonly ServiceBusReceiver _topic;
+        _serviceBusClient = new ServiceBusClient(servicebusconexao);
 
-        private readonly ServiceBusReceiveMode _receiveMode;
+        _serviceBusAdministrationClient = new ServiceBusAdministrationClient(servicebusconexao);
 
-        private readonly ServiceBusClient _serviceBusClient;
+        _receiveMode = receiveMode;
 
-        private readonly ServiceBusAdministrationClient _serviceBusAdministrationClient;
+        _topicPath = topicoName;
 
-        private readonly string _topicPath;
+        _subscriber = subscriptionName;
 
-        private readonly string _subscriber;
+        _serviceBusReceiver = _serviceBusClient.CreateReceiver(topicoName, subscriptionName, new ServiceBusReceiverOptions { ReceiveMode = receiveMode });
+        
+    }
 
-        private readonly TimeSpan _LOCK_AWAIT_ = TimeSpan.FromMinutes(5);
+    /// <summary>
+    /// Obtem uma lista de mensagens do topico no Servicebus:
+    ///   Este método não garante o retorno de mensagens `quantity` exatas, mesmo
+    ///   se houver mensagens `quantity` disponíveis na fila ou tópico.
+    /// </summary>
+    /// <param name="quantity">Quantidade de mensagens que vai retornar</param>
+    /// <returns>Retorna uma lista de (T) convertida</returns>
+    public virtual async Task<List<T>> GetMessagesTypedAsync<T>(int quantity)
+    {
+        var messages = new List<T>();
 
-        public ServiceBusReceiverProviderBase(string servicebusconexao, string topicoName, string subscriber, ServiceBusReceiveMode receiveMode = ServiceBusReceiveMode.PeekLock)
+        var listMessage = new List<ServiceBusReceivedMessage>();
+
+        var count = Convert.ToInt32(await ActiveMessageCount());
+
+        var quantidade = this.CountQuantity(count, quantity);
+
+        var counter = this.SetCounter(quantidade, listMessage.Count);
+
+        if (count.Equals(0)) return messages;
+
+        do
         {
-            _serviceBusClient = new ServiceBusClient(servicebusconexao);
+            listMessage.AddRange(await _serviceBusReceiver.ReceiveMessagesAsync(counter, _LOCK_AWAIT_) as List<ServiceBusReceivedMessage>);
 
-            _serviceBusAdministrationClient = new ServiceBusAdministrationClient(servicebusconexao);
+            counter = this.SetCounter(quantidade, listMessage.Count);
 
-            _receiveMode = receiveMode;
+        } while (counter != 0);
 
-            _topicPath = topicoName;
+        foreach (var item in listMessage)
+        {
+            var mappedMessage = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(item.Body));
 
-            _subscriber = subscriber;
-
-            _topic = _serviceBusClient.CreateReceiver(topicoName, subscriber, new ServiceBusReceiverOptions { ReceiveMode = receiveMode });
-            
+            messages.Add(mappedMessage);
         }
 
-        /// <summary>
-        /// Obtem uma lista de mensagens do topico no Servicebus:
-        ///   Este método não garante o retorno de mensagens `quantity` exatas, mesmo
-        ///   se houver mensagens `quantity` disponíveis na fila ou tópico.
-        /// </summary>
-        /// <param name="quantity">Quantidade de mensagens que vai retornar</param>
-        /// <returns>Retorna uma lista de (T) convertida</returns>
-        public virtual async Task<List<T>> GetMessagesTypedAsync<T>(int quantity)
+        return messages;
+    }
+
+    /// <summary>
+    /// Obtem a ultima mensagem do serviceBus
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns>retorna uma tupla com o valor convertido e o valor original</returns>
+    public virtual async Task<MessageEntity<T>> GetMessageAsync<T>()
+    {
+        var receiveMessage = await _serviceBusReceiver.ReceiveMessageAsync(_LOCK_AWAIT_);
+
+        var receiveMessageConvert = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(receiveMessage.Body));
+
+        return new MessageEntity<T> { MappedMessage = receiveMessageConvert, OriginalMessage = receiveMessage };
+    }
+
+    /// <summary>
+    /// Obtem uma lista de mensagens do topico no Servicebus:
+    ///   Este método não garante o retorno de mensagens `quantity` exatas, mesmo
+    ///   se houver mensagens `quantity` disponíveis na fila ou tópico.
+    /// </summary>
+    /// <param name="quantity">Quantidade de mensagens que vai retornar</param>
+    /// <returns>Retorna uma lista de (T) convertida</returns>
+    public virtual async Task<List<MessageEntity<T>>> GetMessagesAsync<T>(int quantity)
+    {
+        var messages = new List<MessageEntity<T>>();
+
+        var listMessage = new List<ServiceBusReceivedMessage>();
+
+        var count = Convert.ToInt32(await ActiveMessageCount());
+
+        var quantidade = this.CountQuantity(count, quantity);
+
+        var counter = this.SetCounter(quantidade, listMessage.Count);
+
+        if (count.Equals(0)) return messages;
+
+        do
         {
-            var messages = new List<T>();
+            listMessage.AddRange(await _serviceBusReceiver.ReceiveMessagesAsync(counter, _LOCK_AWAIT_) as List<ServiceBusReceivedMessage>);
 
-            var listMessage = new List<ServiceBusReceivedMessage>();
+            counter = this.SetCounter(quantidade, listMessage.Count);
 
-            var count = Convert.ToInt32(await ActiveMessageCount());
+        } while (counter != 0);
 
-            var quantidade = this.CountQuantity(count, quantity);
+        foreach (var item in listMessage)
+        {
+            var mappedMessage = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(item.Body));
 
-            var counter = this.SetCounter(quantidade, listMessage.Count);
-
-            if (count.Equals(0)) return messages;
-
-            do
-            {
-                listMessage.AddRange(await _topic.ReceiveMessagesAsync(counter, _LOCK_AWAIT_) as List<ServiceBusReceivedMessage>);
-
-                counter = this.SetCounter(quantidade, listMessage.Count);
-
-            } while (counter != 0);
-
-            foreach (var item in listMessage)
-            {
-                var mappedMessage = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(item.Body));
-
-                messages.Add(mappedMessage);
-            }
-
-            return messages;
+            messages.Add(new MessageEntity<T>(mappedMessage, item));
         }
 
-        /// <summary>
-        /// Obtem a ultima mensagem do serviceBus
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>retorna uma tupla com o valor convertido e o valor original</returns>
-        public virtual async Task<MessageEntity<T>> GetMessageAsync<T>()
+        return messages;
+    }
+
+    /// <summary>
+    /// Obtem uma lista de mensagens do topico no Servicebus:
+    ///   Este método não garante o retorno de mensagens `quantity` exatas, mesmo
+    ///   se houver mensagens `quantity` disponíveis na fila ou tópico.
+    /// </summary>
+    /// <param name="quantity">Quantidade de mensagens que vai retornar</param>
+    /// <returns>Retorna uma lista de (T) convertida</returns>
+    public virtual async Task<List<ServiceBusReceivedMessage>> GetMessagesAsync(int quantity)
+    {
+        var listMessage = new List<ServiceBusReceivedMessage>();
+
+        var count = Convert.ToInt32(await ActiveMessageCount());
+
+        var quantidade = this.CountQuantity(count, quantity);
+
+        var counter = this.SetCounter(quantidade, listMessage.Count);
+
+        if (count.Equals(0))  return listMessage;
+
+        do
         {
-            var receiveMessage = await _topic.ReceiveMessageAsync(_LOCK_AWAIT_);
+            listMessage.AddRange(await _serviceBusReceiver.ReceiveMessagesAsync(counter, _LOCK_AWAIT_) as List<ServiceBusReceivedMessage>);
 
-            var receiveMessageConvert = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(receiveMessage.Body));
+            counter = this.SetCounter(quantidade, listMessage.Count);
 
-            return new MessageEntity<T>(receiveMessageConvert, receiveMessage);
-        }
+        } while (counter != 0);
 
-        /// <summary>
-        /// Obtem uma lista de mensagens do topico no Servicebus:
-        ///   Este método não garante o retorno de mensagens `quantity` exatas, mesmo
-        ///   se houver mensagens `quantity` disponíveis na fila ou tópico.
-        /// </summary>
-        /// <param name="quantity">Quantidade de mensagens que vai retornar</param>
-        /// <returns>Retorna uma lista de (T) convertida</returns>
-        public virtual async Task<List<MessageEntity<T>>> GetMessagesAsync<T>(int quantity)
-        {
-            var messages = new List<MessageEntity<T>>();
+        return listMessage;
+    }
 
-            var listMessage = new List<ServiceBusReceivedMessage>();
+    /// <summary>
+    /// Completa e retira uma mensagem do serviceBus
+    /// </summary>
+    /// <param name="message">Mensagem que vai ser completada no serviceBus</param>
+    /// <returns>none</returns>
+    public virtual async Task CompleteMessageAsync(ServiceBusReceivedMessage message)
+    {
+        if (_receiveMode != ServiceBusReceiveMode.ReceiveAndDelete)
+            await _serviceBusReceiver.CompleteMessageAsync(message);
+        else
+            throw new Exception("ServiceBusReceiveMode configurado como ReceiveAndDelete, não é necessário completar a mensagem.");
+    }
 
-            var count = Convert.ToInt32(await ActiveMessageCount());
+    /// <summary>
+    /// Completa e retira uma lista de mensagens do serviceBus
+    /// </summary>
+    /// <param name="listMessage">Lista de Mensagens que vai ser completada no serviceBus</param>
+    /// <returns>none</returns>
+    public virtual async Task CompleteMessagesAsync(List<ServiceBusReceivedMessage> listMessage)
+    {
+        if (_receiveMode != ServiceBusReceiveMode.ReceiveAndDelete)
+            listMessage.ForEach(async message => await _serviceBusReceiver.CompleteMessageAsync(message));
+        else
+            throw new Exception("ServiceBusReceiveMode configurado como ReceiveAndDelete, não é necessário completar a mensagem.");
+    }
 
-            var quantidade = this.CountQuantity(count, quantity);
+    /// <summary>
+    /// busca a quantidade de mensagens no topico
+    /// </summary>
+    /// <returns>Quantidade de mensagens no topico</returns>
+    private async Task<long> ActiveMessageCount()
+    {
+        var runtimeProps = await _serviceBusAdministrationClient.GetSubscriptionRuntimePropertiesAsync(_topicPath, _subscriber);
 
-            var counter = this.SetCounter(quantidade, listMessage.Count);
+        return runtimeProps.Value.ActiveMessageCount;
+    }
 
-            if (count.Equals(0)) return messages;
+    /// <summary>
+    /// Retorna qual parametro passado é maior
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="quantity"></param>
+    /// <returns></returns>
+    private int CountQuantity(int count, int quantity)
+    {
+        return (count > quantity) ? quantity : count;
+    }
 
-            do
-            {
-                listMessage.AddRange(await _topic.ReceiveMessagesAsync(counter, _LOCK_AWAIT_) as List<ServiceBusReceivedMessage>);
-
-                counter = this.SetCounter(quantidade, listMessage.Count);
-
-            } while (counter != 0);
-
-            foreach (var item in listMessage)
-            {
-                var mappedMessage = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(item.Body));
-
-                messages.Add(new MessageEntity<T>(mappedMessage, item));
-            }
-
-            return messages;
-        }
-
-        /// <summary>
-        /// Obtem uma lista de mensagens do topico no Servicebus:
-        ///   Este método não garante o retorno de mensagens `quantity` exatas, mesmo
-        ///   se houver mensagens `quantity` disponíveis na fila ou tópico.
-        /// </summary>
-        /// <param name="quantity">Quantidade de mensagens que vai retornar</param>
-        /// <returns>Retorna uma lista de (T) convertida</returns>
-        public virtual async Task<List<ServiceBusReceivedMessage>> GetMessagesAsync(int quantity)
-        {
-            var listMessage = new List<ServiceBusReceivedMessage>();
-
-            var count = Convert.ToInt32(await ActiveMessageCount());
-
-            var quantidade = this.CountQuantity(count, quantity);
-
-            var counter = this.SetCounter(quantidade, listMessage.Count);
-
-            if (count.Equals(0))  return listMessage;
-
-            do
-            {
-                listMessage.AddRange(await _topic.ReceiveMessagesAsync(counter, _LOCK_AWAIT_) as List<ServiceBusReceivedMessage>);
-
-                counter = this.SetCounter(quantidade, listMessage.Count);
-
-            } while (counter != 0);
-
-            return listMessage;
-        }
-
-        /// <summary>
-        /// Completa e retira uma mensagem do serviceBus
-        /// </summary>
-        /// <param name="message">Mensagem que vai ser completada no serviceBus</param>
-        /// <returns>none</returns>
-        public virtual async Task CompleteMessageAsync(ServiceBusReceivedMessage message)
-        {
-            if (_receiveMode != ServiceBusReceiveMode.ReceiveAndDelete)
-                await _topic.CompleteMessageAsync(message);
-            else
-                throw new Exception("ServiceBusReceiveMode configurado como ReceiveAndDelete, não é necessário completar a mensagem.");
-        }
-
-        /// <summary>
-        /// Completa e retira uma lista de mensagens do serviceBus
-        /// </summary>
-        /// <param name="listMessage">Lista de Mensagens que vai ser completada no serviceBus</param>
-        /// <returns>none</returns>
-        public virtual async Task CompleteMessagesAsync(List<ServiceBusReceivedMessage> listMessage)
-        {
-            if (_receiveMode != ServiceBusReceiveMode.ReceiveAndDelete)
-                listMessage.ForEach(async message => await _topic.CompleteMessageAsync(message));
-            else
-                throw new Exception("ServiceBusReceiveMode configurado como ReceiveAndDelete, não é necessário completar a mensagem.");
-        }
-
-        /// <summary>
-        /// busca a quantidade de mensagens no topico
-        /// </summary>
-        /// <returns>Quantidade de mensagens no topico</returns>
-        private async Task<long> ActiveMessageCount()
-        {
-            var runtimeProps = await _serviceBusAdministrationClient.GetSubscriptionRuntimePropertiesAsync(_topicPath, _subscriber);
-
-            return runtimeProps.Value.ActiveMessageCount;
-        }
-
-        /// <summary>
-        /// Retorna qual parametro passado é maior
-        /// </summary>
-        /// <param name="count"></param>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
-        private int CountQuantity(int count, int quantity)
-        {
-            return (count > quantity) ? quantity : count;
-        }
-
-        /// <summary>
-        /// Retorna o valor subtraido 
-        /// </summary>
-        /// <param name="quantity"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        int SetCounter(int quantity, int count)
-        {
-            return (quantity - count);
-        }
+    /// <summary>
+    /// Retorna o valor subtraido 
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    int SetCounter(int quantity, int count)
+    {
+        return (quantity - count);
     }
 }

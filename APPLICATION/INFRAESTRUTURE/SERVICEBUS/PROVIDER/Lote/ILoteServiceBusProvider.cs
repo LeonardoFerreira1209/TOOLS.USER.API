@@ -1,12 +1,6 @@
-﻿using RedeAceitacao.Archetype.Application.Infra.ServiceBus.Provider.Base;
+﻿using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.BASE;
 
-namespace RedeAceitacao.Archetype.Application.Infra.ServiceBus.Provider.Lote
-{
-    public interface ILoteServiceBusSenderProvider : IServiceBusSenderProvider
-    {
-    }
+namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.LOTE;
 
-    public interface ILoteServiceBusReceiverProvider : IServiceBusReceiverProvider
-    {
-    }
-}
+public interface ILoteServiceBusSenderProvider : IServiceBusSenderProvider { }
+public interface ILoteServiceBusReceiverProvider : IServiceBusReceiverProvider { }
