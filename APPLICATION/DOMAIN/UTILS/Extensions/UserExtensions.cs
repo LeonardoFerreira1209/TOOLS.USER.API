@@ -58,7 +58,7 @@ public static class UserExtensions
             Age = user.Age,
             BirthDay = user.BirthDay,
             CompanyId = user.CompanyId,
-            Company = user.Company.ToResponse(),
+            Company = user.Company?.ToResponse(),
             CPF = user.CPF,
             RG = user.RG,
             Created = user.Created,

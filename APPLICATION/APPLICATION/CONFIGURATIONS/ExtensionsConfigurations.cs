@@ -47,12 +47,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Refit;
 using Serilog;
 using Serilog.Events;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net.Mime;
 using System.Security.Claims;
@@ -60,6 +62,7 @@ using System.Text;
 
 namespace APPLICATION.APPLICATION.CONFIGURATIONS;
 
+[ExcludeFromCodeCoverage]
 public static class ExtensionsConfigurations
 {
     public static readonly string HealthCheckEndpoint = "/application/healthcheck";
@@ -125,7 +128,7 @@ public static class ExtensionsConfigurations
         services
             .AddDbContext<Contexto>(options =>
             {
-                options.UseLazyLoadingProxies().UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados"));
+                options.UseLazyLoadingProxies().UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados")).LogTo(Console.WriteLine, LogLevel.None);
 
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
@@ -497,14 +500,7 @@ public static class ExtensionsConfigurations
     // Configure Hangfire
     public static IServiceCollection ConfigureHangFire(this IServiceCollection services)
     {
-        var inMemory = GlobalConfiguration.Configuration.UseMemoryStorage();
-
-        services.AddHangfire(configuration => configuration
-                       .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                       .UseSimpleAssemblyNameTypeSerializer()
-                       .UseRecommendedSerializerSettings()
-                       .UseStorage(inMemory.Entry)
-                       );
+        services.AddHangfire(configuration => configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170).UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseStorage(GlobalConfiguration.Configuration.UseMemoryStorage().Entry));
 
         // Add the processing server as IHostedService
         services.AddHangfireServer();

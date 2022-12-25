@@ -11,28 +11,28 @@ public interface IUserService
     /// </summary>
     /// <param name="loginRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Authentication(LoginRequest loginRequest);
+    Task<ApiResponse<object>> AuthenticationAsync(LoginRequest loginRequest);
 
     /// <summary>
     /// Recuperar usuário através do Id.
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Get(Guid userId);
+    Task<ApiResponse<object>> GetAsync(Guid userId);
 
     /// <summary>
     /// Método responsável por criar um novo usuário.
     /// </summary>
     /// <param name="userCreateRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Create(UserCreateRequest userCreateRequest);
+    Task<ApiResponse<object>> CreateAsync(UserCreateRequest userCreateRequest);
 
     /// <summary>
     /// Método responsável por atualizar um usuário.
     /// </summary>
     /// <param name="userRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Update(UserUpdateRequest userRequest);
+    Task<ApiResponse<object>> UpdateAsync(UserUpdateRequest userUpdateRequest);
 
     /// <summary>
     /// Método responsável por atualizar a imagem de um usuario.
@@ -40,14 +40,14 @@ public interface IUserService
     /// <param name="id"></param>
     /// <param name="formFile"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> UpdateUserIamge(Guid id, IFormFile formFile);
+    Task<ApiResponse<object>> UpdateUserIamgeAsync(Guid id, IFormFile formFile);
 
     /// <summary>
     /// Método responsavel por ativar um usuário.
     /// </summary>
     /// <param name="activateUserRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> Activate(ActivateUserRequest activateUserRequest);
+    Task<ApiResponse<object>> ActivateAsync(ActivateUserRequest activateUserRequest);
 
     /// <summary>
     /// Método responsavel por adicionar uma claim ao usuário.
@@ -55,7 +55,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="claimRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> AddClaim(string username, ClaimRequest claimRequest);
+    Task<ApiResponse<object>> AddClaimAsync(string username, ClaimRequest claimRequest);
 
     /// <summary>
     /// Método responsavel por remover uma claim do usuário.
@@ -63,7 +63,7 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="claimRequest"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> RemoveClaim(string username, ClaimRequest claimRequest);
+    Task<ApiResponse<object>> RemoveClaimAsync(string username, ClaimRequest claimRequest);
 
     /// <summary>
     /// Método responsavel por adicionar uma role ao usuário.
@@ -71,14 +71,14 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="roleName"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> AddRole(string username, string roleName);
+    Task<ApiResponse<object>> AddRoleAsync(string username, string roleName);
 
     /// <summary>
     /// Método responsavel por recuperar roles do usuário.
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> GetUserRoles(Guid userId);
+    Task<ApiResponse<object>> GetUserRolesAsync(Guid userId);
 
     /// <summary>
     /// Método responsavel por remover uma role do usuário.
@@ -86,5 +86,5 @@ public interface IUserService
     /// <param name="username"></param>
     /// <param name="roleName"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> RemoveRole(string username, string roleName);
+    Task<ApiResponse<object>> RemoveRoleAsync(string username, string roleName);
 }

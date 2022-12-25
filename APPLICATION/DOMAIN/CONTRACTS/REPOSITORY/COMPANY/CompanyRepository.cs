@@ -7,9 +7,11 @@ using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.COMPANY;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.COMPANY;
 
+[ExcludeFromCodeCoverage]
 public class CompanyRepository : BaseRepository, ICompanyRepository
 {
     private readonly Contexto _contexto;
@@ -23,7 +25,6 @@ public class CompanyRepository : BaseRepository, ICompanyRepository
         _appSettings = appSettings;
     }
 
-    #region EF Core
     /// <summary>
     /// Create a Company
     /// </summary>
@@ -52,5 +53,4 @@ public class CompanyRepository : BaseRepository, ICompanyRepository
             return (false, null);
         }
     }
-    #endregion
 }

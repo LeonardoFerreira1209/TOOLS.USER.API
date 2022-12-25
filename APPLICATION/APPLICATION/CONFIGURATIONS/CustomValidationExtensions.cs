@@ -1,12 +1,14 @@
 ﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENUM;
 using FluentValidation.Results;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.APPLICATION.CONFIGURATIONS;
 
 /// <summary>
 /// Extensão para o Validation Customizados.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class CustomValidationExtensions
 {
     /// <summary>

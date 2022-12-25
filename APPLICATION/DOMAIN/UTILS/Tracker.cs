@@ -1,11 +1,13 @@
 ﻿using Serilog;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.DOMAIN.UTILS;
 
 /// <summary>
 /// Tracker para chamadas de funções.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class Tracker
 {
     public static async Task Time(Func<Task> method, string message)

@@ -81,20 +81,7 @@ try
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
         .UseEndpoints()
-        .UseHangfireDashboard()
-        .Use(async (context, next) =>
-        {
-            HttpRequest req = context.Request;
-            // User's API Key
-            context.Items["apiKey"] = "rdme_xn8s9h5333c43d452091f882f520bf28551a150e43fd820a2600b6e67c301538038a1a";
-            // Username to show in the dashboard
-            context.Items["label"] = "Leonardo Almeida";
-            // User's email address
-            context.Items["email"] = "Leo.Ferreira30@outlook.com";
-
-            await next();
-
-        }).UseMiddleware<ReadMe.Metrics>();
+        .UseHangfireDashboard();
 
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);
