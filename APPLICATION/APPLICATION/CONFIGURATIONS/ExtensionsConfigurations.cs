@@ -7,6 +7,7 @@ using APPLICATION.APPLICATION.SERVICES.USER;
 using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
+using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.COMPANY;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.COMPANY;
@@ -425,7 +426,7 @@ public static class ExtensionsConfigurations
             .AddTransient<IFileService, FileService>()
             .AddTransient<ICompanyService, CompanyService>()
             // Facades
-            .AddSingleton<EmailFacade>()
+            .AddSingleton<IEmailFacade, EmailFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<ICompanyRepository, CompanyRepository>()

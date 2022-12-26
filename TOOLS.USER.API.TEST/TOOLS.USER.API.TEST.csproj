@@ -27,8 +27,4 @@
     <ProjectReference Include="..\APPLICATION\APPLICATION.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MOCKS\" />
-  </ItemGroup>
-
 </Project>

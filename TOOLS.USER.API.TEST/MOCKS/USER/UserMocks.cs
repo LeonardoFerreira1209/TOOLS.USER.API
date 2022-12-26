@@ -56,4 +56,6 @@ public static class UserMocks
         RG = "446997882",
         UserName = Faker.Internet.UserName(),
     };
+
+    public static ActivateUserRequest ActivateUserRequestMock() => new("code-activate", Guid.NewGuid());
 }

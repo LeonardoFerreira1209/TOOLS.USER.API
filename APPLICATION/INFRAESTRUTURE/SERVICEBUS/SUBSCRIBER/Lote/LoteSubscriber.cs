@@ -3,7 +3,6 @@ using APPLICATION.INFRAESTRUTURE.SERVICEBUS.SUBSCRIBER.BASE;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
 using Serilog.Context;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.SUBSCRIBER.LOTE;

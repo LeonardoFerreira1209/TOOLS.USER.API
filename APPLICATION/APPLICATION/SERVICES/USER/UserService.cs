@@ -364,7 +364,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     }
                     else
                     {
-                        Log.Information($"[LOG INFORMATION] - Erro ao armazenar imagem no blob do azur..\n");
+                        Log.Information($"[LOG INFORMATION] - Erro ao armazenar imagem no blob do azure.\n");
 
                         // Response success.
                         return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Erro ao armazenar imagem no blob do azure.") });
@@ -375,7 +375,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Usuário não encontrado.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
                 }
             }
             catch (Exception exception)
