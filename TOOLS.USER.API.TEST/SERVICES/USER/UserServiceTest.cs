@@ -8,6 +8,7 @@ using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.ENUM;
+using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -46,6 +47,8 @@ public class UserTest
         _mockEmailExternal = new Mock<IEmailExternal>();
 
         _mockEmailFacade = new Mock<IEmailFacade>();
+
+
 
         _userService = new UserService(_mockUserRepository.Object, _mockSettings.Object, _mockEmailFacade.Object, _mockTokenService.Object, _mockFileService.Object);
     }
@@ -328,11 +331,201 @@ public class UserTest
         // Configure o mock do repositório de usuários para retornar sucesso na alteração do celular
         _mockUserRepository.Setup(repo => repo.SetPhoneNumberAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
+        // Set GlobalUser.
+        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        {
+            Id = Guid.NewGuid()
+        };
+
+        // Execute o método de atualização
+        var result = await _userService.UpdateAsync(UserMocks.UserUpdateRequestMock());
+
+        // Verifique se o resultado é um sucesso
+        Assert.True(result.Sucesso);
+        Assert.Equal(StatusCodes.SuccessOK, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task TestUpdateAsyncErrorNotFound()
+    {
+        _mockSettings.Setup(set => set.Value).Returns(new AppSettings
+        {
+            UrlBase = new UrlBase
+            {
+                TOOLS_MAIL_API = Faker.Internet.Url()
+            }
+        });
+
+        // Configure o mock do repositório de usuários para retornar sucesso na atualização
+        _mockUserRepository.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na recuperação
+        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<UserEntity>());
+
+        // Execute o método de atualização
+        var result = await _userService.UpdateAsync(UserMocks.UserUpdateRequestMock());
+
+        // Verifique se o resultado é um sucesso
+        Assert.False(result.Sucesso);
+        Assert.Equal(StatusCodes.ErrorNotFound, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task TestUpdateAsyncUsernameErrorBadRequest()
+    {
+        _mockSettings.Setup(set => set.Value).Returns(new AppSettings
+        {
+            UrlBase = new UrlBase
+            {
+                TOOLS_MAIL_API = Faker.Internet.Url()
+            }
+        });
+
+        // Configure o mock do repositório de usuários para retornar sucesso na atualização
+        _mockUserRepository.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na recuperação
+        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do username
+        _mockUserRepository.Setup(repo => repo.SetUserNameAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+
+        // Set GlobalUser.
+        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        {
+            Id = Guid.NewGuid()
+        };
+
         // Execute o método de autenticação
         var result = await _userService.UpdateAsync(UserMocks.UserUpdateRequestMock());
 
         // Verifique se o resultado é um sucesso
         Assert.False(result.Sucesso);
-        Assert.Equal(StatusCodes.ServerErrorInternalServerError, result.StatusCode);
+        Assert.Equal(StatusCodes.ErrorBadRequest, result.StatusCode);
+    }
+
+
+    [Fact]
+    public async Task TestUpdateAsyncChangePasswordErrorBadRequest()
+    {
+        _mockSettings.Setup(set => set.Value).Returns(new AppSettings
+        {
+            UrlBase = new UrlBase
+            {
+                TOOLS_MAIL_API = Faker.Internet.Url()
+            }
+        });
+
+        // Configure o mock do repositório de usuários para retornar sucesso na atualização
+        _mockUserRepository.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na recuperação
+        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do username
+        _mockUserRepository.Setup(repo => repo.SetUserNameAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração da senha
+        _mockUserRepository.Setup(repo => repo.ChangePasswordAsync(It.IsAny<UserEntity>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+
+
+        // Set GlobalUser.
+        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        {
+            Id = Guid.NewGuid()
+        };
+
+        // Execute o método de autenticação
+        var result = await _userService.UpdateAsync(UserMocks.UserUpdateRequestMock());
+
+        // Verifique se o resultado é um sucesso
+        Assert.False(result.Sucesso);
+        Assert.Equal(StatusCodes.ErrorBadRequest, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task TestUpdateAsyncSetEmailErrorBadRequest()
+    {
+        _mockSettings.Setup(set => set.Value).Returns(new AppSettings
+        {
+            UrlBase = new UrlBase
+            {
+                TOOLS_MAIL_API = Faker.Internet.Url()
+            }
+        });
+
+        // Configure o mock do repositório de usuários para retornar sucesso na atualização
+        _mockUserRepository.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na recuperação
+        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do username
+        _mockUserRepository.Setup(repo => repo.SetUserNameAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração da senha
+        _mockUserRepository.Setup(repo => repo.ChangePasswordAsync(It.IsAny<UserEntity>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do e-mail
+        _mockUserRepository.Setup(repo => repo.SetEmailAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+
+        // Set GlobalUser.
+        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        {
+            Id = Guid.NewGuid()
+        };
+
+        // Execute o método de autenticação
+        var result = await _userService.UpdateAsync(UserMocks.UserUpdateRequestMock());
+
+        // Verifique se o resultado é um sucesso
+        Assert.False(result.Sucesso);
+        Assert.Equal(StatusCodes.ErrorBadRequest, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task TestUpdateAsyncSetPhoneNumberErrorBadRequest()
+    {
+        _mockSettings.Setup(set => set.Value).Returns(new AppSettings
+        {
+            UrlBase = new UrlBase
+            {
+                TOOLS_MAIL_API = Faker.Internet.Url()
+            }
+        });
+
+        // Configure o mock do repositório de usuários para retornar sucesso na atualização
+        _mockUserRepository.Setup(repo => repo.UpdateUserAsync(It.IsAny<UserEntity>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na recuperação
+        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do username
+        _mockUserRepository.Setup(repo => repo.SetUserNameAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração da senha
+        _mockUserRepository.Setup(repo => repo.ChangePasswordAsync(It.IsAny<UserEntity>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do e-mail
+        _mockUserRepository.Setup(repo => repo.SetEmailAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+
+        // Configure o mock do repositório de usuários para retornar sucesso na alteração do celular
+        _mockUserRepository.Setup(repo => repo.SetPhoneNumberAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+
+        // Configure o mock do repositório de usuários para retornar um token de confirmação de email gerado de forma aleatória ao chamar o método de geração de token
+        _mockUserRepository.Setup(repo => repo.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>())).ReturnsAsync(Faker.Currency.ThreeLetterCode);
+
+        // Set GlobalUser.
+        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        {
+            Id = Guid.NewGuid()
+        };
+
+        // Execute o método de autenticação
+        var result = await _userService.UpdateAsync(UserMocks.UserUpdateRequestMock());
+
+        // Verifique se o resultado é um sucesso
+        Assert.False(result.Sucesso);
+        Assert.Equal(StatusCodes.ErrorBadRequest, result.StatusCode);
     }
 }

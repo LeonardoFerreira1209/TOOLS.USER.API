@@ -14,7 +14,6 @@ using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
-using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -251,7 +250,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao atualizar nome de usuário.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setUsernameResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setUsernameResponse.Errors.FirstOrDefault()?.Code.CustomExceptionMessage()) });
                         }
                     }
 
@@ -264,7 +263,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao trocar senha.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(changePasswordResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(changePasswordResponse.Errors.FirstOrDefault()?.Code.CustomExceptionMessage()) });
                         }
                     }
 
@@ -277,7 +276,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao atualizar e-mail de usuário.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setEmailResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setEmailResponse.Errors.FirstOrDefault()?.Code.CustomExceptionMessage()) });
                         }
 
                         // Confirm user for e-mail.
@@ -293,7 +292,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                         {
                             Log.Information($"[LOG INFORMATION] - Erro ao atualizar celular do usuário.\n");
 
-                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setPhoneNumberResponse.Errors?.FirstOrDefault().Code.CustomExceptionMessage()) });
+                            return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(setPhoneNumberResponse.Errors.FirstOrDefault()?.Code.CustomExceptionMessage()) });
                         }
                     }
 
@@ -313,7 +312,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                     Log.Information($"[LOG INFORMATION] - Usuário não encontrado.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, userUpdateRequest, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado..") });
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, userUpdateRequest, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado..") });
                 }
             }
             catch (Exception exception)
