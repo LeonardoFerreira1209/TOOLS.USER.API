@@ -51,8 +51,8 @@ try
         .ConfigureSubscribers()
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()
-        .ConfigureHangFire()
-        .ConfigureRegisterJobs()
+        .ConfigureFluentSchedulerJobs()
+        .ConfigureHangFire(configurations)
         .AddControllers(options =>
         {
             options.EnableEndpointRouting = false;

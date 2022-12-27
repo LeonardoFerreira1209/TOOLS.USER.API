@@ -2,10 +2,12 @@
 using Azure.Messaging.ServiceBus.Administration;
 using Newtonsoft.Json;
 using RedeAceitacao.Archetype.Application.Domain.Dtos.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.BASE;
 
+[ExcludeFromCodeCoverage]
 public abstract class ServiceBusReceiverProviderBase
 {
     private readonly ServiceBusReceiver _serviceBusReceiver;

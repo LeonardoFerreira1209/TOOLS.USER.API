@@ -1,9 +1,11 @@
 ﻿using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 using FluentScheduler;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
 
+[ExcludeFromCodeCoverage]
 public class ScheduledTasksManager
 {
     private readonly IServiceProvider _serviceProvider;
@@ -12,7 +14,7 @@ public class ScheduledTasksManager
 
     public void StartJobs()
     {
-        Registry jobsRegistry = (Registry)_serviceProvider.GetService<IRegistryJobs>();
+        Registry jobsRegistry = (Registry)_serviceProvider.GetService<IFluentSchedulerJobs>();
 
         JobManager.JobFactory = new FluentSchedulerJobFactory(_serviceProvider);
 

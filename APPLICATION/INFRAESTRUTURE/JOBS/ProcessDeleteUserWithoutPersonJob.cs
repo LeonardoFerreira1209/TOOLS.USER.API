@@ -3,9 +3,11 @@ using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Context;
+using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.INFRAESTRUTURE.JOBS;
 
+[ExcludeFromCodeCoverage]
 public class ProcessDeleteUserWithoutPersonJob : IProcessDeleteUserWithoutPersonJob
 {
     private readonly bool _execute = false;
@@ -22,7 +24,7 @@ public class ProcessDeleteUserWithoutPersonJob : IProcessDeleteUserWithoutPerson
         DeleteUserWithoutPerson().Wait();
     }
 
-    private async Task DeleteUserWithoutPerson()
+    public async Task DeleteUserWithoutPerson()
     {
         using (LogContext.PushProperty("Fluxo", "ProcessDeleteUserWithoutPerson"))
         using (LogContext.PushProperty("Job", "ProcessDeleteUserWithoutPersonJob"))

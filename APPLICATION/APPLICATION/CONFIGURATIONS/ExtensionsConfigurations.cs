@@ -487,9 +487,9 @@ public static class ExtensionsConfigurations
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection ConfigureRegisterJobs(this IServiceCollection services)
+    public static IServiceCollection ConfigureFluentSchedulerJobs(this IServiceCollection services)
     {
-        services.AddTransient<IRegistryJobs, RegistryJobs>();
+        services.AddTransient<IFluentSchedulerJobs, FluentSchedulerJobs>();
 
         services.AddTransient<IProcessDeleteUserWithoutPersonJob, ProcessDeleteUserWithoutPersonJob>();
 
@@ -498,15 +498,21 @@ public static class ExtensionsConfigurations
         return services;
     }
 
-    // Configure Hangfire
-    public static IServiceCollection ConfigureHangFire(this IServiceCollection services)
+    /// <summary>
+    /// Configure Hangfire
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureHangFire(this IServiceCollection services, IConfiguration configurations)
     {
-        services.AddHangfire(configuration => configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170).UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseStorage(GlobalConfiguration.Configuration.UseMemoryStorage().Entry));
+        services.AddHangfire(configuration => configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170).UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseSqlServerStorage(configurations.GetConnectionString("BaseDados")));
+
+        services.AddTransient<IHangfireJobs, HangfireJobs>();
 
         // Add the processing server as IHostedService
         services.AddHangfireServer();
 
-        services.GetProvider().GetService<IRegistryJobs>();
+        services.GetProvider().GetService<IHangfireJobs>().RegistrarJobs();
 
         return services;
     }

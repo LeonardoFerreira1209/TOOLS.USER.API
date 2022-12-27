@@ -2,4 +2,7 @@
 
 namespace APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
 
-public interface IProcessDeleteUserWithoutPersonJob : IJob { }
+public interface IProcessDeleteUserWithoutPersonJob : IJob
+{
+    Task DeleteUserWithoutPerson();
+}
