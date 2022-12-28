@@ -161,10 +161,10 @@ public class UserTest
     public async Task TestGetAsyncSuccessOK()
     {
         // Configure o mock do repositório de usuários para retornar sucesso na recuperação
-        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
+        _mockUserRepository.Setup(repo => repo.GetFullAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
 
         // Execute o método de recuperação
-        var result = await _userService.GetAsync(Guid.NewGuid());
+        var result = await _userService.GetFullAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um true
         Assert.True(result.Sucesso);
@@ -175,10 +175,10 @@ public class UserTest
     public async Task TestGetAsyncErrorNotFound()
     {
         // Configure o mock do repositório de usuários para retornar erro na recuperação
-        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<UserEntity>());
+        _mockUserRepository.Setup(repo => repo.GetFullAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<UserEntity>());
 
         // Execute o método de recuperação
-        var result = await _userService.GetAsync(Guid.NewGuid());
+        var result = await _userService.GetFullAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um falso
         Assert.False(result.Sucesso);
@@ -189,10 +189,10 @@ public class UserTest
     public async Task TestGetAsyncErrorInternalServer()
     {
         // Configure o mock do repositório de usuários para retornar erro na recuperaçãp
-        _mockUserRepository.Setup(repo => repo.GetAsync(It.IsAny<Guid>())).ThrowsAsync(new Exception());
+        _mockUserRepository.Setup(repo => repo.GetFullAsync(It.IsAny<Guid>())).ThrowsAsync(new Exception());
 
         // Execute o método de recuperação
-        var result = await _userService.GetAsync(Guid.NewGuid());
+        var result = await _userService.GetFullAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um falso
         Assert.False(result.Sucesso);

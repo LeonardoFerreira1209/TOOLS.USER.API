@@ -121,7 +121,7 @@ namespace TOOLS.USER.API.CONTROLLER.USER.USER
             using (LogContext.PushProperty("Payload", JsonConvert.SerializeObject(userId)))
             using (LogContext.PushProperty("Metodo", "Get"))
             {
-                return await Tracker.Time(() => _userService.GetAsync(userId), "Recuperar um usuário");
+                return await Tracker.Time(() => _userService.GetFullAsync(userId), "Recuperar um usuário");
             }
         }
 

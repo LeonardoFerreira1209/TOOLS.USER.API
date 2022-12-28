@@ -131,9 +131,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<ApiResponse<object>> GetAsync(Guid userId)
+        public async Task<ApiResponse<object>> GetFullAsync(Guid userId)
         {
-            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(GetAsync)}\n");
+            Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(UserService)} - METHOD {nameof(GetFullAsync)}\n");
 
             try
             {

@@ -47,7 +47,7 @@ try
 
     // Continuação do pipeline...
     builder.Services
-        //.ConfigureSerilog()
+        .ConfigureSerilog()
         .ConfigureSubscribers()
         .ConfigureHealthChecks(configurations)
         .ConfigureCors()
