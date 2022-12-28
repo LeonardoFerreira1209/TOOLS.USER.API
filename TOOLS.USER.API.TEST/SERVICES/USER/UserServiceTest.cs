@@ -164,7 +164,7 @@ public class UserTest
         _mockUserRepository.Setup(repo => repo.GetFullAsync(It.IsAny<Guid>())).ReturnsAsync(UserMocks.UserEntityMock);
 
         // Execute o método de recuperação
-        var result = await _userService.GetFullAsync(Guid.NewGuid());
+        var result = await _userService.GetAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um true
         Assert.True(result.Sucesso);
@@ -178,7 +178,7 @@ public class UserTest
         _mockUserRepository.Setup(repo => repo.GetFullAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<UserEntity>());
 
         // Execute o método de recuperação
-        var result = await _userService.GetFullAsync(Guid.NewGuid());
+        var result = await _userService.GetAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um falso
         Assert.False(result.Sucesso);
@@ -192,7 +192,7 @@ public class UserTest
         _mockUserRepository.Setup(repo => repo.GetFullAsync(It.IsAny<Guid>())).ThrowsAsync(new Exception());
 
         // Execute o método de recuperação
-        var result = await _userService.GetFullAsync(Guid.NewGuid());
+        var result = await _userService.GetAsync(Guid.NewGuid());
 
         // Verifique se o resultado é um falso
         Assert.False(result.Sucesso);

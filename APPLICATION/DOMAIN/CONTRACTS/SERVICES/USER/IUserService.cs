@@ -18,7 +18,7 @@ public interface IUserService
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    Task<ApiResponse<object>> GetFullAsync(Guid userId);
+    Task<ApiResponse<object>> GetAsync(Guid userId);
 
     /// <summary>
     /// Método responsável por criar um novo usuário.
