@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\css\**" />
     <Compile Remove="wwwroot\wwwroot\**" />
+    <Content Remove="wwwroot\css\**" />
     <Content Remove="wwwroot\wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\css\**" />
     <EmbeddedResource Remove="wwwroot\wwwroot\**" />
+    <None Remove="wwwroot\css\**" />
     <None Remove="wwwroot\wwwroot\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\css\" />
   </ItemGroup>
 
   <ItemGroup>
