@@ -16,7 +16,7 @@ public static class UserExtensions
             LastName = userRequest.LastName,
             Age = DateTime.Today.Year - DateTime.Parse(userRequest.BirthDay).Year,
             BirthDay = userRequest.BirthDay,
-            CompanyId = userRequest.CompanyId,
+            PlanId = userRequest.PlanId,
             CPF = userRequest.CPF,
             RG = userRequest.RG,
             Gender = userRequest.Gender,
@@ -40,7 +40,6 @@ public static class UserExtensions
         user.CPF = userUpdateRequest.CPF;
         user.RG = userUpdateRequest.RG;
         user.Updated = DateTime.Now;
-
         user.UpdatedUserId = GlobalData<object>.GlobalUser.Id;
 
         return user;
@@ -53,12 +52,12 @@ public static class UserExtensions
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            PlanId = user.PlanId.Value,
+            Plan = user.Plan?.ToResponse(),
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             Age = user.Age,
             BirthDay = user.BirthDay,
-            CompanyId = user.CompanyId,
-            Company = user.Company?.ToResponse(),
             CPF = user.CPF,
             RG = user.RG,
             Created = user.Created,

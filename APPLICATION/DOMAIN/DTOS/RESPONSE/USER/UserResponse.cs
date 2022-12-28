@@ -1,4 +1,4 @@
-﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.COMPANY;
+﻿using APPLICATION.DOMAIN.DTOS.RESPONSE.PLAN;
 using APPLICATION.ENUMS;
 
 namespace APPLICATION.DOMAIN.DTOS.RESPONSE.USER;
@@ -61,14 +61,14 @@ public class UserResponse
     public string CPF { get; set; }
 
     /// <summary>
-    /// Id da empresa.
+    /// Identificador do plano.
     /// </summary>
-    public Guid? CompanyId { get; set; }
+    public Guid PlanId { get; set; }
 
     /// <summary>
-    /// Empresa em que o usuário é vinculado.
+    /// Dados plano.
     /// </summary>
-    public virtual CompanyResponse Company { get; set; }
+    public PlanResponse Plan { get; set; }
 
     /// <summary>
     /// Data de criação

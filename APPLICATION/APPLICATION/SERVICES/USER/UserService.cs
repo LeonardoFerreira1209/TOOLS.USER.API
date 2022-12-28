@@ -140,7 +140,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Recuperando usuário com Id {userId}.\n");
 
                 // get user by id.
-                var userEntity = await _userRepository.GetAsync(userId);
+                var userEntity = await _userRepository.GetFullAsync(userId);
 
                 // is not null.
                 if (userEntity is not null)

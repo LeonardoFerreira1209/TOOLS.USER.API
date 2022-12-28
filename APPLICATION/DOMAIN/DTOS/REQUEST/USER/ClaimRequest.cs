@@ -8,7 +8,6 @@
         public ClaimRequest(string type, string value)
         {
             Type = type;
-
             Value = value;
         }
 

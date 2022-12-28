@@ -1,4 +1,4 @@
-﻿using APPLICATION.DOMAIN.ENTITY.COMPANY;
+﻿using APPLICATION.DOMAIN.ENTITY.PLAN;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Identity;
 
@@ -47,14 +47,14 @@ public class UserEntity : IdentityUser<Guid>
     public string CPF { get; set; }
 
     /// <summary>
-    /// Id da empresa.
+    /// Plano vinculado ao usuário.
     /// </summary>
-    public Guid? CompanyId { get; set; }
+    public Guid? PlanId { get; set; }
 
     /// <summary>
-    /// Empresa em que o usuário é vinculado.
+    /// Dados do Plano
     /// </summary>
-    public virtual CompanyEntity Company { get; set; }
+    public virtual PlanEntity Plan { get; set; }
 
     /// <summary>
     /// Data de criação

@@ -1,8 +1,6 @@
-﻿using APPLICATION.DOMAIN.ENTITY.COMPANY;
-using APPLICATION.DOMAIN.ENTITY.PLAN;
+﻿using APPLICATION.DOMAIN.ENTITY.PLAN;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
-using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.COMPANY;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO.CONFIGUREDATATYPES.PLAN;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +25,6 @@ public class Contexto : IdentityDbContext<UserEntity, RoleEntity, Guid>
     {
         // Configutrations
         builder
-            // Company
-            .ApplyConfiguration(new CompanyTypesConfiguration())
             // Plan
             .ApplyConfiguration(new PlanTypesConfiguration());
 
@@ -38,11 +34,5 @@ public class Contexto : IdentityDbContext<UserEntity, RoleEntity, Guid>
     /// <summary>
     /// Sets de tabelas no banco.
     /// </summary>
-    #region C
-    public DbSet<CompanyEntity> Companies { get; set; }
-    #endregion
-
-    #region P
     public DbSet<PlanEntity> Plans { get; set; }
-    #endregion
 }

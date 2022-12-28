@@ -10,9 +10,8 @@ public static class UserMocks
 
     public static UserCreateRequest UserCreateRequestMock() => new()
     {
-        Age = Faker.RandomNumber.Next(18, 99),
         BirthDay = "12/09/1999",
-        CompanyId = Guid.NewGuid(),
+        PlanId = Guid.NewGuid(),
         CPF = "47841467842",
         Email= Faker.Internet.Email(),
         FirstName = Faker.Name.First(),
@@ -45,7 +44,7 @@ public static class UserMocks
     {
         Age = Faker.RandomNumber.Next(18, 99),
         BirthDay = "12/09/1999",
-        CompanyId = Guid.NewGuid(),
+        PlanId = Guid.NewGuid(),
         CPF = "47841467842",
         Email = Faker.Internet.Email(),
         FirstName = Faker.Name.First(),

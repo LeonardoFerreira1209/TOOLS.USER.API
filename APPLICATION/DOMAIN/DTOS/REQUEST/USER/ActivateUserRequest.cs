@@ -11,7 +11,6 @@ public class ActivateUserRequest
     public ActivateUserRequest(string code, Guid userId)
     {
         Code = code;
-
         UserId = userId;
     }
 

@@ -44,11 +44,6 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         public string CPF { get; set; }
 
         /// <summary>
-        /// Id da empresa.
-        /// </summary>
-        public Guid CompanyId { get; set; }
-
-        /// <summary>
         /// Nome de usuário
         /// </summary>
         public string UserName { get; set; }
@@ -70,6 +65,11 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         /// </summary>
         [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Plano vinculado com o usuário.
+        /// </summary>
+        public Guid PlanId { get; set; }
 
     }
 }

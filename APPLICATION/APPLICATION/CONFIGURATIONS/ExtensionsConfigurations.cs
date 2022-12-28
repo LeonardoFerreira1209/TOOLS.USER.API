@@ -1,6 +1,5 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.APPLICATION.CONFIGURATIONS.SWAGGER;
-using APPLICATION.APPLICATION.SERVICES.COMPANY;
 using APPLICATION.APPLICATION.SERVICES.FILE;
 using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
@@ -8,13 +7,10 @@ using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
 using APPLICATION.DOMAIN.CONTRACTS.FACADE;
-using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.COMPANY;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
-using APPLICATION.DOMAIN.CONTRACTS.SERVICES.COMPANY;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
-using APPLICATION.DOMAIN.ENTITY.COMPANY;
 using APPLICATION.DOMAIN.ENTITY.PLAN;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
@@ -26,14 +22,12 @@ using APPLICATION.INFRAESTRUTURE.JOBS;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
 using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
-using APPLICATION.INFRAESTRUTURE.REPOSITORY.COMPANY;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.BASE;
 using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.LOTE;
 using APPLICATION.INFRAESTRUTURE.SERVICEBUS.SUBSCRIBER.LOTE;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Hangfire;
-using Hangfire.MemoryStorage;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -424,12 +418,10 @@ public static class ExtensionsConfigurations
             .AddTransient<IRoleService, RoleService>()
             .AddTransient<ITokenService, TokenService>()
             .AddTransient<IFileService, FileService>()
-            .AddTransient<ICompanyService, CompanyService>()
             // Facades
             .AddSingleton<IEmailFacade, EmailFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
-            .AddScoped<ICompanyRepository, CompanyRepository>()
             // Infra
             .AddSingleton<ILoteServiceBusSenderProvider, LoteServiceBusSenderProvider>()
             .AddSingleton<ILoteServiceBusReceiverProvider, LoteServiceBusReceiverProvider>();
@@ -628,9 +620,11 @@ public static class ExtensionsConfigurations
 
             var context = scope.ServiceProvider.GetRequiredService<Contexto>();
 
+            Log.Debug($"[LOG DEBUG] - Verificando se usuário inicial já existe na base.\n");
+
             if (await userManager.Users.AnyAsync() is false)
             {
-                Log.Debug($"[LOG DEBUG] - Criando Seeds.\n");
+                Log.Debug($"[LOG DEBUG] - Não existe, iniciando Seeds.\n");
 
                 // Set data in user.
                 var user = new UserEntity
@@ -710,23 +704,8 @@ public static class ExtensionsConfigurations
                 // Add plan.
                 await context.Plans.AddAsync(plan);
 
-                // Sets data in Company.
-                var company = new CompanyEntity
-                {
-                    Name = "HYPER.IO",
-                    Description = "tecnology & future solutions.",
-                    StartDate = DateTime.Now,
-                    Status = Status.Active,
-                    CreatedUserId = user.Id,
-                    Created = DateTime.Now,
-                    PlanId = plan.Id
-                };
-
-                // Add Company.
-                await context.Companies.AddAsync(company);
-
-                // Set company in user.
-                user.CompanyId = company.Id;
+                // Set plan in user.
+                user.PlanId = plan.Id;
 
                 // Update user.
                 await userManager.UpdateAsync(user);

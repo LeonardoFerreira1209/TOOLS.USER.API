@@ -186,11 +186,9 @@ public class UserRepository : BaseRepository, IUserRepository
             Log.Information($"[LOG INFORMATION] - Recuperando usuário completo Identity.\n");
 
             var userEntity = await _userManager.Users
-                     // Include company.
-                     .Include(user => user.Company)
-                     // Include Plan in company.
-                     .ThenInclude(company => company.Plan)
-                     // Include Role in plan.
+                     // Include plan.
+                     .Include(user => user.Plan)
+                     // Include Plan in user.
                      .ThenInclude(plan => plan.Role)
                      // Split includes and select the first user by Id.s
                      .AsSplitQuery().FirstOrDefaultAsync(user => user.Id.Equals(userId));

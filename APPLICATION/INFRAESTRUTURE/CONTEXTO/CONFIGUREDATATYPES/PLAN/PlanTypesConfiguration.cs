@@ -9,27 +9,27 @@ public class PlanTypesConfiguration : IEntityTypeConfiguration<PlanEntity>
     public void Configure(EntityTypeBuilder<PlanEntity> builder)
     {
         // Renomeando nome.
-        builder.ToTable("Plans").HasKey(company => company.Id);
+        builder.ToTable("Plans").HasKey(plan => plan.Id);
 
         // Guid
-        builder.Property(company => company.Id).IsRequired();
-        builder.Property(company => company.RoleId).IsRequired();
-        builder.Property(company => company.CreatedUserId).IsRequired();
-        builder.Property(company => company.UpdatedUserId);
+        builder.Property(plan => plan.Id).IsRequired();
+        builder.Property(plan => plan.RoleId).IsRequired();
+        builder.Property(plan => plan.CreatedUserId).IsRequired();
+        builder.Property(plan => plan.UpdatedUserId);
 
         // String
-        builder.Property(company => company.PlanName).IsRequired();
-        builder.Property(company => company.PlanDescription).HasMaxLength(100);
+        builder.Property(plan => plan.PlanName).IsRequired();
+        builder.Property(plan => plan.PlanDescription).HasMaxLength(100);
 
         // Enum
-        builder.Property(company => company.Status).IsRequired();
+        builder.Property(plan => plan.Status).IsRequired();
 
         // DateTime
-        builder.Property(company => company.Created);
-        builder.Property(company => company.Updated);
+        builder.Property(plan => plan.Created);
+        builder.Property(plan => plan.Updated);
 
         // Vinculo com roles.
         builder
-            .HasOne(company => company.Role).WithMany(role => role.Plans).HasForeignKey(plan => plan.RoleId);
+            .HasOne(plan => plan.Role).WithMany(role => role.Plans).HasForeignKey(plan => plan.RoleId);
     }
 }
