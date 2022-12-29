@@ -2,6 +2,7 @@
 using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
@@ -34,6 +35,8 @@ public class UserTest
 
     private readonly Mock<IEmailFacade> _mockEmailFacade;
 
+    private readonly Mock<IPlanService> _mockPlanService;
+
     private readonly UserService _userService;
 
     public UserTest()
@@ -50,9 +53,9 @@ public class UserTest
 
         _mockEmailFacade = new Mock<IEmailFacade>();
 
+        _mockPlanService = new Mock<IPlanService>();
 
-
-        _userService = new UserService(_mockUserRepository.Object, _mockSettings.Object, _mockEmailFacade.Object, _mockTokenService.Object, _mockFileService.Object);
+        _userService = new UserService(_mockUserRepository.Object, _mockSettings.Object, _mockEmailFacade.Object, _mockTokenService.Object, _mockFileService.Object, _mockPlanService.Object);
     }
 
     [Fact]

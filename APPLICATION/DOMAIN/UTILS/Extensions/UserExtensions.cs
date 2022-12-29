@@ -52,7 +52,7 @@ public static class UserExtensions
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            PlanId = user.PlanId.Value,
+            PlanId = user.PlanId,
             Plan = user.Plan?.ToResponse(),
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,

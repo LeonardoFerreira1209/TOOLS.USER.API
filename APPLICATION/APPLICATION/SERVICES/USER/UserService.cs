@@ -1,12 +1,14 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
+using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.REQUEST;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.FILE;
+using APPLICATION.DOMAIN.DTOS.RESPONSE.PLAN;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.USER.ROLE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.USER;
@@ -32,7 +34,6 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
     /// </summary>
     public class UserService : IUserService
     {
-
         private readonly IUserRepository _userRepository;
 
         private readonly IOptions<AppSettings> _appsettings;
@@ -43,7 +44,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
         private readonly IFileService _fileService;
 
-        public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, IEmailFacade emailFacade, ITokenService tokenService, IFileService fileService)
+        private readonly IPlanService _planService;
+
+        public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, IEmailFacade emailFacade, ITokenService tokenService, IFileService fileService, IPlanService planService)
         {
             _userRepository = userRepository;
 
@@ -54,6 +57,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             _tokenService = tokenService;
 
             _fileService = fileService;
+
+            _planService = planService;
         }
 
         /// <summary>
@@ -183,27 +188,28 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             {
                 Log.Information($"[LOG INFORMATION] - Validando request.\n");
 
-                // Validate person reques.
+                // Validate person reques
                 var validation = await new CreateUserValidator().ValidateAsync(userCreateRequest); if (validation.IsValid is false) return validation.CarregarErrosValidator();
 
                 Log.Information($"[LOG INFORMATION] - Request validado com sucesso.\n");
 
+                // Convert userCreatedRequest to identityUser
                 var user = userCreateRequest.ToIdentityUser();
 
                 // Build a user.
                 var response = await BuildUserAsync(user, userCreateRequest.Password);
 
-                // Response succes true.
+                // Response succes true
                 if (response.Succeeded)
                 {
-                    // Confirm user for e-mail.
+                    // Confirm user for e-mail
                     await ConfirmeUserForEmailAsync(user);
 
                     // Response success.
                     return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessCreated, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário criado com sucesso.") });
                 }
 
-                // Response error.
+                // Response error
                 return new ApiResponse<object>(response.Succeeded, StatusCodes.ErrorBadRequest, null, response.Errors.Select((e) => new DadosNotificacao(e.Code.CustomExceptionMessage())).ToList());
             }
             catch (Exception exception)
@@ -671,16 +677,25 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             Log.Information("[LOG INFORMATION] - Criando usuário\n");
 
-            // Create User.
+            // Create User
             var identityResult = await _userRepository.CreateUserAsync(user, password);
 
-            // Logged user.
+            // Logged user
             var responsibleUser = GlobalData<object>.GlobalUser?.Id;
 
-            // responsible user is not null use he, is null use user created Id. 
+            // Responsible user is not null use he, is null use user created Id.
             user.CreatedUserId = responsibleUser is not null ? responsibleUser.Value : user.Id;
 
-            // update user with created Id seted.
+            // Get plan by Id
+            var apiResponse = await _planService.GetAsync(user.PlanId.Value);
+
+            // Convert object to PlanResponse class
+            var planResponse = (PlanResponse)apiResponse.Dados;
+
+            // Add role plan in user.
+            await _userRepository.AddToUserRoleAsync(user, planResponse.Role.Name);
+
+            // Update user with created Id seted.
             await _userRepository.UpdateUserAsync(user);
 
             // Return result.

@@ -63,7 +63,7 @@ public class UserResponse
     /// <summary>
     /// Identificador do plano.
     /// </summary>
-    public Guid PlanId { get; set; }
+    public Guid? PlanId { get; set; }
 
     /// <summary>
     /// Dados plano.
