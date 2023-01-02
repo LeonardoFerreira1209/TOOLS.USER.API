@@ -1,4 +1,6 @@
 ﻿using APPLICATION.ENUMS;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 
 namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
@@ -26,6 +28,7 @@ namespace APPLICATION.DOMAIN.DTOS.REQUEST.USER
         /// <summary>
         /// Gênero.
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
         public Gender Gender { get; set; }
 
         /// <summary>

@@ -20,11 +20,13 @@ public abstract class ServiceBusReceiverProviderBase
 
     private readonly string _topicPath;
 
+    private readonly string _queueName;
+
     private readonly string _subscriber;
 
     private readonly TimeSpan _LOCK_AWAIT_ = TimeSpan.FromMinutes(5);
 
-    public ServiceBusReceiverProviderBase(string servicebusconexao, string topicoName, string subscriptionName, ServiceBusReceiveMode receiveMode = ServiceBusReceiveMode.PeekLock)
+    protected ServiceBusReceiverProviderBase(string servicebusconexao, string topicoName, string subscriptionName, ServiceBusReceiveMode receiveMode = ServiceBusReceiveMode.PeekLock)
     {
         _serviceBusClient = new ServiceBusClient(servicebusconexao);
 
@@ -37,7 +39,21 @@ public abstract class ServiceBusReceiverProviderBase
         _subscriber = subscriptionName;
 
         _serviceBusReceiver = _serviceBusClient.CreateReceiver(topicoName, subscriptionName, new ServiceBusReceiverOptions { ReceiveMode = receiveMode });
-        
+
+    }
+
+    protected ServiceBusReceiverProviderBase(string servicebusconexao, string queueName, ServiceBusReceiveMode receiveMode = ServiceBusReceiveMode.PeekLock)
+    {
+        _serviceBusClient = new ServiceBusClient(servicebusconexao);
+
+        _serviceBusAdministrationClient = new ServiceBusAdministrationClient(servicebusconexao);
+
+        _receiveMode = receiveMode;
+
+        _queueName = queueName;
+
+        _serviceBusReceiver = _serviceBusClient.CreateReceiver(queueName, new ServiceBusReceiverOptions { ReceiveMode = receiveMode });
+
     }
 
     /// <summary>
@@ -149,7 +165,7 @@ public abstract class ServiceBusReceiverProviderBase
 
         var counter = this.SetCounter(quantidade, listMessage.Count);
 
-        if (count.Equals(0))  return listMessage;
+        if (count.Equals(0)) return listMessage;
 
         do
         {
@@ -169,10 +185,7 @@ public abstract class ServiceBusReceiverProviderBase
     /// <returns>none</returns>
     public virtual async Task CompleteMessageAsync(ServiceBusReceivedMessage message)
     {
-        if (_receiveMode != ServiceBusReceiveMode.ReceiveAndDelete)
-            await _serviceBusReceiver.CompleteMessageAsync(message);
-        else
-            throw new Exception("ServiceBusReceiveMode configurado como ReceiveAndDelete, não é necessário completar a mensagem.");
+        if(_receiveMode == ServiceBusReceiveMode.PeekLock) await _serviceBusReceiver.CompleteMessageAsync(message);
     }
 
     /// <summary>
@@ -182,10 +195,13 @@ public abstract class ServiceBusReceiverProviderBase
     /// <returns>none</returns>
     public virtual async Task CompleteMessagesAsync(List<ServiceBusReceivedMessage> listMessage)
     {
-        if (_receiveMode != ServiceBusReceiveMode.ReceiveAndDelete)
-            listMessage.ForEach(async message => await _serviceBusReceiver.CompleteMessageAsync(message));
-        else
-            throw new Exception("ServiceBusReceiveMode configurado como ReceiveAndDelete, não é necessário completar a mensagem.");
+        if (_receiveMode == ServiceBusReceiveMode.PeekLock)
+        {
+            foreach (var message in listMessage)
+            {
+                await _serviceBusReceiver.CompleteMessageAsync(message);
+            }
+        }
     }
 
     /// <summary>

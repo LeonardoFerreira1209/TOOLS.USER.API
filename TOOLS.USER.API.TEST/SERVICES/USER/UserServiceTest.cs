@@ -1,6 +1,4 @@
 ﻿using APPLICATION.APPLICATION.SERVICES.USER;
-using APPLICATION.DOMAIN.CONTRACTS.API;
-using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
@@ -31,10 +29,6 @@ public class UserTest
 
     private readonly Mock<IFileService> _mockFileService;
 
-    private readonly Mock<IEmailExternal> _mockEmailExternal;
-
-    private readonly Mock<IEmailFacade> _mockEmailFacade;
-
     private readonly Mock<IPlanService> _mockPlanService;
 
     private readonly UserService _userService;
@@ -49,13 +43,10 @@ public class UserTest
 
         _mockFileService = new Mock<IFileService>();
 
-        _mockEmailExternal = new Mock<IEmailExternal>();
-
-        _mockEmailFacade = new Mock<IEmailFacade>();
 
         _mockPlanService = new Mock<IPlanService>();
 
-        _userService = new UserService(_mockUserRepository.Object, _mockSettings.Object, _mockEmailFacade.Object, _mockTokenService.Object, _mockFileService.Object, _mockPlanService.Object);
+        _userService = new UserService(_mockUserRepository.Object, _mockSettings.Object, _mockTokenService.Object, _mockFileService.Object, _mockPlanService.Object);
     }
 
     [Fact]
@@ -222,12 +213,6 @@ public class UserTest
         // Configure o mock do repositório de usuários para retornar um token de confirmação de email gerado de forma aleatória ao chamar o método de geração de token
         _mockUserRepository.Setup(repo => repo.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>())).ReturnsAsync(Faker.Currency.ThreeLetterCode);
 
-        // Configure o mock do serviço de email para retornar sucesso ao chamar o método de invite
-        _mockEmailFacade.Setup(facade => facade.Invite(It.IsAny<MailRequest>())).Returns(Task.FromResult(true));
-
-        // Configure o mock do serviço de email externo para retornar um código de status OK na chamada do método de invite
-        _mockEmailExternal.Setup(emailExter => emailExter.Invite(It.IsAny<MailRequest>())).ReturnsAsync(new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK });
-
         // Execute o método de criação
         var result = await _userService.CreateAsync(UserMocks.UserCreateRequestMock());
 
@@ -256,12 +241,6 @@ public class UserTest
         // Configure o mock do repositório de usuários para retornar um token de confirmação de email gerado de forma aleatória ao chamar o método de geração de token
         _mockUserRepository.Setup(repo => repo.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>())).ReturnsAsync(Faker.Currency.ThreeLetterCode);
 
-        // Configure o mock do serviço de email para retornar sucesso ao chamar o método de invite
-        _mockEmailFacade.Setup(facade => facade.Invite(It.IsAny<MailRequest>())).Returns(Task.FromResult(true));
-
-        // Configure o mock do serviço de email externo para retornar um código de status OK na chamada do método de invite
-        _mockEmailExternal.Setup(emailExter => emailExter.Invite(It.IsAny<MailRequest>())).ReturnsAsync(new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK });
-
         // Execute o método de criação
         var result = await _userService.CreateAsync(UserMocks.UserCreateRequestMock());
 
@@ -289,12 +268,6 @@ public class UserTest
 
         // Configure o mock do repositório de usuários para retornar um token de confirmação de email gerado de forma aleatória ao chamar o método de geração de token
         _mockUserRepository.Setup(repo => repo.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>())).ReturnsAsync(Faker.Currency.ThreeLetterCode);
-
-        // Configure o mock do serviço de email para retornar sucesso ao chamar o método de invite
-        _mockEmailFacade.Setup(facade => facade.Invite(It.IsAny<MailRequest>())).Returns(Task.FromResult(true));
-
-        // Configure o mock do serviço de email externo para retornar um código de status OK na chamada do método de invite
-        _mockEmailExternal.Setup(emailExter => emailExter.Invite(It.IsAny<MailRequest>())).ReturnsAsync(new HttpResponseMessage { StatusCode = System.Net.HttpStatusCode.OK });
 
         // Execute o método de criação
         var result = await _userService.CreateAsync(UserMocks.UserCreateRequestMock());

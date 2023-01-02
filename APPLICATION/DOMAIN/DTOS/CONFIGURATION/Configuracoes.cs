@@ -14,6 +14,7 @@ public class AppSettings
     public RetryPolicy RetryPolicy { get; set; }
     public Auth Auth { get; set; }
     public AzureStorage AzureStorage { get; set; }
+    public ServiceBus ServiceBus { get; set; }
     public UrlBase UrlBase { get; set; }
 }
 
@@ -56,11 +57,6 @@ public class SwaggerInfo
 public class Configuracoes
 {
     public int TimeOutDefault { get; set; }
-    public int NumeroThreadsConsumer { get; set; }
-    public string TopicoExemploName { get; set; }
-    public string SubscriptionExemploName { get; set; }
-    public int TempoReagendamentoMinutos { get; set; }
-    public int QuantidadeMaximaDeRetentativas { get; set; }
 }
 
 /// <summary>
@@ -84,6 +80,19 @@ public class AzureStorage
 {
     public string ConnectionStringAzureStorageKey { get; set; }
     public string Container { get; set; }
+}
+
+/// <summary>
+/// Classe de dados do serviceBus
+/// </summary>
+[ExcludeFromCodeCoverage]
+public class ServiceBus
+{
+    public int NumeroThreadsConsumer { get; set; }
+    public string QueueUserEmail { get; set; }
+    public string SubscriptionExemploName { get; set; }
+    public int TempoReagendamentoMinutos { get; set; }
+    public int QuantidadeMaximaDeRetentativas { get; set; }
 }
 
 /// <summary>

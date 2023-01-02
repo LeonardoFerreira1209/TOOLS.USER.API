@@ -1,11 +1,10 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
-using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.DOMAIN.DTOS.REQUEST;
+using APPLICATION.DOMAIN.DTOS.CONFIGURATION.SERVICEBUS.MESSAGE;
 using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.FILE;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.PLAN;
@@ -16,6 +15,7 @@ using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
+using APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -38,21 +38,17 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
         private readonly IOptions<AppSettings> _appsettings;
 
-        private readonly IEmailFacade _emailFacade;
-
         private readonly ITokenService _tokenService;
 
         private readonly IFileService _fileService;
 
         private readonly IPlanService _planService;
 
-        public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, IEmailFacade emailFacade, ITokenService tokenService, IFileService fileService, IPlanService planService)
+        public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, ITokenService tokenService, IFileService fileService, IPlanService planService)
         {
             _userRepository = userRepository;
 
             _appsettings = appsettings;
-
-            _emailFacade = emailFacade;
 
             _tokenService = tokenService;
 
@@ -721,8 +717,8 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             Log.Information($"[LOG INFORMATION] - Código gerado - {codifyEmailCode}.\n");
 
-            // Invite email code.
-            await _emailFacade.Invite(new MailRequest
+            // Create Queued Job.
+            SendUserEmailToServiceBusJob.Execute(new UserEmailMessageDto
             {
                 Receivers = new List<string> { user.Email },
                 Link = $"{_appsettings.Value.UrlBase.TOOLS_WEB_APP}/confirmEmail/{codifyEmailCode}/{user.Id}",

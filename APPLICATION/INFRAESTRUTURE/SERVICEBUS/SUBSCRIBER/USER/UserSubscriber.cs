@@ -5,17 +5,14 @@ using Microsoft.Extensions.Options;
 using Serilog.Context;
 using System.Text.Json;
 
-namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.SUBSCRIBER.LOTE;
-public class LoteSubscriber : SubscriberBase, ISubscriberProcess
+namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.SUBSCRIBER.USER;
+public class UserSubscriber : SubscriberBase, ISubscriberProcess
 {
-    public LoteSubscriber(
-        IOptions<AppSettings> options
-    ) : base(
+    public UserSubscriber(IOptions<AppSettings> options) : base(
         options.Value.ConnectionStrings.ServiceBus,
-        options.Value.Configuracoes.TopicoExemploName,
-        options.Value.Configuracoes.SubscriptionExemploName,
-        options.Value.Configuracoes.QuantidadeMaximaDeRetentativas,
-        options.Value.Configuracoes.TempoReagendamentoMinutos
+        options.Value.ServiceBus.QueueUserEmail,
+        options.Value.ServiceBus.QuantidadeMaximaDeRetentativas,
+        options.Value.ServiceBus.TempoReagendamentoMinutos
 
     ) { }
 

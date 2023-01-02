@@ -1,9 +1,10 @@
-﻿using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
+﻿using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.BASE;
+using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.RECURRENT;
 using Hangfire;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
 
-namespace APPLICATION.INFRAESTRUTURE.JOBS.FACTORY;
+namespace APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.HANGFIRE;
 
 [ExcludeFromCodeCoverage]
 public class HangfireJobs : IHangfireJobs
@@ -24,7 +25,7 @@ public class HangfireJobs : IHangfireJobs
         {
             Log.Information($"[LOG INFORMATION] - Inicializando os Job do Hangfire.\n");
 
-            _recurringJobManager.AddOrUpdate<IProcessDeleteUserWithoutPersonJob>("processa-delete-user-without-person", c => c.Execute(), Cron.Daily, TimeZoneInfo.Local);
+            _recurringJobManager.AddOrUpdate<IProcessDeleteUserWithoutPersonJob>("processa-delete-user-without-person", job => job.Execute(), Cron.Daily, TimeZoneInfo.Local);
         }
         catch (Exception exception)
         {

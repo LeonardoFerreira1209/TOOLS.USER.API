@@ -1,11 +1,11 @@
 ﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
-using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
+using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.RECURRENT;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Context;
 using System.Diagnostics.CodeAnalysis;
 
-namespace APPLICATION.INFRAESTRUTURE.JOBS;
+namespace APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
 
 [ExcludeFromCodeCoverage]
 public class ProcessDeleteUserWithoutPersonJob : IProcessDeleteUserWithoutPersonJob
@@ -14,7 +14,7 @@ public class ProcessDeleteUserWithoutPersonJob : IProcessDeleteUserWithoutPerson
 
     private readonly IOptions<AppSettings> _configuracoes;
 
-    public ProcessDeleteUserWithoutPersonJob(IOptions<AppSettings> configuracoes) 
+    public ProcessDeleteUserWithoutPersonJob(IOptions<AppSettings> configuracoes)
     {
         _configuracoes = configuracoes;
     }

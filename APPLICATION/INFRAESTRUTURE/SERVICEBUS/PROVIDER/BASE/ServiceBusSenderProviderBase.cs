@@ -10,33 +10,28 @@ public abstract class ServiceBusSenderProviderBase
 {
     private readonly ServiceBusSender _clientSender;
 
-    protected ServiceBusSenderProviderBase(string servicebusconexao, string topicoName)
+    protected ServiceBusSenderProviderBase(string servicebusconexao, string queueOrTopic)
     {
         var client = new ServiceBusClient(servicebusconexao);
-        _clientSender = client.CreateSender(topicoName);
+
+        _clientSender = client.CreateSender(queueOrTopic);
     }
 
     public virtual async Task SendAsync(List<MessageBase> messageList, DateTimeOffset ScheduledEnqueueTime = default)
     {
-        var splitList = this.SplitList(messageList, 100);
+        var splitList = await SplitList(messageList, 100);
 
         Parallel.ForEach(splitList, async filterList =>
         {
-            var result = this.ComposeMessageBase(filterList);
+            var result = ComposeMessageBase(filterList);
 
-            if (ScheduledEnqueueTime.Equals(default))
-                await _clientSender.SendMessagesAsync(result);
-            else
-                await _clientSender.ScheduleMessagesAsync(result, ScheduledEnqueueTime);
+            if (ScheduledEnqueueTime.Equals(default)) await _clientSender.SendMessagesAsync(result); else await _clientSender.ScheduleMessagesAsync(result, ScheduledEnqueueTime);
         });
     }
 
     public virtual async Task SendAsync(MessageBase item, DateTimeOffset ScheduledEnqueueTime = default)
     {
-        if (ScheduledEnqueueTime.Equals(default))
-            await _clientSender.SendMessageAsync(ItemToMessage(item, item.Headers));
-        else
-            await _clientSender.ScheduleMessageAsync(ItemToMessage(item, item.Headers), ScheduledEnqueueTime);
+        if (ScheduledEnqueueTime.Equals(default)) await _clientSender.SendMessageAsync(ItemToMessage(item, item.Headers)); else await _clientSender.ScheduleMessageAsync(ItemToMessage(item, item.Headers), ScheduledEnqueueTime);
     }
 
     #region private methods
@@ -45,20 +40,18 @@ public abstract class ServiceBusSenderProviderBase
     {
         var composeMessage = new List<ServiceBusMessage>();
 
-        foreach (var item in messageList)
-            composeMessage.Add(ItemToMessage(item, item.Headers));
+        foreach (var item in messageList) composeMessage.Add(ItemToMessage(item, item.Headers));
 
         return composeMessage;
     }
 
-    private List<List<T>> SplitList<T>(List<T> listMessage, int size = 30)
+    private Task<List<List<T>>> SplitList<T>(List<T> listMessage, int size = 30)
     {
         var list = new List<List<T>>();
 
-        for (int i = 0; i < listMessage.Count; i += size)
-            list.Add(listMessage.GetRange(i, Math.Min(size, listMessage.Count - i)));
+        for (int i = 0; i < listMessage.Count; i += size) list.Add(listMessage.GetRange(i, Math.Min(size, listMessage.Count - i)));
 
-        return list;
+        return Task.FromResult(list);
     }
 
     private ServiceBusMessage ItemToMessage(object item, Dictionary<string, object> headers = null)

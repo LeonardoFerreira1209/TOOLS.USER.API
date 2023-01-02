@@ -1,9 +1,10 @@
-﻿using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
+﻿using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.BASE;
+using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.RECURRENT;
 using FluentScheduler;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
 
-namespace APPLICATION.INFRAESTRUTURE.JOBS.FACTORY;
+namespace APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
 
 [ExcludeFromCodeCoverage]
 public class FluentSchedulerJobs : Registry, IFluentSchedulerJobs

@@ -1,4 +1,4 @@
-﻿using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
+﻿using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.BASE;
 using FluentScheduler;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;

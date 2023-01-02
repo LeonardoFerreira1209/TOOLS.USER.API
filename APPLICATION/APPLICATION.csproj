@@ -38,7 +38,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MimeKit" Version="3.4.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="ReadMe.Metrics" Version="2.1.0" />
     <PackageReference Include="Refit" Version="6.3.2" />
@@ -54,6 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DOMAIN\CONTRACTS\API\" />
+    <Folder Include="DOMAIN\CONTRACTS\FACADE\" />
+    <Folder Include="INFRAESTRUTURE\FACADES\" />
     <Folder Include="INFRAESTRUTURE\SIGNALR\DTOS\" />
     <Folder Include="MIGRATIONS\" />
   </ItemGroup>

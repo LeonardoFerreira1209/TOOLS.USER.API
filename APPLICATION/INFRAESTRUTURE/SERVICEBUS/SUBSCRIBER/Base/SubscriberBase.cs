@@ -8,18 +8,13 @@ public abstract class SubscriberBase : ISubscriberBase
     private readonly ServiceBusProcessor _processor;
     public readonly string _topicName;
     public readonly string _subscriptionName;
+    public readonly string _queueName;
     public string _nameProcess;
     public int _maximoTentativas;
     public int _tempoRetry;
     private const int _quantidadeTentativaMinima_ = 1;
 
-    protected SubscriberBase(
-            string serviceBusConnection,
-            string topicName,
-            string subscriptionName,
-            int maximoTentativas,
-            int tempoRetry
-        )
+    protected SubscriberBase(string serviceBusConnection, string topicName, string subscriptionName, int maximoTentativas, int tempoRetry)
     {
         _topicName = topicName;
         _subscriptionName = subscriptionName;
@@ -27,8 +22,23 @@ public abstract class SubscriberBase : ISubscriberBase
         _tempoRetry = tempoRetry;
 
         var _client = new ServiceBusClient(serviceBusConnection);
+
         _sender = _client.CreateSender(topicName);
+
         _processor = _client.CreateProcessor(topicName, subscriptionName, new ServiceBusProcessorOptions());
+    }
+
+    protected SubscriberBase(string serviceBusConnection, string queueName, int maximoTentativas, int tempoRetry)
+    {
+        _queueName = queueName;
+        _maximoTentativas = maximoTentativas;
+        _tempoRetry = tempoRetry;
+
+        var _client = new ServiceBusClient(serviceBusConnection);
+
+        _sender = _client.CreateSender(queueName);
+
+        _processor = _client.CreateProcessor(queueName, new ServiceBusProcessorOptions());
     }
 
     public async Task RegisterSubscriberAsync(string nameProcess)

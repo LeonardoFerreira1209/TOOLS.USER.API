@@ -4,10 +4,8 @@ using APPLICATION.APPLICATION.SERVICES.FILE;
 using APPLICATION.APPLICATION.SERVICES.PLAN;
 using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
-using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
-using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
@@ -20,16 +18,16 @@ using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.ENUMS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
-using APPLICATION.INFRAESTRUTURE.FACADES.EMAIL;
-using APPLICATION.INFRAESTRUTURE.JOBS;
-using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
-using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES;
+using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.HANGFIRE;
+using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.BASE;
+using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.RECURRENT;
+using APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.PLAN;
 using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.BASE;
-using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.LOTE;
-using APPLICATION.INFRAESTRUTURE.SERVICEBUS.SUBSCRIBER.LOTE;
+using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.USER;
+using APPLICATION.INFRAESTRUTURE.SERVICEBUS.SUBSCRIBER.USER;
 using APPLICATION.INFRAESTRUTURE.SIGNALR.HUBS;
 using Hangfire;
 using Microsoft.ApplicationInsights;
@@ -145,31 +143,22 @@ public static class ExtensionsConfigurations
         services
             .AddIdentity<UserEntity, RoleEntity>(options =>
             {
-                #region Signin
                 options.SignIn.RequireConfirmedEmail = true;
 
                 options.SignIn.RequireConfirmedAccount = true;
-                #endregion
 
-                #region User
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 
                 options.User.RequireUniqueEmail = true;
-                #endregion
 
-                #region Stores
                 options.Stores.MaxLengthForKeys = 20;
-                #endregion
 
-                #region Lockout
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
 
                 options.Lockout.MaxFailedAccessAttempts = 3;
 
                 options.Lockout.AllowedForNewUsers = true;
-                #endregion
 
-                #region Password
                 options.Password.RequireDigit = true;
 
                 options.Password.RequireLowercase = true;
@@ -181,7 +170,6 @@ public static class ExtensionsConfigurations
                 options.Password.RequireNonAlphanumeric = true;
 
                 options.Password.RequiredUniqueChars = 1;
-                #endregion
 
             }).AddEntityFrameworkStores<Contexto>().AddDefaultTokenProviders();
 
@@ -364,7 +352,6 @@ public static class ExtensionsConfigurations
                             Id = "Bearer"
                         }
                     },
-
                     Array.Empty<string>()
                 }
             });
@@ -382,14 +369,13 @@ public static class ExtensionsConfigurations
                 },
                 License = new OpenApiLicense
                 {
-
                     Name = "HYPER.IO LICENSE",
+
                 },
                 TermsOfService = new Uri(uriMyGit)
             });
 
             swagger.DocumentFilter<HealthCheckSwagger>();
-
         });
 
         return services;
@@ -424,14 +410,15 @@ public static class ExtensionsConfigurations
             .AddTransient<IFileService, FileService>()
             .AddTransient<IPlanService, PlanService>()
             // Facades
-            .AddSingleton<IEmailFacade, EmailFacade>()
+
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IPlanRepository, PlanRepository>()
             // Infra
-            .AddSingleton<ILoteServiceBusSenderProvider, LoteServiceBusSenderProvider>()
-            .AddSingleton<ILoteServiceBusReceiverProvider, LoteServiceBusReceiverProvider>();
+            .AddSingleton<IUserEmailServiceBusSenderProvider, UserServiceBusSenderProvider>()
+            .AddSingleton<IUserEmailServiceBusReceiverProvider, UserEmailServiceBusReceiverProvider>();
 
+        // AutoMapper
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         return services;
@@ -444,8 +431,8 @@ public static class ExtensionsConfigurations
     /// <returns></returns>
     public static IServiceCollection ConfigureRefit(this IServiceCollection services, IConfiguration configurations)
     {
-        services
-            .AddRefitClient<IEmailExternal>().ConfigureHttpClient(c => c.BaseAddress = configurations.GetValue<Uri>("UrlBase:TOOLS_MAIL_API"));
+        //services
+        //    .AddRefitClient<IEmailExternal>().ConfigureHttpClient(c => c.BaseAddress = configurations.GetValue<Uri>("UrlBase:TOOLS_MAIL_API"));
 
         return services;
     }
@@ -533,7 +520,7 @@ public static class ExtensionsConfigurations
     {
         services
             //Subscribers
-            .AddTransient<LoteSubscriber>();
+            .AddTransient<UserSubscriber>();
 
         return services;
     }
