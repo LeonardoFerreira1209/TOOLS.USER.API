@@ -99,6 +99,7 @@ jobs:
           Auth.ValidAudience: ${{ secrets.__HYPER_SECURITY_AUDIENCE_BEARER__ }}
           Auth.SecurityKey: ${{ secrets.__HYPER_SECURITY_KEY__ }}
           Auth.ExpiresIn: ${{ secrets.__SECURITY_TOKEN_EXPIRES_IN__ }}
+          ServiceBus.QueueUserEmail: ${{ secrets.__QUEUE_USER_EMAIL__ }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
