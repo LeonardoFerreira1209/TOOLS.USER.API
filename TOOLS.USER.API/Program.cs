@@ -1,5 +1,6 @@
 using APPLICATION.APPLICATION.CONFIGURATIONS;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+using APPLICATION.DOMAIN.UTILS.AUTH.CUSTOMAUTHORIZE.FILTER;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -81,7 +82,10 @@ try
         .UseHealthChecks()
         .UseSwaggerConfigurations(configurations)
         .UseEndpoints()
-        .UseHangfireDashboard();
+        .UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = new[] { new CustomAuthorizeHangfireFilter() }
+        });
 
     // Chamando as configurações de Minimal APIS.
     applicationbuilder.UseMinimalAPI(configurations);
