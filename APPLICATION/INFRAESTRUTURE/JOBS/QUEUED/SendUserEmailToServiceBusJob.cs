@@ -2,7 +2,6 @@
 using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.USER;
 using Hangfire;
 using Serilog;
-using Serilog.Context;
 using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
@@ -18,6 +17,7 @@ public class SendUserEmailToServiceBusJob
     /// <param name="userEmailMessageDto"></param>
     public static void Execute(UserEmailMessageDto userEmailMessageDto)
     {
+        // Execute and wait Job.
         ProcessSendUserEmailToServiceBusJob(userEmailMessageDto).Wait();
     }
 
@@ -28,24 +28,21 @@ public class SendUserEmailToServiceBusJob
     /// <returns></returns>
     public static async Task ProcessSendUserEmailToServiceBusJob(UserEmailMessageDto userEmailMessageDto)
     {
-        using (LogContext.PushProperty("Fluxo", "ProcessSendUserEmailToServiceBusJob"))
-        using (LogContext.PushProperty("Job", "SendUserEmailToServiceBusJob"))
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(SendUserEmailToServiceBusJob)} - METHOD {nameof(ProcessDeleteUserWithoutPersonJob)}\n");
+        
+        try
         {
-            try
-            {
-                Log.Information("[LOG INFORMATION] - Iniciando - Processando Job de envio de dados de e-mail para service bus.\n");
-               
-                // Create enqueued job to send message to service bus queue.
-                BackgroundJob.Enqueue<IUserEmailServiceBusSenderProvider>(userServiceBusSenderProvider => userServiceBusSenderProvider.SendAsync(userEmailMessageDto, DateTimeOffset.Now));
+            Log.Information("[LOG INFORMATION] - Iniciando - Processando Job de envio de dados de e-mail para service bus.\n");
 
-                // Complete Task.
-                await Task.CompletedTask;
-            }
-            catch (Exception exception)
-            {
-                Log.Error("[LOG ERRO] - Erro ao processar Job - ProcessSendUserEmailToServiceBusJob - ({0}).\n", exception.Message);
-            }
+            // Create enqueued job to send message to service bus queue.
+            BackgroundJob.Enqueue<IUserEmailServiceBusSenderProvider>(userServiceBusSenderProvider => userServiceBusSenderProvider.SendAsync(userEmailMessageDto, DateTimeOffset.Now));
+
+            // Complete Task.
+            await Task.CompletedTask;
         }
-
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERRO] - Erro ao processar Job - {nameof(SendUserEmailToServiceBusJob)} - ({0}).\n", exception.Message);
+        }
     }
 }

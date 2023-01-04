@@ -1,7 +1,7 @@
-﻿using Azure.Messaging.ServiceBus;
+﻿using APPLICATION.DOMAIN.ENTITY.MESSAGE;
+using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using Newtonsoft.Json;
-using RedeAceitacao.Archetype.Application.Domain.Dtos.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 

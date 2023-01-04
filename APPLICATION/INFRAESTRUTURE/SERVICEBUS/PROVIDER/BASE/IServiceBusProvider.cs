@@ -1,6 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.SERVICEBUS.MESSAGE;
+using APPLICATION.DOMAIN.ENTITY.MESSAGE;
 using Azure.Messaging.ServiceBus;
-using RedeAceitacao.Archetype.Application.Domain.Dtos.Entity;
 
 namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.BASE;
 

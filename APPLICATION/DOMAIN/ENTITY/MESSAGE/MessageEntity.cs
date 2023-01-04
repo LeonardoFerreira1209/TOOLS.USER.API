@@ -1,17 +1,35 @@
 ﻿using Azure.Messaging.ServiceBus;
 
-namespace RedeAceitacao.Archetype.Application.Domain.Dtos.Entity
+namespace APPLICATION.DOMAIN.ENTITY.MESSAGE;
+
+/// <summary>
+/// Classe de mensagem do serviceBus
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class MessageEntity<T>
 {
-    public class MessageEntity<T>
+    /// <summary>
+    /// Construtor onde recebe dois parametros de mensagem
+    /// </summary>
+    /// <param name="_mappedMessage"></param>
+    /// <param name="_originalMessage"></param>
+    public MessageEntity(T _mappedMessage, ServiceBusReceivedMessage _originalMessage)
     {
-        public MessageEntity(T _mappedMessage, ServiceBusReceivedMessage _originalMessage)
-        {
-            MappedMessage = _mappedMessage; OriginalMessage = _originalMessage;
-        }
-
-        public MessageEntity() { }
-
-        public T MappedMessage { get; set; }
-        public ServiceBusReceivedMessage OriginalMessage { get; set; }
+        MappedMessage = _mappedMessage; OriginalMessage = _originalMessage;
     }
+
+    /// <summary>
+    /// Construtor vazio
+    /// </summary>
+    public MessageEntity() { }
+
+    /// <summary>
+    /// Mensagem mapeada
+    /// </summary>
+    public T MappedMessage { get; set; }
+
+    /// <summary>
+    /// Mensagem do formato ServiceBus
+    /// </summary>
+    public ServiceBusReceivedMessage OriginalMessage { get; set; }
 }
