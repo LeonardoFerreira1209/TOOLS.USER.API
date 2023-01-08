@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.BASE;
+namespace APPLICATION.INFRAESTRUTURE.REPOSITORY.BASE;
 
 [ExcludeFromCodeCoverage]
 public class BaseRepository

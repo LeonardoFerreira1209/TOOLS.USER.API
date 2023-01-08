@@ -1,4 +1,5 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
@@ -16,7 +17,6 @@ using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
 using APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
-using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -677,7 +677,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
             var identityResult = await _userRepository.CreateUserAsync(user, password);
 
             // Logged user
-            var responsibleUser = GlobalData<object>.GlobalUser?.Id;
+            var responsibleUser = GlobalData.GlobalUser?.Id;
 
             // Responsible user is not null use he, is null use user created Id.
             user.CreatedUserId = responsibleUser is not null ? responsibleUser.Value : user.Id;

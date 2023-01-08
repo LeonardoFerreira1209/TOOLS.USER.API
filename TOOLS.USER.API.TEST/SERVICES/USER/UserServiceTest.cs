@@ -1,4 +1,5 @@
 ﻿using APPLICATION.APPLICATION.SERVICES.USER;
+using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
@@ -6,7 +7,6 @@ using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
-using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -312,7 +312,7 @@ public class UserTest
         _mockUserRepository.Setup(repo => repo.SetPhoneNumberAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
 
         // Set GlobalUser.
-        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        GlobalData.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
         {
             Id = Guid.NewGuid()
         };
@@ -371,7 +371,7 @@ public class UserTest
         _mockUserRepository.Setup(repo => repo.SetUserNameAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
 
         // Set GlobalUser.
-        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        GlobalData.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
         {
             Id = Guid.NewGuid()
         };
@@ -410,7 +410,7 @@ public class UserTest
 
 
         // Set GlobalUser.
-        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        GlobalData.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
         {
             Id = Guid.NewGuid()
         };
@@ -450,7 +450,7 @@ public class UserTest
         _mockUserRepository.Setup(repo => repo.SetEmailAsync(It.IsAny<UserEntity>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
 
         // Set GlobalUser.
-        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        GlobalData.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
         {
             Id = Guid.NewGuid()
         };
@@ -496,7 +496,7 @@ public class UserTest
         _mockUserRepository.Setup(repo => repo.GenerateEmailConfirmationTokenAsync(It.IsAny<UserEntity>())).ReturnsAsync(Faker.Currency.ThreeLetterCode);
 
         // Set GlobalUser.
-        GlobalData<object>.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
+        GlobalData.GlobalUser = new APPLICATION.DOMAIN.DTOS.USER.UserData
         {
             Id = Guid.NewGuid()
         };

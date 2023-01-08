@@ -6,8 +6,16 @@ using APPLICATION.ENUMS;
 
 namespace APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 
+/// <summary>
+/// Extensões de usuários.
+/// </summary>
 public static class UserExtensions
 {
+    /// <summary>
+    /// Convert um user create para um userEntity.
+    /// </summary>
+    /// <param name="userRequest"></param>
+    /// <returns></returns>
     public static UserEntity ToIdentityUser(this UserCreateRequest userRequest)
     {
         return new UserEntity
@@ -30,6 +38,11 @@ public static class UserExtensions
         };
     }
 
+    /// <summary>
+    /// Convert um user update para um userEntity.
+    /// </summary>
+    /// <param name="userRequest"></param>
+    /// <returns></returns>
     public static UserEntity ToCompleteUserUpdateWithRequest(this UserUpdateRequest userUpdateRequest, UserEntity user)
     {
         user.FirstName = userUpdateRequest.FirstName;
@@ -40,11 +53,16 @@ public static class UserExtensions
         user.CPF = userUpdateRequest.CPF;
         user.RG = userUpdateRequest.RG;
         user.Updated = DateTime.Now;
-        user.UpdatedUserId = GlobalData<object>.GlobalUser.Id;
+        user.UpdatedUserId = GlobalData.GlobalUser.Id;
 
         return user;
     }
 
+    /// <summary>
+    /// Convert um userEntity para um user response.
+    /// </summary>
+    /// <param name="userRequest"></param>
+    /// <returns></returns>
     public static UserResponse ToResponse(this UserEntity user)
     {
         return new UserResponse

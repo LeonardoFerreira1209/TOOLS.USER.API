@@ -1,8 +1,8 @@
-﻿using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.BASE;
+﻿using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
-using APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
+using APPLICATION.INFRAESTRUTURE.REPOSITORY.BASE;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -10,7 +10,7 @@ using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
-namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
+namespace APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
 
 [ExcludeFromCodeCoverage]
 public class UserRepository : BaseRepository, IUserRepository

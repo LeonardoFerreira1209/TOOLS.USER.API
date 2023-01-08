@@ -1,8 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.USER;
 
-namespace APPLICATION.DOMAIN.UTILS.GLOBAL;
-
-public static class GlobalData
+internal static class GlobalDataHelpers
 {
     public static UserData GlobalUser { get; set; }
 }

@@ -123,7 +123,7 @@ public static class ExtensionsConfigurations
     public static IServiceCollection ConfigureContexto(this IServiceCollection services, IConfiguration configurations)
     {
         services
-            .AddDbContext<Contexto>(options =>
+            .AddDbContext<Context>(options =>
             {
                 options.UseLazyLoadingProxies().UseSqlServer(configurations.GetValue<string>("ConnectionStrings:BaseDados")).LogTo(Console.WriteLine, LogLevel.None);
 
@@ -171,7 +171,7 @@ public static class ExtensionsConfigurations
 
                 options.Password.RequiredUniqueChars = 1;
 
-            }).AddEntityFrameworkStores<Contexto>().AddDefaultTokenProviders();
+            }).AddEntityFrameworkStores<Context>().AddDefaultTokenProviders();
 
         return services;
     }
@@ -219,7 +219,7 @@ public static class ExtensionsConfigurations
                 {
                     Log.Information($"[LOG INFORMATION] {nameof(JwtBearerEvents)} - OnTokenValidated - {context.SecurityToken}\n");
 
-                    GlobalData<object>.GlobalUser = new DOMAIN.DTOS.USER.UserData
+                    GlobalData.GlobalUser = new DOMAIN.DTOS.USER.UserData
                     {
                         Id = Guid.Parse(context.Principal.Claims?.FirstOrDefault().Value)
                     };
@@ -611,7 +611,7 @@ public static class ExtensionsConfigurations
 
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<RoleEntity>>();
 
-            var context = scope.ServiceProvider.GetRequiredService<Contexto>();
+            var context = scope.ServiceProvider.GetRequiredService<Context>();
 
             Log.Debug($"[LOG DEBUG] - Verificando se usuário inicial já existe na base.\n");
 

@@ -13,7 +13,7 @@ public static class RoleExtensions
         return new RoleEntity
         {
             Name = roleRequest.Name,
-            CreatedUserId = GlobalData<object>.GlobalUser.Id,
+            CreatedUserId = GlobalData.GlobalUser.Id,
             Created = DateTime.Now,
             Status = Status.Active
         };

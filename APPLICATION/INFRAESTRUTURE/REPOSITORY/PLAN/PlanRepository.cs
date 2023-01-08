@@ -1,23 +1,23 @@
-﻿using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.BASE;
+﻿using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PLAN;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
 using APPLICATION.DOMAIN.ENTITY.PLAN;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
-using APPLICATION.INFRAESTRUTURE.REPOSITORY.PLAN;
+using APPLICATION.INFRAESTRUTURE.REPOSITORY.BASE;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
 
-namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PLAN;
+namespace APPLICATION.INFRAESTRUTURE.REPOSITORY.PLAN;
 
 [ExcludeFromCodeCoverage]
 public class PlanRepository : BaseRepository, IPlanRepository
 {
-    private readonly Contexto _contexto;
+    private readonly Context _context;
 
-    public PlanRepository(Contexto contexto, IOptions<AppSettings> appssetings) : base(appssetings) 
+    public PlanRepository(Context context, IOptions<AppSettings> appssetings) : base(appssetings)
     {
-        _contexto = contexto;
+        _context = context;
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ public class PlanRepository : BaseRepository, IPlanRepository
             Log.Information($"[LOG INFORMATION] - Recuperando um Plano com base no Id {planId}.\n");
 
             // get plan by id with role.
-            var planEntity = await _contexto.Plans.Include(plan => plan.Role).FirstOrDefaultAsync(plan => plan.Id.Equals(planId));
+            var planEntity = await _context.Plans.Include(plan => plan.Role).FirstOrDefaultAsync(plan => plan.Id.Equals(planId));
 
             // return planEntity.
             return planEntity;

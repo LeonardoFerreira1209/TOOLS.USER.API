@@ -10,9 +10,9 @@ namespace APPLICATION.INFRAESTRUTURE.CONTEXTO;
 /// <summary>
 /// Classe de configuração do banco de dados.
 /// </summary>
-public class Contexto : IdentityDbContext<UserEntity, RoleEntity, Guid>
+public class Context : IdentityDbContext<UserEntity, RoleEntity, Guid>
 {
-    public Contexto(DbContextOptions<Contexto> options) : base(options)
+    public Context(DbContextOptions<Context> options) : base(options)
     {
         Database.EnsureCreated();
     }

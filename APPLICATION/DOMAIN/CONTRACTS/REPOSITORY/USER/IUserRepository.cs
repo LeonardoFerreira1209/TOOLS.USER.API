@@ -3,7 +3,7 @@ using APPLICATION.DOMAIN.ENTITY.USER;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace APPLICATION.INFRAESTRUTURE.REPOSITORY.USER;
+namespace APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 
 public interface IUserRepository
 {

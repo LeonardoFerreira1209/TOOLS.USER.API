@@ -53,7 +53,7 @@ public abstract class SubscriberBase : ISubscriberBase
 
             await this.StartProcessingAsync();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //_logWithMetric.Error(ex);
         }
