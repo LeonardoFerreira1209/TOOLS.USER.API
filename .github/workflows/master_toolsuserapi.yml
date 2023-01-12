@@ -53,13 +53,13 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: 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  # Needed to get PR information, if any
-          SONAR_TOKEN: 6530b3f91bb271bc4064442d8717f37dbbf90428
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"LeonardoFerreira1209_TOOLS.USER.API" /o:"leonardoferreira1209" /d:sonar.login="6530b3f91bb271bc4064442d8717f37dbbf90428" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build --configuration Release
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="6530b3f91bb271bc4064442d8717f37dbbf90428"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
           
   AZURE-QA:
     permissions:
