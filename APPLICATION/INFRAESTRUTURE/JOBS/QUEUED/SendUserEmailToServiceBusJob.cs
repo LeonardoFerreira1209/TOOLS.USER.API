@@ -1,16 +1,14 @@
 ﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.SERVICEBUS.MESSAGE;
 using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.USER;
+using System.Diagnostics.CodeAnalysis;
 using Hangfire;
 using Serilog;
-using System.Diagnostics.CodeAnalysis;
 
 namespace APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
 
 [ExcludeFromCodeCoverage]
-public class SendUserEmailToServiceBusJob
+public static class SendUserEmailToServiceBusJob
 {
-    protected SendUserEmailToServiceBusJob() { }
-
     /// <summary>
     /// Executa o Job.
     /// </summary>
@@ -29,7 +27,7 @@ public class SendUserEmailToServiceBusJob
     public static async Task ProcessSendUserEmailToServiceBusJob(UserEmailMessageDto userEmailMessageDto)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(SendUserEmailToServiceBusJob)} - METHOD {nameof(ProcessDeleteUserWithoutPersonJob)}\n");
-        
+
         try
         {
             Log.Information("[LOG INFORMATION] - Iniciando - Processando Job de envio de dados de e-mail para service bus.\n");

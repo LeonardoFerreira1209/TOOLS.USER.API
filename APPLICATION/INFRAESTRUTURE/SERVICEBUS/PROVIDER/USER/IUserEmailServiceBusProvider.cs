@@ -2,5 +2,12 @@
 
 namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.USER;
 
-public interface IUserEmailServiceBusSenderProvider : IServiceBusSenderProvider { }
-public interface IUserEmailServiceBusReceiverProvider : IServiceBusReceiverProvider { }
+/// <summary>
+/// Interface de UserEmailServiceBusSenderProvider
+/// </summary>
+public interface IUserEmailServiceBusSenderProvider : IServiceBusSenderProvider { };
+
+/// <summary>
+/// Interface de IUserEmailServiceBusReceiverProvider
+/// </summary>
+public interface IUserEmailServiceBusReceiverProvider : IServiceBusReceiverProvider { };

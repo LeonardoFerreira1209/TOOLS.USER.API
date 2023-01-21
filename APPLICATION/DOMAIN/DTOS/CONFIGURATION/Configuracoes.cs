@@ -89,7 +89,8 @@ public class AzureStorage
 public class ServiceBus
 {
     public int NumeroThreadsConsumer { get; set; }
-    public string QueueUserEmail { get; set; }
+    public string QueueEmail { get; set; }
+    public string QueueFile { get; set; }
     public string SubscriptionExemploName { get; set; }
     public int TempoReagendamentoMinutos { get; set; }
     public int QuantidadeMaximaDeRetentativas { get; set; }
@@ -110,7 +111,7 @@ public class Password
 [ExcludeFromCodeCoverage]
 public class UrlBase
 {
-    public string TOOLS_MAIL_API { get; set; }
+    public string TOOLS_UTIL_API { get; set; }
     public string BASE_URL { get; set; }
     public string TOOLS_WEB_APP { get; set; }
 }

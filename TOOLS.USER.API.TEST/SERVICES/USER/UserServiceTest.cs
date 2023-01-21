@@ -258,7 +258,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -286,7 +286,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -332,7 +332,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -357,7 +357,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -392,7 +392,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -430,7 +430,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -470,7 +470,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -516,7 +516,7 @@ public class UserTest
         {
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -546,7 +546,7 @@ public class UserTest
             },
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -579,7 +579,7 @@ public class UserTest
             },
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -606,7 +606,7 @@ public class UserTest
             },
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 
@@ -640,7 +640,7 @@ public class UserTest
             },
             UrlBase = new UrlBase
             {
-                TOOLS_MAIL_API = Faker.Internet.Url()
+                TOOLS_UTIL_API = Faker.Internet.Url()
             }
         });
 

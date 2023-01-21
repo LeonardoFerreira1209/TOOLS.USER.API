@@ -4,8 +4,10 @@ using APPLICATION.APPLICATION.SERVICES.FILE;
 using APPLICATION.APPLICATION.SERVICES.PLAN;
 using APPLICATION.APPLICATION.SERVICES.TOKEN;
 using APPLICATION.APPLICATION.SERVICES.USER;
+using APPLICATION.DOMAIN.CONTRACTS.API;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS;
 using APPLICATION.DOMAIN.CONTRACTS.CONFIGURATIONS.APPLICATIONINSIGHTS;
+using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
@@ -18,6 +20,7 @@ using APPLICATION.DOMAIN.ENTITY.USER;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.ENUMS;
 using APPLICATION.INFRAESTRUTURE.CONTEXTO;
+using APPLICATION.INFRAESTRUTURE.FACADES;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.FLUENTSCHEDULER;
 using APPLICATION.INFRAESTRUTURE.JOBS.FACTORY.HANGFIRE;
 using APPLICATION.INFRAESTRUTURE.JOBS.INTERFACES.BASE;
@@ -410,12 +413,12 @@ public static class ExtensionsConfigurations
             .AddTransient<IFileService, FileService>()
             .AddTransient<IPlanService, PlanService>()
             // Facades
-
+            .AddSingleton<IUtilFacade, UtilFacade>()
             // Repository
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IPlanRepository, PlanRepository>()
             // Infra
-            .AddSingleton<IUserEmailServiceBusSenderProvider, UserServiceBusSenderProvider>()
+            .AddSingleton<IUserEmailServiceBusSenderProvider, UserEmailServiceBusSenderProvider>()
             .AddSingleton<IUserEmailServiceBusReceiverProvider, UserEmailServiceBusReceiverProvider>();
 
         // AutoMapper
@@ -431,8 +434,8 @@ public static class ExtensionsConfigurations
     /// <returns></returns>
     public static IServiceCollection ConfigureRefit(this IServiceCollection services, IConfiguration configurations)
     {
-        //services
-        //    .AddRefitClient<IEmailExternal>().ConfigureHttpClient(c => c.BaseAddress = configurations.GetValue<Uri>("UrlBase:TOOLS_MAIL_API"));
+        services
+            .AddRefitClient<IExternalUtil>().ConfigureHttpClient(c => c.BaseAddress = configurations.GetValue<Uri>("UrlBase:TOOLS_UTIL_API"));
 
         return services;
     }

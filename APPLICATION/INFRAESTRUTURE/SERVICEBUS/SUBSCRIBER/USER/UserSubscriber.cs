@@ -10,7 +10,7 @@ public class UserSubscriber : SubscriberBase, ISubscriberProcess
 {
     public UserSubscriber(IOptions<AppSettings> options) : base(
         options.Value.ConnectionStrings.ServiceBus,
-        options.Value.ServiceBus.QueueUserEmail,
+        options.Value.ServiceBus.QueueEmail,
         options.Value.ServiceBus.QuantidadeMaximaDeRetentativas,
         options.Value.ServiceBus.TempoReagendamentoMinutos
 

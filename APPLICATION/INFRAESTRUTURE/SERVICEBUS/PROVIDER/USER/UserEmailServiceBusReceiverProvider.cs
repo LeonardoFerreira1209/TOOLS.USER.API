@@ -4,7 +4,14 @@ using Microsoft.Extensions.Options;
 
 namespace APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.BASE;
 
+/// <summary>
+/// Classe de recebimento de mensagem de email de usuário para service bus. 
+/// </summary>
 public class UserEmailServiceBusReceiverProvider : ServiceBusReceiverProviderBase, IUserEmailServiceBusReceiverProvider
 {
-    public UserEmailServiceBusReceiverProvider(IOptions<AppSettings> configuracoes) : base(configuracoes.Value.ConnectionStrings.ServiceBus, configuracoes.Value.ServiceBus.QueueUserEmail) { }
+    /// <summary>
+    /// Construtor.
+    /// </summary>
+    /// <param name="configuracoes"></param>
+    public UserEmailServiceBusReceiverProvider(IOptions<AppSettings> configuracoes) : base(configuracoes.Value.ConnectionStrings.ServiceBus, configuracoes.Value.ServiceBus.QueueEmail) { }
 }

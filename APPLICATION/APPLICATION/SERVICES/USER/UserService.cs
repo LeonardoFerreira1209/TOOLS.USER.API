@@ -1,6 +1,6 @@
 ﻿using APPLICATION.APPLICATION.CONFIGURATIONS;
+using APPLICATION.DOMAIN.CONTRACTS.FACADE;
 using APPLICATION.DOMAIN.CONTRACTS.REPOSITORY.USER;
-using APPLICATION.DOMAIN.CONTRACTS.SERVICES.FILE;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.PLAN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.CONTRACTS.SERVICES.USER;
@@ -40,11 +40,19 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
         private readonly ITokenService _tokenService;
 
-        private readonly IFileService _fileService;
+        private readonly IUtilFacade _utilFacade;
 
         private readonly IPlanService _planService;
 
-        public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, ITokenService tokenService, IFileService fileService, IPlanService planService)
+        /// <summary>
+        /// Construtor.
+        /// </summary>
+        /// <param name="userRepository"></param>
+        /// <param name="appsettings"></param>
+        /// <param name="tokenService"></param>
+        /// <param name="utilFacade"></param>
+        /// <param name="planService"></param>
+        public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, ITokenService tokenService, IUtilFacade utilFacade, IPlanService planService)
         {
             _userRepository = userRepository;
 
@@ -52,7 +60,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
             _tokenService = tokenService;
 
-            _fileService = fileService;
+            _utilFacade = utilFacade;
 
             _planService = planService;
         }
@@ -116,6 +124,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 Log.Information($"[LOG INFORMATION] - Gerando token.\n");
 
+                // Return Json Web Token.
                 return await _tokenService.CreateJsonWebToken(loginRequest.Username);
             }
             catch (Exception exception)
@@ -345,7 +354,7 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 if (userEntity is not null)
                 {
                     // Response of Azure blob.
-                    var response = await _fileService.InviteFileToAzureBlobStorageAndReturnUri(formFile);
+                    var response = await _utilFacade.SendAsync(formFile);
 
                     // Is success.
                     if (response.Sucesso)

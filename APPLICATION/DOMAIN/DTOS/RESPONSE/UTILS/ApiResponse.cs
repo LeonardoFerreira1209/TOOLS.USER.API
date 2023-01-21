@@ -21,6 +21,8 @@ public class DadosNotificacao
 /// <typeparam name="T"></typeparam>
 public class ApiResponse<T> where T : class
 {
+    public ApiResponse() { }
+
     public ApiResponse(bool sucesso, StatusCodes statusCode, List<DadosNotificacao> notificacaos = null)
     {
         Sucesso = sucesso; StatusCode = statusCode; Notificacoes = notificacaos;
