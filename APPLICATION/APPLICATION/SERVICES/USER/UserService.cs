@@ -414,23 +414,34 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 // Get user form Id.
                 var userEntity = await _userRepository.GetAsync(activateUserRequest.UserId);
 
-                Log.Information($"[LOG INFORMATION] - Confirmando e-mail do usuário {userEntity.UserName}.\n");
-
-                // Confirm e-mail user.
-                var response = await _userRepository.ConfirmEmailAsync(userEntity, HttpUtility.UrlDecode(activateUserRequest.Code.Replace(";", "%")));
-
-                // Response success true
-                if (response.Succeeded)
+                // Is not null.
+                if (userEntity is not null)
                 {
-                    Log.Information($"[LOG INFORMATION] - Usuário ativado com sucesso.\n");
+                    Log.Information($"[LOG INFORMATION] - Confirmando e-mail do usuário {userEntity.UserName}.\n");
 
-                    // Success response.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário ativado com sucesso.") });
+                    // Confirm e-mail user.
+                    var response = await _userRepository.ConfirmEmailAsync(userEntity, HttpUtility.UrlDecode(activateUserRequest.Code.Replace(";", "%")));
+
+                    // Response success true
+                    if (response.Succeeded)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Usuário ativado com sucesso.\n");
+
+                        // Success response.
+                        return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário ativado com sucesso.") });
+                    }
+
+                    Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n");
+
+                    return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha na ativãção do usuário!") });
                 }
+                else
+                {
+                    Log.Information($"[LOG ERROR] - Usuário não encontrado.\n");
 
-                Log.Information($"[LOG INFORMATION] - Falha na ativãção do usuário.\n");
-
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha na ativãção do usuário!") });
+                    // Response success.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
+                }
             }
             catch (Exception exception)
             {
@@ -458,24 +469,35 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 // Get user for username.
                 var userEntity = await _userRepository.GetWithUsernameAsync(username);
 
-                Log.Information($"[LOG INFORMATION] - Adicionando a claim ({claimRequest.Type}/{claimRequest.Value}) no usuário.\n");
-
-                // Add claim in user.
-                var identityResult = await _userRepository.AddClaimUserAsync(userEntity, new Claim(claimRequest.Type, claimRequest.Value));
-
-                // Response success true.
-                if (identityResult.Succeeded)
+                // Is not null.
+                if(userEntity is not null)
                 {
-                    Log.Information($"[LOG INFORMATION] - Claim adicionada com sucesso.\n");
+                    Log.Information($"[LOG INFORMATION] - Adicionando a claim ({claimRequest.Type}/{claimRequest.Value}) no usuário.\n");
 
-                    // Success response.
-                    return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                    // Add claim in user.
+                    var identityResult = await _userRepository.AddClaimUserAsync(userEntity, new Claim(claimRequest.Type, claimRequest.Value));
+
+                    // Response success true.
+                    if (identityResult.Succeeded)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Claim adicionada com sucesso.\n");
+
+                        // Success response.
+                        return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, adicionada com sucesso ao usuário {username}.") });
+                    }
+
+                    Log.Information($"[LOG ERROR] - Falha ao adicionar claim.\n");
+
+                    // Response error.
+                    return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar claim!") });
                 }
+                else
+                {
+                    Log.Information($"[LOG ERROR] - Usuário não encontrado.\n");
 
-                Log.Information($"[LOG ERROR] - Falha ao adicionar claim.\n");
-
-                // Response error.
-                return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar claim!") });
+                    // Response success.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
+                }
             }
             catch (Exception exception)
             {
@@ -503,24 +525,35 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 // Get user for username.
                 var userIdentity = await _userRepository.GetWithUsernameAsync(username);
 
-                Log.Information($"[LOG INFORMATION] - Removendo a claim ({claimRequest.Type}/{claimRequest.Value}) do usuário.\n");
-
-                // Remove claim.
-                var identityResult = await _userRepository.RemoveClaimUserAsync(userIdentity, new Claim(claimRequest.Type, claimRequest.Value));
-
-                // Response success true.
-                if (identityResult.Succeeded)
+                // Is not null.
+                if (userIdentity is not null)
                 {
-                    Log.Information($"[LOG INFORMATION] - Claim remvida com sucesso.\n");
+                    Log.Information($"[LOG INFORMATION] - Removendo a claim ({claimRequest.Type}/{claimRequest.Value}) do usuário.\n");
+
+                    // Remove claim.
+                    var identityResult = await _userRepository.RemoveClaimUserAsync(userIdentity, new Claim(claimRequest.Type, claimRequest.Value));
+
+                    // Response success true.
+                    if (identityResult.Succeeded)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Claim remvida com sucesso.\n");
+
+                        // Response success.
+                        return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                    }
+
+                    Log.Information($"[LOG ERROR] - Falha ao remover claim.\n");
+
+                    // Response error.
+                    return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover claim!") });
+                }
+                else
+                {
+                    Log.Information($"[LOG ERROR] - Usuário não encontrado.\n");
 
                     // Response success.
-                    return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Claim {claimRequest.Type} / {claimRequest.Value}, removida com sucesso do usuário {username}.") });
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
                 }
-
-                Log.Information($"[LOG ERROR] - Falha ao remover claim.\n");
-
-                // Response error.
-                return new ApiResponse<object>(identityResult.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover claim!") });
             }
             catch (Exception exception)
             {
@@ -546,26 +579,37 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 Log.Information($"[LOG INFORMATION] - Recuperando dados do usuário {username}.\n");
 
                 // Get user for username.
-                var user = await _userRepository.GetWithUsernameAsync(username);
+                var userEntity = await _userRepository.GetWithUsernameAsync(username);
 
-                Log.Information($"[LOG INFORMATION] - Adicionando a role ({roleName}) ao usuário.\n");
-
-                // Add Role.
-                var response = await _userRepository.AddToUserRoleAsync(user, roleName);
-
-                // Response success true.
-                if (response.Succeeded)
+                // User is not null.
+                if(userEntity is not null)
                 {
-                    Log.Information($"[LOG INFORMATION] - Role adicionada com sucesso.\n");
+                    Log.Information($"[LOG INFORMATION] - Adicionando a role ({roleName}) ao usuário.\n");
 
-                    // Response success.
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+                    // Add Role.
+                    var response = await _userRepository.AddToUserRoleAsync(userEntity, roleName);
+
+                    // Response is not null and success true.
+                    if (response is not null && response.Succeeded)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Role adicionada com sucesso.\n");
+
+                        // Response success.
+                        return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, adicionada com sucesso ao usuário {username}.") });
+                    }
+                    else
+                    {
+                        Log.Information($"[LOG ERROR] - Falha ao adicionar role.\n");
+
+                        // Response error.
+                        return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar role!") });
+                    }
                 }
 
-                Log.Information($"[LOG ERROR] - Falha ao adicionar role.\n");
+                Log.Information($"[LOG ERROR] - Usuário não encontrado.\n");
 
                 // Response error.
-                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao adicionar role!") });
+                return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado!") });
             }
             catch (Exception exception)
             {
@@ -592,29 +636,40 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 // Get user for Id.
                 var userEntity = await _userRepository.GetAsync(userId);
 
-                // Get roles.
-                var userRoles = await _userRepository.GetUserRolesAsync(userEntity);
-
-                // Instance of role response
-                var roles = new List<RolesResponse>();
-
-                // for in response
-                foreach (var roleName in userRoles)
+                // is not null.
+                if(userEntity is not null) 
                 {
-                    // get role.
-                    var roleEntity = await _userRepository.GetRoleAsync(roleName);
+                    // Get roles.
+                    var userRoles = await _userRepository.GetUserRolesAsync(userEntity);
 
-                    // get role claims
-                    var roleClaims = await _userRepository.GetRoleClaimsAsync(roleEntity);
+                    // Instance of role response
+                    var roles = new List<RolesResponse>();
 
-                    // add roles.
-                    roles.Add(new RolesResponse { Name = roleName, Claims = roleClaims });
+                    // for in response
+                    foreach (var roleName in userRoles)
+                    {
+                        // get role.
+                        var roleEntity = await _userRepository.GetRoleAsync(roleName);
+
+                        // get role claims
+                        var roleClaims = await _userRepository.GetRoleClaimsAsync(roleEntity);
+
+                        // add roles.
+                        roles.Add(new RolesResponse { Name = roleName, Claims = roleClaims });
+                    }
+
+                    Log.Information($"[LOG INFORMATION] - Roles recuperadas.\n");
+
+                    // Response success.
+                    return new ApiResponse<object>(true, StatusCodes.SuccessOK, roles.ToList(), new List<DadosNotificacao> { new DadosNotificacao("Roles recuperadas com sucesso.") });
                 }
+                else
+                {
+                    Log.Information($"[LOG ERROR] - Usuário não encontrado.\n");
 
-                Log.Information($"[LOG INFORMATION] - Roles recuperadas.\n");
-
-                // Response success.
-                return new ApiResponse<object>(true, StatusCodes.SuccessOK, roles.ToList(), new List<DadosNotificacao> { new DadosNotificacao("Roles recuperadas com sucesso.") });
+                    // Response success.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
+                }
             }
             catch (Exception exception)
             {
@@ -642,24 +697,35 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 // Get user for username.
                 var userEntity = await _userRepository.GetWithUsernameAsync(username);
 
-                Log.Information($"[LOG INFORMATION] - Removendo role ({roleName}) do usuário.\n");
-
-                // Remove role.
-                var response = await _userRepository.RemoveToUserRoleAsync(userEntity, roleName);
-
-                // Response success true.
-                if (response.Succeeded)
+                // Is not null.
+                if(userEntity is not null)
                 {
-                    Log.Information($"[LOG INFORMATION] - Role removida com sucesso.\n");
+                    Log.Information($"[LOG INFORMATION] - Removendo role ({roleName}) do usuário.\n");
 
-                    // Response success
-                    return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, removida com sucesso do usuário {username}.") });
+                    // Remove role.
+                    var response = await _userRepository.RemoveToUserRoleAsync(userEntity, roleName);
+
+                    // Response success true.
+                    if (response.Succeeded)
+                    {
+                        Log.Information($"[LOG INFORMATION] - Role removida com sucesso.\n");
+
+                        // Response success
+                        return new ApiResponse<object>(response.Succeeded, StatusCodes.SuccessOK, null, new List<DadosNotificacao> { new DadosNotificacao($"Role {roleName}, removida com sucesso do usuário {username}.") });
+                    }
+
+                    Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
+
+                    // Response error.
+                    return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover role.!") });
                 }
+                else
+                {
+                    Log.Information($"[LOG ERROR] - Usuário não encontrado.\n");
 
-                Log.Information($"[LOG INFORMATION] - Falha ao remover role.\n");
-
-                // Response error.
-                return new ApiResponse<object>(response.Succeeded, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao("Falha ao remover role.!") });
+                    // Response success.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorNotFound, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário não encontrado.") });
+                }
             }
             catch (Exception exception)
             {
