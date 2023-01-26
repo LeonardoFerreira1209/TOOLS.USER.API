@@ -90,7 +90,6 @@ public class ServiceBus
 {
     public int NumeroThreadsConsumer { get; set; }
     public string QueueEmail { get; set; }
-    public string QueueFile { get; set; }
     public string SubscriptionExemploName { get; set; }
     public int TempoReagendamentoMinutos { get; set; }
     public int QuantidadeMaximaDeRetentativas { get; set; }
