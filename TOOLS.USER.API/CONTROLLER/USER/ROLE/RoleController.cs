@@ -47,6 +47,24 @@ namespace TOOLS.USER.API.CONTROLLER.USER.ROLE
         }
 
         /// <summary>
+        /// Método responsável por recuperar todas as roles.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getAll")][CustomAuthorize(Claims.Role, "Get")][EnableCors("CorsPolicy")]
+        [SwaggerOperation(Summary = "Recuperar todas as roles", Description = "Método responsável por recuperar todas as roles")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        public async Task<ApiResponse<object>> GetAll()
+        {
+            using (LogContext.PushProperty("Controller", "RoleController"))
+            using (LogContext.PushProperty("Metodo", "GetAll"))
+            {
+                return await Tracker.Time(() => _roleService.GetAsync(), "Recuperar todas as roles.");
+            }
+        }
+
+        /// <summary>
         /// Método responsável por adicionar uma role.
         /// </summary>
         /// <param name="roleRequest"></param>

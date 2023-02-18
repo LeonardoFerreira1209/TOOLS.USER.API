@@ -68,6 +68,33 @@ public class RoleService : IRoleService
     }
 
     /// <summary>
+    /// Método responsavel por retornar todas as roles.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ApiResponse<object>> GetAsync()
+    {
+        Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(RoleService)} - METHOD {nameof(GetAsync)}\n");
+
+        try
+        {
+            Log.Information($"[LOG INFORMATION] - Recuperando todas as roles\n");
+
+            // Get roles.
+            var roles = await _roleManager.Roles.Include(role => role.Plans).ThenInclude(plan => plan.Users).ToListAsync();
+
+            // Response success.
+            return new ApiResponse<object>(true, StatusCodes.SuccessOK, roles, new List<DadosNotificacao> { new DadosNotificacao("Roles recuperadas com sucesso.") });
+        }
+        catch (Exception exception)
+        {
+            Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
+
+            // Error response.
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+        }
+    }
+
+    /// <summary>
     /// Método responsavel por adicionar uma claim na role.
     /// </summary>
     /// <param name="roleRequest"></param>

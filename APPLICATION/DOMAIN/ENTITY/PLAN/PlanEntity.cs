@@ -1,5 +1,6 @@
 ﻿using APPLICATION.DOMAIN.ENTITY.BASE;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
+using APPLICATION.DOMAIN.ENTITY.USER;
 
 namespace APPLICATION.DOMAIN.ENTITY.PLAN
 {
@@ -34,6 +35,11 @@ namespace APPLICATION.DOMAIN.ENTITY.PLAN
         /// Total de meses do plano
         /// </summary>
         public int TotalMonthsPlan { get; set; }
+
+        /// <summary>
+        /// Usuários que têm essa Plano.
+        /// </summary>
+        public virtual ICollection<UserEntity> Users { get; set; }
 
     }
 }

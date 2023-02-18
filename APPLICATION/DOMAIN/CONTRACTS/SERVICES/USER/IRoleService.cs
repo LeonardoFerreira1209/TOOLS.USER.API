@@ -13,6 +13,12 @@ public interface IRoleService
     Task<ApiResponse<object>> CreateAsync(RoleRequest roleRequest);
 
     /// <summary>
+    /// Método responsavel por retornar todas as roles.
+    /// </summary>
+    /// <returns></returns>
+    Task<ApiResponse<object>> GetAsync();
+
+    /// <summary>
     /// Método responsável por adicionar uma nova lista de claims na role.
     /// </summary>
     /// <param name="roleRequest"></param>
