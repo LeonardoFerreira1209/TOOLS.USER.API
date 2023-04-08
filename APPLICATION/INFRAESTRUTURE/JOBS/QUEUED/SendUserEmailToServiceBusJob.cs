@@ -3,8 +3,9 @@ using APPLICATION.INFRAESTRUTURE.SERVICEBUS.PROVIDER.USER;
 using System.Diagnostics.CodeAnalysis;
 using Hangfire;
 using Serilog;
+using APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
 
-namespace APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
+namespace APPLICATION.INFRAESTRUTURE.JOBS.QUEUED;
 
 [ExcludeFromCodeCoverage]
 public static class SendUserEmailToServiceBusJob

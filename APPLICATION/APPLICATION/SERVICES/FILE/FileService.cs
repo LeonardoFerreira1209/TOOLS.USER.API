@@ -8,7 +8,7 @@ using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Serilog;
-using StatusCodes = APPLICATION.DOMAIN.ENUM.StatusCodes;
+using StatusCodes = APPLICATION.ENUMS.StatusCodes;
 
 namespace APPLICATION.APPLICATION.SERVICES.FILE;
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace APPLICATION.DOMAIN.ENUM;
+namespace APPLICATION.ENUMS;
 
 public enum StatusCodes
 {

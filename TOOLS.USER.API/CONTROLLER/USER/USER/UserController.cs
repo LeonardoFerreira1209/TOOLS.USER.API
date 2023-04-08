@@ -4,7 +4,7 @@ using APPLICATION.DOMAIN.DTOS.REQUEST.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.USER;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.UTILS;
-using APPLICATION.DOMAIN.UTILS.AUTH;
+using APPLICATION.DOMAIN.UTILS.AUTH.CUSTOMAUTHORIZE.ATTRIBUTE;
 using APPLICATION.ENUMS;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using Serilog.Context;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+
+using StatusCodes = Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace TOOLS.USER.API.CONTROLLER.USER.USER
 {

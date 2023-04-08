@@ -1,9 +1,9 @@
 ﻿using APPLICATION.DOMAIN.CONTRACTS.SERVICES.TOKEN;
 using APPLICATION.DOMAIN.DTOS.CONFIGURATION;
+using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.ROLE;
 using APPLICATION.DOMAIN.ENTITY.USER;
-using APPLICATION.DOMAIN.ENUM;
 using APPLICATION.DOMAIN.UTILS.AUTH.TOKEN;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +27,6 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
 
             _roleManager = roleManager;
 
-
             _appsettings = appsettings;
         }
 
@@ -36,46 +35,37 @@ namespace APPLICATION.APPLICATION.SERVICES.TOKEN
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public async Task<ApiResponse<object>> CreateJsonWebToken(string username)
+        public async Task<(TokenJWT tokenJWT, List<DadosNotificacao> messages)> CreateJsonWebToken(string username)
         {
             Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenService)} - METHOD {nameof(CreateJsonWebToken)}\n");
 
-            try
-            {
-                Log.Information($"[LOG INFORMATION] - Recuperando dados do token do usuário\n");
+            Log.Information($"[LOG INFORMATION] - Recuperando dados do token do usuário\n");
 
-                // Return de user.
-                var user = await User(username);
+            // Return de user.
+            var userEntity = await User(username);
 
-                // Return user roles.
-                var roles = await Roles(user);
+            // Valid user.
+            if (userEntity is null) return (null, new List<DadosNotificacao>() { new DadosNotificacao("Usuário não foi encontrado.") });
 
-                // Return user claims.
-                var claims = await Claims(user, roles);
+            // Return user roles.
+            var roles = await Roles(userEntity);
 
-                Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
+            // Return user claims.
+            var claims = await Claims(userEntity, roles);
 
-                // Create de token and return.
-                var response = await Task.FromResult(new TokenJwtBuilder()
-                   .AddUsername(username)
-                   .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
-                   .AddSubject("HYPER.IO PROJECTS L.T.D.A")
-                   .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
-                   .AddAudience(_appsettings.Value.Auth.ValidAudience)
-                   .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
-                   .AddRoles(roles.ToList())
-                   .AddClaims(claims.ToList())
-                   .Builder(user));
+            Log.Information($"[LOG INFORMATION] - Criando o token do usuário.\n");
 
-                return response;
-            }
-            catch (Exception exception)
-            {
-                Log.Error($"[LOG ERROR] - {exception.Message}\n");
-
-                return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
-            }
+            // Create de token and return.
+            return await Task.FromResult(new TokenJwtBuilder()
+               .AddUsername(username)
+               .AddSecurityKey(JwtSecurityKey.Create(_appsettings.Value.Auth.SecurityKey))
+               .AddSubject("HYPER.IO PROJECTS L.T.D.A")
+               .AddIssuer(_appsettings.Value.Auth.ValidIssuer)
+               .AddAudience(_appsettings.Value.Auth.ValidAudience)
+               .AddExpiry(_appsettings.Value.Auth.ExpiresIn)
+               .AddRoles(roles.ToList())
+               .AddClaims(claims.ToList())
+               .Builder(userEntity));
         }
 
         /// <summary>

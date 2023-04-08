@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Serilog;
 
+using StatusCodes = APPLICATION.ENUMS.StatusCodes;
+
 namespace APPLICATION.INFRAESTRUTURE.FACADES;
 
 public class UtilFacade : IUtilFacade
@@ -47,7 +49,7 @@ public class UtilFacade : IUtilFacade
             Log.Error($"[LOG ERROR] - {exception.InnerException} - {exception.Message}\n");
 
             // Error response.
-            return new ApiResponse<object>(false, DOMAIN.ENUM.StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using APPLICATION.DOMAIN.DTOS.CONFIGURATION.AUTH.TOKEN;
 using APPLICATION.DOMAIN.DTOS.RESPONSE.UTILS;
 using APPLICATION.DOMAIN.ENTITY.USER;
-using APPLICATION.DOMAIN.ENUM;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
@@ -148,68 +147,71 @@ public class TokenJwtBuilder
     /// Método que verifica se os dados estão validos.
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
-    private (bool success, string message) EnsureArguments()
+    private (bool success, List<DadosNotificacao> messages) EnsureArguments()
     {
-        if (securityKey == null) return (false, "securotyKey não existe!");
+        var notifications = new List<DadosNotificacao>();
 
-        if (string.IsNullOrEmpty(subject)) return (false, "subject não existe!");
+        if (securityKey == null) notifications.Add(new DadosNotificacao("securotyKey não existe!"));
 
-        if (string.IsNullOrEmpty(issuer)) return (false, "issuer não existe!");
+        if (string.IsNullOrEmpty(subject)) notifications.Add(new DadosNotificacao("subject não existe!"));
 
-        if (string.IsNullOrEmpty(audience)) return (false, "audience não existe!");
+        if (string.IsNullOrEmpty(issuer)) notifications.Add(new DadosNotificacao("issuer não existe!"));
 
-        return (true, null);
+        if (string.IsNullOrEmpty(audience)) notifications.Add(new DadosNotificacao("audience não existe!"));
+
+        return notifications.Count > 0 ? (false, null) : (true, notifications);
     }
 
     /// <summary>
     /// Método que cria e retorna o token.
     /// </summary>
     /// <returns></returns>
-    public ApiResponse<object> Builder(UserEntity user)
+    public (TokenJWT, List<DadosNotificacao>) Builder(UserEntity userEntity)
     {
         Log.Information($"[LOG INFORMATION] - SET TITLE {nameof(TokenJwtBuilder)} - METHOD {nameof(Builder)}\n");
 
         try
         {
             // Verifica os dados.
-            var (success, message) = EnsureArguments(); if (success is false)
+            var (success, messages) = EnsureArguments(); if (success is false)
             {
-                Log.Error($"[LOG ERROR] - {message}\n");
+                Log.Error($"[LOG ERROR] - {messages}\n");
 
-                return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, new List<DadosNotificacao> { new DadosNotificacao(message) });
+                return (null, messages);
             }
 
             // Adiciona as claims a uma lista.
             var baseClaims = new[]
             {
-                new Claim("id", user.Id.ToString()),
+                new Claim("id", userEntity.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(JwtRegisteredClaimNames.Typ, "Bearer"),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("phoneNumber", user.PhoneNumber),
+                new Claim(JwtRegisteredClaimNames.Email, userEntity.Email),
+                new Claim("phoneNumber", userEntity.PhoneNumber),
                 new Claim(JwtRegisteredClaimNames.Website, "https://toolsuserapi.azurewebsites.net/")
 
             }.Union(roles.AsParallel()).Union(claims.AsParallel());
 
+            Log.Information($"[LOG INFORMATION] - Token gerado com sucesso.\n");
+
             // Gera o token com os dados passados.
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: baseClaims,
-                expires: DateTime.Now.AddMinutes(expiryInMinutes),
-                signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256));
+            return (new TokenJWT(
+                            new JwtSecurityToken(
+                                issuer: issuer,
+                                audience: audience,
+                                claims: baseClaims,
+                                expires: DateTime.Now.AddMinutes(expiryInMinutes),
+                                signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256))
 
-            Log.Information($"[LOG INFORMATION] - Token gerado {token}.\n");
-
-            return new ApiResponse<object>(true, StatusCodes.SuccessCreated, new TokenJWT(token), new List<DadosNotificacao> { new DadosNotificacao("Token gerado com sucesso.") });
+                        ), messages);
         }
         catch (Exception exception)
         {
             Log.Error($"[LOG ERROR] - {exception.Message}\n");
 
-            return new ApiResponse<object>(false, StatusCodes.ServerErrorInternalServerError, null, new List<DadosNotificacao> { new DadosNotificacao(exception.Message) });
+            return (null, new List<DadosNotificacao>() { new DadosNotificacao(exception.Message) });
         }
     }
 }

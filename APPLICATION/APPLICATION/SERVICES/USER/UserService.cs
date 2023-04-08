@@ -16,7 +16,7 @@ using APPLICATION.DOMAIN.UTILS.Extensions;
 using APPLICATION.DOMAIN.UTILS.EXTENSIONS;
 using APPLICATION.DOMAIN.UTILS.GLOBAL;
 using APPLICATION.DOMAIN.VALIDATORS;
-using APPLICATION.INFRAESTRUTURE.JOBS.RECURRENT;
+using APPLICATION.INFRAESTRUTURE.JOBS.QUEUED;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -25,7 +25,7 @@ using Serilog;
 using System.Data;
 using System.Security.Claims;
 using System.Web;
-using StatusCodes = APPLICATION.DOMAIN.ENUM.StatusCodes;
+using StatusCodes = APPLICATION.ENUMS.StatusCodes;
 
 namespace APPLICATION.APPLICATION.SERVICES.USER
 {
@@ -35,13 +35,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
         private readonly IOptions<AppSettings> _appsettings;
-
         private readonly ITokenService _tokenService;
-
         private readonly IUtilFacade _utilFacade;
-
         private readonly IPlanService _planService;
 
         /// <summary>
@@ -55,13 +51,9 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
         public UserService(IUserRepository userRepository, IOptions<AppSettings> appsettings, ITokenService tokenService, IUtilFacade utilFacade, IPlanService planService)
         {
             _userRepository = userRepository;
-
             _appsettings = appsettings;
-
             _tokenService = tokenService;
-
             _utilFacade = utilFacade;
-
             _planService = planService;
         }
 
@@ -85,47 +77,71 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
 
                 Log.Information($"[LOG INFORMATION] - Recuperando usuário {JsonConvert.SerializeObject(loginRequest)}.\n");
 
-                // sigin user wirh username & password.
-                var signInResult = await _userRepository.PasswordSignInAsync(loginRequest.Username, loginRequest.Password, true, true);
+                // Get user by username.
+                var userEntity = await _userRepository.GetWithUsernameAsync(loginRequest.Username);
 
-                // return error response.
-                if (signInResult.Succeeded is false)
+                // User is not null.
+                if (userEntity is not null)
                 {
-                    // locked user.
-                    if (signInResult.IsLockedOut)
-                    {
-                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, está bloqueado.\n");
 
-                        // Response Locked.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorLocked, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
-                    }
-                    else if (signInResult.IsNotAllowed) // not allowed user.
-                    {
-                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, não está confirmado.\n");
+                    // sigin user wirh username & password.
+                    var signInResult = await _userRepository.PasswordSignInAsync(userEntity, loginRequest.Password, true, true);
 
-                        // Response notAllowed.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Email do usuário não está confirmado.") });
-                    }
-                    else if (signInResult.RequiresTwoFactor) // requires two factor user.
+                    // return error response.
+                    if (signInResult.Succeeded is false)
                     {
-                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, requer verificação de dois fatores.\n");
+                        // locked user.
+                        if (signInResult.IsLockedOut)
+                        {
+                            Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, está bloqueado.\n");
 
-                        // Response twoFactor.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário necessita de verificação de dois fatores.") });
-                    }
-                    else // incorrects params user.
-                    {
-                        Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, dados incorretos.\n");
+                            // Response Locked.
+                            return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorLocked, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário está bloqueado. Caso não desbloqueie em alguns minutos entre em contato com o suporte.") });
+                        }
+                        else if (signInResult.IsNotAllowed) // not allowed user.
+                        {
+                            Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, não está confirmado.\n");
 
-                        // Response error unathorized.
-                        return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Os dados do usuário estão inválidos ou usuário não existe.") });
+                            // Response notAllowed.
+                            return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Email do usuário não está confirmado.") });
+                        }
+                        else if (signInResult.RequiresTwoFactor) // requires two factor user.
+                        {
+                            Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, requer verificação de dois fatores.\n");
+
+                            // Response twoFactor.
+                            return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Usuário necessita de verificação de dois fatores.") });
+                        }
+                        else // incorrects params user.
+                        {
+                            Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, dados incorretos.\n");
+
+                            // Response error unathorized.
+                            return new ApiResponse<object>(signInResult.Succeeded, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Os dados do usuário estão inválidos ou usuário não existe.") });
+                        }
                     }
+                }
+                else // incorrects params user.
+                {
+                    Log.Information($"[LOG INFORMATION] - Falha ao recuperar usuário, dados incorretos.\n");
+
+                    // Response error unathorized.
+                    return new ApiResponse<object>(false, StatusCodes.ErrorUnauthorized, null, new List<DadosNotificacao> { new DadosNotificacao("Os dados do usuário estão inválidos ou usuário não existe.") });
                 }
 
                 Log.Information($"[LOG INFORMATION] - Gerando token.\n");
 
+                // Create token jwr.
+                var (tokenJWT, messages) = await _tokenService.CreateJsonWebToken(loginRequest.Username);
+
+                // Token is null.
+                if (tokenJWT is null) return new ApiResponse<object>(false, StatusCodes.ErrorBadRequest, null, messages);
+
+                // Save user token.
+                await SetAuthenticationTokenAsync(userEntity, tokenJWT.Value);
+
                 // Return Json Web Token.
-                return await _tokenService.CreateJsonWebToken(loginRequest.Username);
+                return new ApiResponse<object>(true, StatusCodes.SuccessCreated, tokenJWT, messages);
             }
             catch (Exception exception)
             {
@@ -802,6 +818,17 @@ namespace APPLICATION.APPLICATION.SERVICES.USER
                 ButtonText = "Liberar acesso",
                 TemplateName = "Activate.Template"
             });
+        }
+
+        /// <summary>
+        /// Método responsável por atualizar o token do usuário.
+        /// </summary>
+        /// <param name="userEntity"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private async Task SetAuthenticationTokenAsync(UserEntity userEntity, string token)
+        {
+            await _userRepository.SetUserAuthenticationTokenAsync(userEntity, "EVENTHUB", "AUTHENTICATIONTOKEN", token);
         }
     }
 }

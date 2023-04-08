@@ -10,27 +10,27 @@ public interface IUserRepository
     /// <summary>
     /// Retorna o resultado de autenicação do usuário.
     /// </summary>
-    /// <param name="username"></param>
+    /// <param name="userEntity"></param>
     /// <param name="password"></param>
     /// <param name="isPersistent"></param>
     /// <param name="lockoutOnFailure"></param>
     /// <returns></returns>
-    Task<SignInResult> PasswordSignInAsync(string username, string password, bool isPersistent, bool lockoutOnFailure);
+    Task<SignInResult> PasswordSignInAsync(UserEntity userEntity, string password, bool isPersistent, bool lockoutOnFailure);
 
     /// <summary>
     /// Método responsavel por criar um novo usuário.
     /// </summary>
-    /// <param name="user"></param>
+    /// <param name="userEntity"></param>
     /// <param name="password"></param>
     /// <returns></returns>
-    Task<IdentityResult> CreateUserAsync(UserEntity user, string password);
+    Task<IdentityResult> CreateUserAsync(UserEntity userEntity, string password);
 
     /// <summary>
     /// Método responsavel por atualizar um usuário.
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    Task<IdentityResult> UpdateUserAsync(UserEntity user);
+    Task<IdentityResult> UpdateUserAsync(UserEntity userEntity);
 
     /// <summary>
     /// Método responsável por recuperar um usuário.
@@ -56,7 +56,7 @@ public interface IUserRepository
     /// <summary>
     /// Método responsável por setar o nome de usuário.
     /// </summary>
-    /// <param name="userIdentity"></param>
+    /// <param name="userEntity"></param>
     /// <param name="username"></param>
     /// <returns></returns>
     Task<IdentityResult> SetUserNameAsync(UserEntity userEntity, string username);
@@ -153,4 +153,14 @@ public interface IUserRepository
     /// <param name="roleEntity"></param>
     /// <returns></returns>
     Task<IList<Claim>> GetRoleClaimsAsync(RoleEntity roleEntity);
+
+    /// <summary>
+    ///  Método responsável por setar um token no usuário.
+    /// </summary>
+    /// <param name="userEntity"></param>
+    /// <param name="providerName"></param>
+    /// <param name="tokenName"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    Task SetUserAuthenticationTokenAsync(UserEntity userEntity, string providerName, string tokenName, string token);
 }

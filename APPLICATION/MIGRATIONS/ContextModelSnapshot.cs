@@ -4,7 +4,6 @@ using APPLICATION.INFRAESTRUTURE.CONTEXTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,15 +11,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APPLICATION.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20221229032515_INIT")]
-    partial class INIT
+    partial class ContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.1")
+                .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -347,7 +344,7 @@ namespace APPLICATION.Migrations
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.USER.UserEntity", b =>
                 {
                     b.HasOne("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", "Plan")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("PlanId");
 
                     b.Navigation("Plan");
@@ -402,6 +399,11 @@ namespace APPLICATION.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.PLAN.PlanEntity", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("APPLICATION.DOMAIN.ENTITY.ROLE.RoleEntity", b =>
